@@ -1,0 +1,47 @@
+:root {
+
+    --background: #FFFDFD;
+    --component: #EB5353;
+    --btnfont: #F9D1D1;
+    --font: #2B0B0B;
+    
+  }
+  
+* {
+  
+    /* font */
+    font-family: Poppins, sans-serif;
+    font-size: 14px;
+    color: var(--font);
+  
+    /* phase */
+    margin: 0;
+    padding: 0;
+
+    /* radius */
+    
+  
+    /* color */
+    /* background-color: var(--background); */
+}
+
+.header {
+    font-size: 4rem;
+    line-height: 4.5rem;
+}
+
+.btn {
+    border-radius: 0rem;
+    padding: 0.5rem 2rem;
+}
+  
+.btn.red {
+    color: var(--btnfont);
+    background-color: var(--component);
+}
+
+.btnline:focus {
+    margin-bottom: 3rem;
+    border-bottom: 1px solid var(--font);
+    
+}
