@@ -1,28 +1,25 @@
 :root {
+    --whitecolor: #fffdfd;
+    --redcolor: #eb5353;
+    --pinkcolor: #f9d1d1;
+    --deepredcolor: #2b0b0b;
+    --graycolor: #6a6161;
+    --darkcolor: #1e1e1e;
+}
 
-    --background: #FFFDFD;
-    --component: #EB5353;
-    --btnfont: #F9D1D1;
-    --font: #2B0B0B;
-    
-  }
-  
-* {
-  
-    /* font */
-    font-family: Poppins, sans-serif;
+body {
+    height: max-content;
     font-size: 14px;
-    color: var(--font);
-  
-    /* phase */
-    margin: 0;
-    padding: 0;
+    color: var(--darkcolor);
+    background-color: var(--whitecolor);
+}
 
-    /* radius */
-    
-  
-    /* color */
-    /* background-color: var(--background); */
+.footer {
+    position: fixed;
+    bottom: 0;
+    width: 100vw;
+    height: 1.5rem;
+    background-color: var(--redcolor);
 }
 
 .header {
@@ -30,18 +27,30 @@
     line-height: 4.5rem;
 }
 
-.btn {
-    border-radius: 0rem;
-    padding: 0.5rem 2rem;
-}
-  
-.btn.red {
-    color: var(--btnfont);
-    background-color: var(--component);
+.tabcomponent {
+    border: solid 1px --graycolor;
 }
 
-.btnline:focus {
-    margin-bottom: 3rem;
-    border-bottom: 1px solid var(--font);
-    
+.iconcomponent {
+    width: 14px;
+    height: 14px;
+    color: var(--pinkcolor);
+}
+
+.btncomponent {
+    color: var(--redcolor);
+    border-radius: xs;
+    size: xl;
+    width: 75%;
+}
+
+.inputcomponent {
+    font-size: small;
+    color: var(--deepredcolor);
+    border: rem(1px) solid;
+    background: transparent;
+
+    &:focus-within {
+        border-color: var(--deepredcolor);
+    }
 }
