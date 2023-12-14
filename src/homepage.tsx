@@ -1,61 +1,47 @@
+// import mantine component
 import {
-    Box,
     Text,
+    Title,
     Flex,
     Grid,
-    UnstyledButton,
-    Tabs,
-    Divider,
     Container,
-    Center,
     Button,
+    Box,
+    Divider,
+    Tabs,
+    Center,
+    Affix,
 } from "@mantine/core";
+import "@mantine/core/styles.css";
 
+// import styles css
 import styles from "./styles.module.css";
 
+// import icon form tabler react
 import { IconArrowRight } from "@tabler/icons-react";
+
+// import components
+import Navbar from "./components/homepage_navbar";
 
 export default function Homepage() {
     return (
         <body>
             {/* navbar */}
-            <Box p="xl">
-                <Grid align="center">
-                    <Grid.Col span="auto">Gallery walk</Grid.Col>
-                    <Grid.Col span="auto">
-                        <Flex justify="flex-end" align="center" gap="lg">
-                            <UnstyledButton
-                                variant="transparent"
-                                className={styles.btn}
-                                size="md">
-                                Login
-                            </UnstyledButton>
-                            <UnstyledButton
-                                className={`${styles.btn} ${styles.red}`}
-                                size="md">
-                                Sign up
-                            </UnstyledButton>
-                        </Flex>
-                    </Grid.Col>
-                </Grid>
+            <Navbar />
 
-                <Divider my="sm" />
-            </Box>
-
-            {/* content container */}
+            {/* tab container */}
             <Center
                 style={{
-                    height: 750,
+                    height: "calc(100vh - 15rem)",
                 }}>
+                {/* tab header container */}
                 <Container size="xl">
-                    {/* tab container */}
                     <Tabs
-                        color="#EB5353"
+                        color="redcolor.4"
                         defaultValue="home"
                         orientation="vertical">
-                        {/* tab list */}
                         <Tabs.List my="auto">
-                            <Tabs.Tab value="home" py="md" my="md">
+                            <Tabs.Tab value="home" py="md" mb="md">
                                 Home
                             </Tabs.Tab>
                             <Tabs.Tab value="service" py="md" my="md">
@@ -64,106 +50,200 @@ export default function Homepage() {
                             <Tabs.Tab value="about" py="md" my="md">
                                 About us
                             </Tabs.Tab>
-                            <Tabs.Tab value="contact" py="md" my="md">
+                            <Tabs.Tab value="contact" py="md" mt="md">
                                 Contact
                             </Tabs.Tab>
                         </Tabs.List>
 
-                        {/* tab panel home */}
-                        <Tabs.Panel value="home">
-                            <Box p="xl">
-                                <Grid>
-                                    <Grid.Col span={9}>
-                                        <Text>
-                                            Lorem ipsum dolor sit amet
-                                            consectetur. Accumsan nulla ac vitae
-                                            aliquet proin. Non senectus mi vitae
-                                            eu.
-                                        </Text>
-                                        <Text className={styles.header} mt="xl">
-                                            Create your own events and Join the
-                                            events that interest you.
-                                            <Button
-                                                color="red"
-                                                radius="xs"
-                                                size="xl"
-                                                rightSection={
-                                                    <IconArrowRight size={14} />
-                                                }>
+                        {/* home container tab */}
+                        <Tabs.Panel value="home" px="5rem">
+                            <Grid gutter="xl">
+                                <Grid.Col span="auto">
+                                    <Text>
+                                        Lorem ipsum dolor sit amet consectetur.
+                                        Accumsan nulla ac vitae aliquet proin.
+                                        Non senectus mi vitae eu.
+                                    </Text>
+                                    <Title size="4rem" mt="md" my="auto">
+                                        <Text span c="redcolor.4" inherit>
+                                            Create
+                                        </Text>{" "}
+                                        your own events and{" "}
+                                        <Text span c="redcolor.4" inherit>
+                                            Join
+                                        </Text>{" "}
+                                        the events that interest you.
+                                        <Button
+                                            w="15rem"
+                                            ml="xl"
+                                            justify="space-between"
+                                            rightSection={
+                                                <IconArrowRight
+                                                    className={
+                                                        styles.iconcomponent
+                                                    }
+                                                />
+                                            }>
+                                            <Text c="pinkcolor.1">
                                                 Get Start!
-                                            </Button>
-                                        </Text>
-                                    </Grid.Col>
-                                    <Grid.Col span={2}></Grid.Col>
-                                </Grid>
-                            </Box>
+                                            </Text>
+                                        </Button>
+                                    </Title>
+                                </Grid.Col>
+
+                                <Grid.Col span={1} my="auto">
+                                    <Center my="auto">
+                                        <Flex direction="column" align="center">
+                                            <Text
+                                                c="deepredcolor.4"
+                                                size="small">
+                                                01
+                                            </Text>
+                                            <Box ta="center" my="sm">
+                                                <Divider
+                                                    orientation="vertical"
+                                                    color="deepredcolor.9"
+                                                    h="2rem"
+                                                />
+                                                <Divider
+                                                    orientation="vertical"
+                                                    color="graycolor.2"
+                                                    h="2rem"
+                                                />
+                                                <Divider
+                                                    orientation="vertical"
+                                                    color="graycolor.2"
+                                                    h="4rem"
+                                                />
+                                            </Box>
+                                            <Text c="graycolor.2" size="small">
+                                                04
+                                            </Text>
+                                        </Flex>
+                                    </Center>
+                                </Grid.Col>
+                            </Grid>
                         </Tabs.Panel>
 
-                        {/* tab panel service */}
+                        {/* service container tab */}
                         <Tabs.Panel value="service">
-                            <Box p="xl">
-                                <Grid>
-                                    <Grid.Col span={9}>
+                            <Flex>
+                                <Grid grow px="5rem" my="auto" gutter="3rem">
+                                    <Grid.Col span={4}>
+                                        <Text size="xsmall" c="graycolor.2">
+                                            Role Group
+                                        </Text>
+                                        <Text mb="md" c="redcolor.4" fw={500}>
+                                            Event Manager
+                                        </Text>
                                         <Text>
                                             Lorem ipsum dolor sit amet
-                                            consectetur. Accumsan nulla ac vitae
-                                            aliquet proin. Non senectus mi vitae
-                                            eu.
-                                        </Text>
-                                        <Text className={styles.header} mt="xl">
-                                            Create your own events and Join the
-                                            events that interest you.
+                                            consectetur adipisicing elit. Unde
+                                            distinctio explicabo, quia illum
+                                            totam perferendis. Consequatur eaque
+                                            aperiam totam reiciendis vero, a
+                                            facere tenetur rem libero saepe
+                                            natus, nobis dolor?
                                         </Text>
                                     </Grid.Col>
-                                    <Grid.Col span={2}></Grid.Col>
+                                    <Grid.Col span={4}>
+                                        <Text size="xsmall" c="graycolor.2">
+                                            Role Group
+                                        </Text>
+                                        <Text mb="md" c="redcolor.4" fw={500}>
+                                            Event Presenter
+                                        </Text>
+                                        <Text>
+                                            Lorem ipsum dolor sit amet
+                                            consectetur adipisicing elit. Unde
+                                            distinctio explicabo, quia illum
+                                            totam perferendis. Consequatur eaque
+                                            aperiam totam reiciendis vero, a
+                                            facere tenetur rem libero saepe
+                                            natus, nobis dolor?
+                                        </Text>
+                                    </Grid.Col>
+                                    <Grid.Col span={4}>
+                                        <Text size="xsmall" c="graycolor.2">
+                                            Role Group
+                                        </Text>
+                                        <Text mb="md" c="redcolor.4" fw={500}>
+                                            Guest
+                                        </Text>
+                                        <Text>
+                                            Lorem ipsum dolor sit amet
+                                            consectetur adipisicing elit. Unde
+                                            distinctio explicabo, quia illum
+                                            totam perferendis. Consequatur eaque
+                                            aperiam totam reiciendis vero, a
+                                            facere tenetur rem libero saepe
+                                            natus, nobis dolor?
+                                        </Text>
+                                    </Grid.Col>
+                                    <Grid.Col span={4}>
+                                        <Text mb="md" c="redcolor.4" fw={500}>
+                                            Service
+                                        </Text>
+                                        <Text>
+                                            Lorem ipsum dolor sit amet
+                                            consectetur adipisicing elit. Unde
+                                            distinctio explicabo, quia illum
+                                            totam perferendis. Consequatur eaque
+                                            aperiam totam reiciendis vero, a
+                                            facere tenetur rem libero saepe
+                                            natus, nobis dolor?
+                                        </Text>
+                                    </Grid.Col>
+                                    <Grid.Col span={4}>
+                                        <Text mb="md" c="redcolor.4" fw={500}>
+                                            Virtual Money
+                                        </Text>
+                                        <Text>
+                                            Lorem ipsum dolor sit amet
+                                            consectetur adipisicing elit. Unde
+                                            distinctio explicabo, quia illum
+                                            totam perferendis. Consequatur eaque
+                                            aperiam totam reiciendis vero, a
+                                            facere tenetur rem libero saepe
+                                            natus, nobis dolor?
+                                        </Text>
+                                    </Grid.Col>
                                 </Grid>
-                            </Box>
-                        </Tabs.Panel>
 
-                        {/* tab panel about */}
-                        <Tabs.Panel value="about">
-                            <Box p="xl">
-                                <Grid>
-                                    <Grid.Col span={9}>
-                                        <Text>
-                                            Lorem ipsum dolor sit amet
-                                            consectetur. Accumsan nulla ac vitae
-                                            aliquet proin. Non senectus mi vitae
-                                            eu.
+                                <Center my="auto">
+                                    <Flex direction="column" align="center">
+                                        <Text c="graycolor.2" size="small">
+                                            01
                                         </Text>
-                                        <Text className={styles.header} mt="xl">
-                                            Create your own events and Join the
-                                            events that interest you.
+                                        <Box ta="center" my="sm">
+                                            <Divider
+                                                orientation="vertical"
+                                                color="graycolor.2"
+                                                h="2rem"
+                                            />
+                                            <Divider
+                                                orientation="vertical"
+                                                color="deepredcolor.9"
+                                                h="2rem"
+                                            />
+                                            <Divider
+                                                orientation="vertical"
+                                                color="graycolor.2"
+                                                h="4rem"
+                                            />
+                                        </Box>
+                                        <Text c="graycolor.2" size="small">
+                                            04
                                         </Text>
-                                    </Grid.Col>
-                                    <Grid.Col span={2}></Grid.Col>
-                                </Grid>
-                            </Box>
-                        </Tabs.Panel>
-
-                        {/* tab panel contact */}
-                        <Tabs.Panel value="contact">
-                            <Box p="xl">
-                                <Grid>
-                                    <Grid.Col span={9}>
-                                        <Text>
-                                            Lorem ipsum dolor sit amet
-                                            consectetur. Accumsan nulla ac vitae
-                                            aliquet proin. Non senectus mi vitae
-                                            eu.
-                                        </Text>
-                                        <Text className={styles.header} mt="xl">
-                                            Create your own events and Join the
-                                            events that interest you.
-                                        </Text>
-                                    </Grid.Col>
-                                    <Grid.Col span={2}></Grid.Col>
-                                </Grid>
-                            </Box>
+                                    </Flex>
+                                </Center>
+                            </Flex>
                         </Tabs.Panel>
                     </Tabs>
                 </Container>
             </Center>
+            {/* red footer */}
+            <Affix className={styles.footer}></Affix>
         </body>
     );
 }
