@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
-  BrowserRouter as Router,
-  Routes,
-  Route,
-  Navigate,
-} from "react-router-dom";
-import axios from "axios";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import "./App.css";
 
@@ -21,7 +15,6 @@ import Login from "./login.tsx";
 import Register from "./register.tsx";
 import Dashboard from "./dashboard.tsx";
 import PrivateRoutes from "./PrivateRoutes.tsx";
-
 
 const theme = createTheme({
   fontFamily: "Poppins, sans-serif",
@@ -78,7 +71,7 @@ export default function App() {
           <Route path="/register" element={<Register />} />
 
           <Route element={<PrivateRoutes />}>
-            <Route element={<Dashboard />} path="/dashboard" exact />
+            <Route element={<Dashboard />} path="/dashboard" exact={true} />
           </Route>
         </Routes>
       </MantineProvider>

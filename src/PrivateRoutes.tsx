@@ -3,7 +3,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 const PrivateRoutes = () => {
-  const [token, setToken] = useState(null);
+  const [token, setToken] = useState<any>(null);
 
   useEffect(() => {
     axios
