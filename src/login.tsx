@@ -35,7 +35,7 @@ export default function Login() {
 
     // google login
     const handleGoogleLogin = () => {
-        window.location.href = import.meta.env.VITE_BACKEND_ENDPOINT;
+        window.location.href = 'http://localhost:8080/login/google';
     };
 
     // mantine form value
