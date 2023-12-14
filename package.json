@@ -10,12 +10,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@flaticon/flaticon-uicons": "^3.0.0",
     "@mantine/carousel": "^7.2.2",
     "@mantine/code-highlight": "^7.2.2",
+    "@mantine/colors-generator": "^7.3.0",
     "@mantine/core": "^7.2.2",
     "@mantine/dates": "^7.2.2",
     "@mantine/dropzone": "^7.2.2",
-    "@mantine/form": "^7.2.2",
+    "@mantine/form": "^7.3.1",
     "@mantine/hooks": "^7.2.2",
     "@mantine/modals": "^7.2.2",
     "@mantine/notifications": "^7.2.2",
@@ -26,12 +28,18 @@
     "@tiptap/extension-link": "^2.1.12",
     "@tiptap/react": "^2.1.12",
     "@tiptap/starter-kit": "^2.1.12",
+    "axios": "^1.6.2",
+    "chroma-js": "^2.4.2",
     "dayjs": "^1.11.10",
+    "dotenv": "^16.3.1",
     "embla-carousel-react": "^7.1.0",
     "react": "^18.2.0",
-    "react-dom": "^18.2.0"
+    "react-dom": "^18.2.0",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
+    "@types/dotenv": "^8.2.0",
+    "@types/node": "^20.10.4",
     "@types/react": "^18.2.37",
     "@types/react-dom": "^18.2.15",
     "@typescript-eslint/eslint-plugin": "^6.10.0",
