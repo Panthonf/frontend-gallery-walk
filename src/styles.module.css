@@ -45,7 +45,7 @@ body {
 }
 
 .inputcomponent {
-    font-size: small;
+    font-size: 14px;
     color: var(--deepredcolor);
     border: rem(1px) solid;
     background: transparent;
@@ -54,3 +54,14 @@ body {
         border-color: var(--deepredcolor);
     }
 }
+
+.logincontainer {
+    position: absolute;
+    background-color: var(--whitecolor);
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.radio {
+    background-color: var(--redcolor);
+}
+
