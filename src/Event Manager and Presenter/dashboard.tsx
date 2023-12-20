@@ -86,6 +86,10 @@ export default function Dashboard() {
     event_name: string;
     start_date: string;
     end_date: string;
+    virtual_money: number;
+    unit_money: string;
+    description: string;
+    video_link: string;
   };
 
   return (
