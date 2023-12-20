@@ -21,18 +21,18 @@ import styles from "./styles.module.css";
 import { IconArrowRight } from "@tabler/icons-react";
 
 // import components
-import Navbar from "./components/homepage_navbar";
+// import Navbar from "./components/homepage_navbar";
 
 export default function Homepage() {
     return (
         <body>
             {/* navbar */}
-            <Navbar />
+            {/* <Navbar /> */}
 
             {/* tab container */}
             <Center
                 style={{
-                    height: "calc(100vh - 15rem)",
+                    height: "100vh",
                 }}>
                 {/* tab header container */}
                 <Container size="xl">
@@ -73,21 +73,24 @@ export default function Homepage() {
                                             Join
                                         </Text>{" "}
                                         the events that interest you.
-                                        <Button
-                                            w="15rem"
-                                            ml="xl"
-                                            justify="space-between"
-                                            rightSection={
-                                                <IconArrowRight
-                                                    className={
-                                                        styles.iconcomponent
-                                                    }
-                                                />
-                                            }>
-                                            <Text c="pinkcolor.1">
-                                                Get Start!
-                                            </Text>
-                                        </Button>
+                                        <a href="/login">
+                                            <Button
+                                                w="15rem"
+                                                ml="xl"
+                                                justify="space-between"
+                                                rightSection={
+                                                    <IconArrowRight
+                                                        className={
+                                                            styles.iconcomponent
+                                                        }
+                                                    />
+                                                }>
+                                                <Text c="pinkcolor.1">
+                                                    Get Start!
+                                                </Text>
+                                            </Button>
+                                        </a>
+
                                     </Title>
                                 </Grid.Col>
 

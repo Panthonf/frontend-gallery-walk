@@ -1,70 +1,117 @@
 // import react component
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 // import mantine component
 import {
-    Grid,
     Text,
+    Center,
     Container,
-    Flex,
     Button,
     Divider,
-    Input,
-    PasswordInput,
-    Group,
-    Checkbox,
-    Center
 } from "@mantine/core";
-import { useForm, hasLength } from "@mantine/form";
+// import { useForm, hasLength } from "@mantine/form";
 import "@mantine/core/styles.css";
 
 // import styles css
-// import styles from "./styles.module.css";
+import styles from "./styles.module.css";
 
 import {
     IconBrandGoogleFilled,
-    // IconBrandFacebookFilled,
+    IconBrandFacebookFilled,
     IconLock,
     IconMail,
 } from "@tabler/icons-react";
 
 // import components
-import Navbar from "./components/homepage_navbar";
+// import Navbar from "./components/homepage_navbar";
 
 export default function Login() {
 
     // google login
     const handleGoogleLogin = () => {
-        window.location.href = 'http://localhost:8080/login/google';
+        window.location.href = import.meta.env.VITE_BACKEND_ENDPOINT;
     };
 
     // mantine form value
-    const form = useForm({
-        initialValues: {
-            email: "",
-            termsOfService: false,
-            password: "",
-        },
+    // const form = useForm({
+    //     initialValues: {
+    //         email: "",
+    //         termsOfService: false,
+    //         password: "",
+    //     },
 
-        validate: {
-            email: (value) =>
-                /^\S+@\S+$/.test(value) ? null : "Invalid email",
-            password: hasLength(
-                { min: 8, max: 12 },
-                "Password must be 8-12 characters long"
-            ),
-        },
-    });
+    //     validate: {
+    //         email: (value) =>
+    //             /^\S+@\S+$/.test(value) ? null : "Invalid email",
+    //         password: hasLength(
+    //             { min: 8, max: 12 },
+    //             "Password must be 8-12 characters long"
+    //         ),
+    //     },
+    // });
     return (
         <body>
             {/* navbar */}
-            <Navbar />
+            {/* <Navbar /> */}
 
             <Center style={{
-                height: "calc(100vh - 15rem)",
+                height: "100vh",
             }}>
-                {/* login container */}
-                <Container size="xl" p="xl">
+                <Container size="xs" p="3rem" className={styles.logincontainer}>
+                    <Text size="topic" c="redcolor.4" fw={500}>
+                        Let's get Started!
+                    </Text>
+
+                    <Text mt="lg">
+                        Lorem ipsum dolor sit amet consectetur adipisicing
+                        elit. Quasi at amet perspiciatis in, quas nobis, sit
+                        id blanditiis recusandae saepe atque laudantium
+                        ratione asperiores culpa numquam provident,
+                        obcaecati repellat? Autem!
+                    </Text>
+                    <Center>
+                        <Button
+                            color="deepredcolor.9"
+                            size="md"
+                            w="100%"
+                            justify="center"
+                            variant="outline"
+                            mt="xl"
+                            leftSection={
+                                <IconBrandGoogleFilled size={14} />
+                            }
+                            onClick={handleGoogleLogin}>
+                            <Text c="deepredcolor.9">
+                                Login with Google account
+                            </Text>
+                        </Button>
+                    </Center>
+                    <Divider
+                        my="lg"
+                        label="or"
+                        c="graycolor.2"
+                        labelPosition="center"
+                    />
+                    <Center>
+                        <Button
+                            color="deepredcolor.9"
+                            size="md"
+                            w="100%"
+                            justify="center"
+                            variant="outline"
+                            leftSection={
+                                <IconBrandFacebookFilled size={14} />
+                            }
+                            // onClick={handleGoogleLogin}
+                            >
+                            <Text c="deepredcolor.9">
+                                Login with Facebook account
+                            </Text>
+                        </Button>
+                    </Center>
+                </Container>
+
+                {/* <Container size="xl" p="xl">
                     <Grid>
                         <Grid.Col span={6}>
                             <Text size="topic" c="redcolor.4" fw={500}>
@@ -96,7 +143,7 @@ export default function Login() {
                                             Login with Google account
                                         </Text>
                                     </Button>
-                                    {/* <Button
+                                    <Button
                                         color="deepredcolor.9"
                                         size="md"
                                         w="60%"
@@ -109,7 +156,7 @@ export default function Login() {
                                         <Text c="deepredcolor.9">
                                             Login with Facebook account
                                         </Text>
-                                    </Button> */}
+                                    </Button>
                                 </Flex>
                                 <Divider
                                     my="xl"
@@ -168,7 +215,7 @@ export default function Login() {
                             </Container>
                         </Grid.Col>
                     </Grid>
-                </Container>
+                </Container> */}
             </Center>
         </body>
     );

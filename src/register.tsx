@@ -141,7 +141,7 @@ export default function Register() {
                                     c="graycolor.2"
                                     labelPosition="center"
                                 />
-                                <form
+                                {/* <form
                                     onSubmit={form.onSubmit((values) =>
                                         console.log(values)
                                     )}>
@@ -226,14 +226,14 @@ export default function Register() {
                                             <Text c="pinkcolor.1">Sign-up</Text>
                                         </Button>
                                     </Group>
-                                </form>
-                                <Center mt="lg">
+                                </form> */}
+                                {/* <Center mt="lg">
                                     <Text size="xs" c="graycolor.2">Already have an account.
                                         <Link to="/login" style={{ color: "var(--deepredcolor)", margin: "0.5rem" }}>
                                             Login
                                         </Link>
                                     </Text>
-                                </Center>
+                                </Center> */}
                             </Container>
                         </Grid.Col>
                     </Grid>
