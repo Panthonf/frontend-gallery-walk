@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Text, Card, Title, Switch, Flex } from "@mantine/core";
+import { Text, Card, Title, Switch, Flex, Anchor } from "@mantine/core";
 
 import moment from "moment";
 
@@ -114,13 +114,15 @@ export default function Event() {
             <Switch
               checked={isPublished}
               onChange={handlePublishToggle}
+              onLabel="Published"
+              offLabel="Unpublished"
               id="publish-toggle"
+              size="lg"
             />
-            <span style={{ marginLeft: 5 }}>
-              {isPublished ? "Published" : "Unpublished"}
-            </span>
           </div>
         </Text>
+
+        <Anchor href="/dashboard">Back</Anchor>
       </div>
     </Card>
   );
