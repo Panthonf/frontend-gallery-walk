@@ -155,20 +155,12 @@ export default function Dashboard() {
                         End Date:{" "}
                         {moment(event.end_date).format("DD/MM/YYYY HH:mm")}
                       </Text>
-                      <Text>
-                        Virtual Money: {event.virtual_money} {event.unit_money}
-                      </Text>
-                      <Text>Description: {event.description}</Text>
-                      <Text>
-                        Video Link:{" "}
-                        <a href={event.video_link} target="_blank">
-                          {event.video_link}
-                        </a>
-                      </Text>
 
                       {thumbnails[event.id] && (
                         <img src={thumbnails[event.id]} width={200} />
                       )}
+
+                      <a href={`/event/${event.id}`}>Go to event</a>
                     </Card>
                   ))}
                 </Grid.Col>
