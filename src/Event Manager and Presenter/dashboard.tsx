@@ -7,13 +7,10 @@ import {
   Card,
   Button,
   Flex,
-  Select,
   TextInput,
-  useMantineTheme,
   TextInputProps,
-  ActionIcon,
-  rem,
 } from "@mantine/core";
+import { Pagination } from "@mantine/core";
 import Navbar from "../components/navbar";
 import moment from "moment";
 
@@ -23,14 +20,12 @@ import moment from "moment";
 import { IconSquarePlus, IconArrowsJoin } from "@tabler/icons-react";
 
 export default function Dashboard(props: TextInputProps) {
-  const theme = useMantineTheme();
   const [activeTab, setActiveTab] = useState("Overview");
   const [activeNavbarIndex] = useState(0);
 
-  const handleTabChange = (event) => {
-    const selectedTab = event.target.value;
-    setActiveTab(selectedTab);
-  };
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(2);
 
   const [events, setEvents] = useState([]);
 
@@ -38,9 +33,10 @@ export default function Dashboard(props: TextInputProps) {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/events/by-user",
+          "http://localhost:8080/events/search",
           {
             withCredentials: true,
+            params: { query, page, pageSize },
           }
         );
         setEvents(response.data.data);
@@ -50,7 +46,7 @@ export default function Dashboard(props: TextInputProps) {
     };
 
     fetchData();
-  }, []);
+  }, [page, pageSize, query]);
 
   const [thumbnails, setThumbnails] = useState<{ [key: number]: string }>({});
 
@@ -122,21 +118,7 @@ export default function Dashboard(props: TextInputProps) {
           {activeTab === "Overview" && (
             <div>
               <Grid justify="space-between">
-                <Grid.Col span={6}>
-                  {/* <TextInput
-                                        radius="xs"
-                                        size="sm"
-                                        placeholder="Search questions"
-                                        rightSectionWidth={42}
-                                        leftSection={<IconSearch style={{ width: rem(18), height: rem(18) }} stroke={1.5} />}
-                                        rightSection={
-                                            <ActionIcon size={32} radius="xl" color={theme.primaryColor} variant="filled">
-                                                <IconArrowRight style={{ width: rem(18), height: rem(18) }} stroke={1.5} />
-                                            </ActionIcon>
-                                        }
-                                        {...props}
-                                    /> */}
-                </Grid.Col>
+                <Grid.Col span={6}></Grid.Col>
                 <Grid.Col span={6}>
                   <Flex gap="lg" justify="end">
                     <Button
@@ -164,6 +146,12 @@ export default function Dashboard(props: TextInputProps) {
 
                 <Grid.Col span={12}>
                   <Divider mb="lg" />
+                  <TextInput
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Search events"
+                  />
+
                   {events.map((event: EventType) => (
                     <Card
                       key={event.id}
@@ -199,101 +187,13 @@ export default function Dashboard(props: TextInputProps) {
             <div>{/* ... Presenter tab content ... */}</div>
           )}
         </Grid.Col>
+
+        <Pagination
+          total={events.length}
+          value={page}
+          onChange={(newPage) => setPage(newPage)}
+        />
       </Grid>
-
-      {/* <Grid w="100%" p="xl">
-                <Grid.Col span={12}>
-                    <Text c="redcolor.4" fw={500} size="topic">
-                        Dashboard
-                    </Text>
-                    <Select
-                        label="Your favorite library"
-                        placeholder="Pick value"
-                        data={['Overview', 'Event manager', 'Presenter']}
-                        defaultValue="Overview"
-                        onSelect={(selectedTab) => handleTabChange(selectedTab)}
-                    />
-                </Grid.Col>
-                <Grid.Col span={12}>
-                    {activeTab === 'Overview' && (
-                        <div>
-                            <Grid justify="space-between">
-                                <Grid.Col span={6}></Grid.Col>
-                                <Grid.Col span={6}>
-                                    <Flex gap="lg" justify="end">
-                                        <Button
-                                            color="redcolor.4"
-                                            size="sm"
-                                            w="20%"
-                                            justify="center"
-                                            variant="filled"
-                                            rightSection={<IconSquarePlus size={14} />}
-                                        >
-                                            <Text c="pinkcolor.1">Create Event!</Text>
-                                        </Button>
-                                        <Button
-                                            color="deepredcolor.9"
-                                            size="sm"
-                                            w="20%"
-                                            justify="center"
-                                            variant="filled"
-                                            rightSection={<IconArrowsJoin size={14} />}
-                                        >
-                                            <Text c="pinkcolor.1">Join event</Text>
-                                        </Button>
-                                    </Flex>
-                                </Grid.Col>
-
-                                <Grid.Col span={12}>
-                                    <Divider mb="lg" />
-                                    {events.map((event: EventType) => (
-                                        <Card
-                                            key={event.id}
-                                            shadow="sm"
-                                            padding="md"
-                                            style={{ marginBottom: "16px" }}
-                                        >
-                                            <Text size="xl">Event: {event.event_name}</Text>
-                                            <Text>
-                                                Start Date:{" "}
-                                                {moment(event.start_date).format("DD/MM/YYYY HH:mm")}
-                                            </Text>
-                                            <Text>
-                                                End Date:{" "}
-                                                {moment(event.end_date).format("DD/MM/YYYY HH:mm")}
-                                            </Text>
-                                            <Text>
-                                                Virtual Money: {event.virtual_money} {event.unit_money}
-                                            </Text>
-                                            <Text>Description: {event.description}</Text>
-                                            <Text>
-                                                Video Link:{" "}
-                                                <a href={event.video_link} target="_blank">
-                                                    {event.video_link}
-                                                </a>
-                                            </Text>
-
-                                            {thumbnails[event.id] && (
-                                                <img src={thumbnails[event.id]} width={200} />
-                                            )}
-                                        </Card>
-                                    ))}
-                                </Grid.Col>
-                            </Grid>
-                        </div>
-                    )}
-                    {activeTab === 'Event manager' && (
-                        <div>
-                           
-                        </div>
-                    )}
-                    {activeTab === 'Presenter' && (
-                        <div>
-                            
-                        </div>
-                    )}
-                </Grid.Col>
-            </Grid> */}
     </body>
   );
 }
