@@ -29,6 +29,8 @@ export default function Dashboard(props: TextInputProps) {
 
   const [events, setEvents] = useState([]);
 
+  document.title = `Dashboard | Event Manager`;
+
   useEffect(() => {
     const fetchData = async () => {
       try {
