@@ -106,16 +106,31 @@ export default function Dashboard(props: TextInputProps) {
 
             <Grid w="100%" p="xl">
                 <Grid.Col span={12}>
-                    <Text c="redcolor.4" fw={500} size="topic">
-                        Dashboard
-                    </Text>
-                    <Select
-                        size="xs"
-                        w="10rem"
-                        data={["Overview", "Event manager", "Presenter"]}
-                        defaultValue="Overview"
-                        onSelect={(selectedTab) => handleTabChange(selectedTab)}
-                    />
+                  <Divider mb="lg" />
+                  {events.map((event: EventType) => (
+                    <Card
+                      key={event.id}
+                      shadow="sm"
+                      padding="md"
+                      style={{ marginBottom: "16px" }}
+                    >
+                      <Text size="xl">Event: {event.event_name}</Text>
+                      <Text>
+                        Start Date:{" "}
+                        {moment(event.start_date).format("DD/MM/YYYY HH:mm")}
+                      </Text>
+                      <Text>
+                        End Date:{" "}
+                        {moment(event.end_date).format("DD/MM/YYYY HH:mm")}
+                      </Text>
+
+                      {thumbnails[event.id] && (
+                        <img src={thumbnails[event.id]} width={200} />
+                      )}
+
+                      <a href={`/event/${event.id}`}>Go to event</a>
+                    </Card>
+                  ))}
                 </Grid.Col>
                 <Grid.Col span={12}>
                     {activeTab === 'Overview' && (

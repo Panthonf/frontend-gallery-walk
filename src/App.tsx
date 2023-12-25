@@ -17,8 +17,10 @@ import Register from "./register.tsx";
 import Dashboard from "./Event Manager and Presenter/dashboard.tsx";
 import PrivateRoutes from "./PrivateRoutes.tsx";
 import CreateEvent from "./Event Manager and Presenter/createEvent.tsx";
+import Event from "./Event Manager and Presenter/event.tsx"
+
 // import Test from "./test.tsx";
-import { DateTimePicker } from "@mantine/dates";
+// import { DateTimePicker } from "@mantine/dates";
 
 const theme = createTheme({
   fontFamily: "Poppins, sans-serif",
@@ -81,9 +83,12 @@ export default function App() {
               caseSensitive={true}
             />
             <Route path="/create-event" element={<CreateEvent />} />
+            <Route path="/event/:eventId" element={<Event />} />
           </Route>
 
           {/* <Route path="/test" element={<Test />} /> */}
+
+          
         </Routes>
       </MantineProvider>
     </Router>
