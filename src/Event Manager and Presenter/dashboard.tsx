@@ -59,10 +59,10 @@ export default function Dashboard(props: TextInputProps) {
               const thumbnail = await getThumbnail(event.id);
               return { eventId: event.id, thumbnail };
             } catch (thumbnailError) {
-              console.error(
-                `Error fetching thumbnail for event ${event.id}:`,
-                thumbnailError
-              );
+              // console.error(
+              //   `Error fetching thumbnail for event ${event.id}:`,
+              //   thumbnailError
+              // );
               return { eventId: event.id, thumbnail: "" }; // Return an empty string or some default value in case of an error
             }
           })
@@ -73,7 +73,7 @@ export default function Dashboard(props: TextInputProps) {
           thumbnailMap[data.eventId] = data.thumbnail;
         });
 
-        console.log("Thumbnail Map:", thumbnailMap);
+        // console.log("Thumbnail Map:", thumbnailMap);
         setThumbnails(thumbnailMap);
       } catch (error) {
         console.error("Error fetching thumbnails:", error);
