@@ -18,8 +18,6 @@ import styles from "./styles.module.css";
 import {
     IconBrandGoogleFilled,
     IconBrandFacebookFilled,
-    IconLock,
-    IconMail,
 } from "@tabler/icons-react";
 
 // import components
