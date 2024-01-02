@@ -58,11 +58,14 @@ const theme = createTheme({
         size: "md",
       },
       classNames: {
+        
         input: styles.inputcomponent,
       },
     }),
     InputWrapper: Input.Wrapper.extend({
-      classNames: {},
+      classNames: {
+        label: styles.labelcomponent,
+      },
     }),
   },
 });
