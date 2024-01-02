@@ -45,6 +45,7 @@ body {
 }
 
 .inputcomponent {
+    margin-top: 1rem;
     font-size: 14px;
     color: var(--deepredcolor);
     border: rem(1px) solid;
@@ -53,6 +54,10 @@ body {
     &:focus-within {
         border-color: var(--deepredcolor);
     }
+}
+
+.labelcomponent {
+    color: var(--darkcolor);
 }
 
 .logincontainer {
@@ -65,3 +70,20 @@ body {
     background-color: var(--redcolor);
 }
 
+.boxContainer {
+    padding: 3rem;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    background: var(--whitecolor);
+}
+
+.deepred {
+    border-right: 1rem solid var(--deepredcolor);
+}
+
+/* .box {
+    border: 1rem soild #1e1e1e;
+    border-radius: 0.5rem;
+    cursor: pointer;
+} */
