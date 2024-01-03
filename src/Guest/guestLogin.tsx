@@ -1,10 +1,7 @@
 import { Button, Center, Text } from "@mantine/core";
 import { IconBrandGoogleFilled } from "@tabler/icons-react";
-import { useParams } from "react-router-dom";
 
 export default function GuestLogin() {
-  const eventId = useParams();
-  console.log("dddd", eventId);
 
   const handleGoogleLogin = () => {
     window.location.href =
