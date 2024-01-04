@@ -34,6 +34,7 @@ import "@mantine/tiptap/styles.css";
 import { IconArrowRight, IconClock } from "@tabler/icons-react";
 import { IconUpload, IconPhoto, IconX } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
+import Swal from "sweetalert2";
 
 import styles from "../styles.module.css";
 
@@ -45,7 +46,7 @@ document.title = `Create Event | Event Manager`;
 export default function CreateEvent() {
   const [activeNavbarIndex] = useState(1);
   const [files, setFiles] = useState<FileWithPath[]>([]);
-
+  const BASE_ENDPOINT = import.meta.env.VITE_BASE_ENDPOINTMENT;
   const previews = files.map((file, index) => {
     const imageUrl = URL.createObjectURL(file);
     return (
@@ -71,17 +72,24 @@ export default function CreateEvent() {
   const prevStep = () =>
     setActive((current) => (current > 0 ? current - 1 : current));
 
+  const changeStep = (step: number) => {
+    if (form.validate().hasErrors) {
+      return;
+    }
+    setActive(step);
+  }
+
   const form = useForm({
     initialValues: {
       eventName: String,
       startDateEvent: new Date(),
-      startTimeEvent: "00:00",
-      endDateEvent: new Date(),
-      endTimeEvent: "00:00",
+      startTimeEvent: null,
+      endDateEvent: null,
+      endTimeEvent: null,
       startDateProject: new Date(),
-      startTimeProject: "00:00",
-      endDateProject: new Date(),
-      endTimeProject: "00:00",
+      startTimeProject: null,
+      endDateProject: null,
+      endTimeProject: null,
       description: "",
       virtualMoney: 10000,
       unit: "Unit",
@@ -140,41 +148,70 @@ export default function CreateEvent() {
         }
         return null;
       },
-      endTimeEvent: isNotEmpty("Enter your end time event"),
-      startDateProject: isNotEmpty("Enter your start date project"),
-      endDateProject: (value) => {
+      endTimeEvent: (value) => {
         if (!value) {
-          return "Enter your end date project";
+          return "Enter your end time event";
         }
 
-        const startDateProject = moment(form.values.startDateProject).format(
-          "YYYY-MM-DD"
-        );
-        const endDateProject = moment(value).format("YYYY-MM-DD");
+        const startDateTimeEvent = moment(
+          `${moment(form.values.startDateEvent).format("YYYY-MM-DD")} ${
+            form.values.startTimeEvent
+          }`,
+          "YYYY-MM-DD HH:mm"
+        ).toISOString();
+
+        const endDateTimeEvent = moment(
+          `${moment(form.values.endDateEvent).format("YYYY-MM-DD")} ${value}`,
+          "YYYY-MM-DD HH:mm"
+        ).toISOString();
+
         const isAfterOrEqual =
-          moment(endDateProject).isSameOrAfter(startDateProject);
+          moment(endDateTimeEvent).isSameOrAfter(startDateTimeEvent);
 
         if (!isAfterOrEqual) {
-          return "End date must be after or equal to start date";
+          return "Start time must be after start time";
+        }
+        return null;
+      },
+      startDateProject: isNotEmpty("Enter your submit start date"),
+      endDateProject: (value) => {
+        if (!value) {
+          return "Enter your submit end date";
+        }
+
+        const isAfterOrEqual = moment(value).isSameOrAfter(
+          moment(form.values.startDateProject).format("YYYY-MM-DD")
+        );
+
+        if (!isAfterOrEqual) {
+          return "End date must be after or equal to submit start date";
         }
 
         return null;
       },
-      startTimeProject: isNotEmpty("Enter your start time project"),
+      startTimeProject: isNotEmpty("Enter your submit start time"),
       endTimeProject: (value) => {
         if (!value) {
-          return "Enter your end time project";
+          return "Enter your submit end time";
         }
 
-        const startTimeProject = moment(form.values.startTimeProject).format(
-          "HH:mm"
-        );
-        const endTimeProject = moment(value).format("HH:mm");
+        const startDateTimeProject = moment(
+          `${moment(form.values.startDateProject).format("YYYY-MM-DD")} ${
+            form.values.startTimeProject
+          }`,
+          "YYYY-MM-DD HH:mm"
+        ).toISOString();
 
-        const isAfterOrEqual = startTimeProject >= endTimeProject;
+        const endDateTimeProject = moment(
+          `${moment(form.values.endDateProject).format("YYYY-MM-DD")} ${value}`,
+          "YYYY-MM-DD HH:mm"
+        ).toISOString();
+
+        const isAfterOrEqual =
+          moment(endDateTimeProject).isSameOrAfter(startDateTimeProject);
 
         if (!isAfterOrEqual) {
-          return "Start time must be after or equal to today";
+          return "Start time must be after submit start time";
         }
         return null;
       },
@@ -223,37 +260,103 @@ export default function CreateEvent() {
 
   const onSubmit = async () => {
     const formData = form.values;
-    console.log("formData", formData);
-    console.log("trans formed values", form.getTransformedValues());
-    const BASE_ENDPOINT = import.meta.env.VITE_BASE_ENDPOINTMENT;
+    // console.log("formData", formData);
+    // console.log("trans formed values", form.getTransformedValues());
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You won't be able to revert this!",
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Yes, create it!",
+      cancelButtonText: "No, cancel!",
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios
+            .post(
+              `${BASE_ENDPOINT}events`,
+              {
+                event_name: formData.eventName,
+                start_date: form.getTransformedValues().startDateTimeEvent,
+                end_date: form.getTransformedValues().endDateTimeEvent,
+                submit_start: form.getTransformedValues().startDateTimeProject,
+                submit_end: form.getTransformedValues().endDateTimeProject,
+                virtual_money: formData.virtualMoney,
+                unit_money: formData.unit,
+                description: formData.description,
+                number_of_member: 10,
+              },
+              {
+                withCredentials: true,
+              }
+            )
+            .then(async (res) => {
+              const thumbnailUploaded = await uploadThumbnail(
+                res.data.data.id
+              ).then((res) => {
+                return res;
+              });
 
+              if (!(thumbnailUploaded === true)) {
+                Swal.fire({
+                  title: "Error!",
+                  text: "Error uploading thumbnail.",
+                  icon: "error",
+                  confirmButtonText: "OK",
+                });
+              } else {
+                Swal.fire({
+                  title: "Created!",
+                  text: "Your event has been created.",
+                  icon: "success",
+                  confirmButtonText: "OK",
+                }).then((result) => {
+                  if (result.isConfirmed) {
+                    window.location.href = "/dashboard";
+                  }
+                });
+              }
+            })
+            .catch((err) => {
+              console.log("err", err);
+            });
+        } catch (error) {
+          console.error("Error fetching events:", error);
+          Swal.fire({
+            title: "Error!",
+            text: "Error creating event please try again.",
+            icon: "error",
+            confirmButtonText: "OK",
+          });
+        }
+      }
+    });
+  };
+
+  const uploadThumbnail = async (eventId: number) => {
+    const selectedFile = files[0];
+    const formData = new FormData();
+    formData.append("file", selectedFile);
     try {
-      await axios
-        .post(
-          `${BASE_ENDPOINT}events`,
+      if (selectedFile) {
+        await axios.post(
+          `${BASE_ENDPOINT}events/upload/thumbnail/${eventId}`,
+          formData,
           {
-            event_name: formData.eventName,
-            start_date: form.getTransformedValues().startDateTimeEvent,
-            end_date: form.getTransformedValues().endDateTimeEvent,
-            submit_start: form.getTransformedValues().startDateTimeProject,
-            submit_end: form.getTransformedValues().endDateTimeProject,
-            virtual_money: formData.virtualMoney,
-            unit_money: formData.unit,
-            description: formData.description,
-            number_of_member: 10,
-          },
-          {
+            headers: {
+              "Content-Type": "multipart/form-data",
+            },
             withCredentials: true,
           }
-        )
-        .then((res) => {
-          console.log(res.data);
-        })
-        .catch((err) => {
-          console.log("err", err);
-        });
+        );
+        return true;
+      }
+      return true;
     } catch (error) {
-      console.error("Error fetching events:", error);
+      // console.error("Error uploading thumbnail:", error);
+      return false;
     }
   };
 
@@ -347,7 +450,7 @@ export default function CreateEvent() {
       >
         <div>
           {/* register container */}
-          <Stepper active={active}>
+          <Stepper active={active} onStepClick={changeStep}>
             <Stepper.Step label="First step" description="General Information">
               <div>
                 <form
@@ -474,7 +577,12 @@ export default function CreateEvent() {
                       <Text fw={600} c="deepredcolor.9" size="md">
                         Presenter Details
                       </Text>
+                      <Text size="sm" c="graycolor.2">
+                        Lorem ipsum dolor sit amet, consectetur adipisicing
+                        elit.
+                      </Text>
                     </Grid.Col>
+
                     <Grid.Col span={4}>
                       <DatePickerInput
                         label="Start Date"
@@ -606,11 +714,28 @@ export default function CreateEvent() {
               <Card shadow="sm" padding="md" radius="md">
                 <Dropzone
                   onDrop={(files) => {
-                    console.log("dropped files", files), setFiles(files);
+                    console.log("dropped files", files[0]), setFiles(files);
                   }}
-                  onReject={(files) => console.log("rejected files", files)}
-                  maxSize={5 * 1024 ** 2}
                   accept={IMAGE_MIME_TYPE}
+                  maxFiles={1}
+                  maxSize={5 * 1024 ** 2} // 0.5mb
+                  onReject={(files) => {
+                    if (files.length > 1) {
+                      Swal.fire({
+                        title: "Error!",
+                        text: "You can only upload 1 file",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                      });
+                    } else {
+                      Swal.fire({
+                        title: "Error!",
+                        text: "Image should not exceed 5mb",
+                        icon: "error",
+                        confirmButtonText: "OK",
+                      });
+                    }
+                  }}
                 >
                   <Group
                     justify="center"
@@ -757,9 +882,7 @@ export default function CreateEvent() {
                 </Text>
                 <Text size="sm">
                   Submit End Date:{" "}
-                  {moment(form.values.endDateProject.toString()).format(
-                    "DD/MM/YYYY"
-                  )}{" "}
+                  {moment(form.values.endDateProject).format("DD/MM/YYYY")}{" "}
                   {moment(form.values.endTimeProject, "HH:mm").format(
                     "hh:mm A"
                   )}
@@ -793,14 +916,10 @@ export default function CreateEvent() {
             {active === 2 && (
               <Button
                 onClick={() => {
-                  console.log("form.values", form.values);
-                  console.log(
-                    "form.getTransformedValues()",
-                    form.getTransformedValues()
-                  );
+                  onSubmit();
                 }}
-                rightSection={<IconArrowRight size={14} />}
                 size="sm"
+                color="indigo"
               >
                 Submit
               </Button>
