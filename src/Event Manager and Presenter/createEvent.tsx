@@ -710,7 +710,10 @@ export default function CreateEvent() {
               </div>
             </Stepper.Step>
             {/*  image dropzone */}
-            <Stepper.Step label="Second step" description="Images Dropzone">
+            <Stepper.Step
+              label="Second step"
+              description="Images Dropzone"
+            >
               <Card shadow="sm" padding="md" radius="md">
                 <Dropzone
                   onDrop={(files) => {
