@@ -10,6 +10,11 @@ interface EventType {
   start_date: string;
   description: string;
   published: boolean;
+  end_date: string;
+  video_link: string;
+  number_of_member: number;
+  virtual_money: number;
+  unit_money: string;
 }
 
 export default function Event() {
@@ -60,7 +65,7 @@ export default function Event() {
       radius="lg"
       style={{ maxWidth: 400, margin: "50px auto" }}
     >
-      <Title order={1} orderMobile={2} align="center">
+      <Title order={1}>
         <Text size="lg" style={{ marginTop: 5 }}>
           {event?.event_name}
         </Text>
@@ -74,7 +79,7 @@ export default function Event() {
             {moment(event?.start_date).format("DD/MM/YYYY")}
           </Text>
 
-          <Text size="md" weight={500} color="gray" style={{ marginTop: 10 }}>
+          <Text size="md" w={500} color="gray" style={{ marginTop: 10 }}>
             End Date:
           </Text>
           <Text size="lg" style={{ marginTop: 5 }}>
@@ -82,27 +87,27 @@ export default function Event() {
           </Text>
         </Flex>
 
-        <Text size="md" weight={500} color="gray" style={{ marginTop: 10 }}>
+        <Text size="md" w={500} color="gray" style={{ marginTop: 10 }}>
           Description:
         </Text>
         <Text size="lg" style={{ marginTop: 5 }}>
           {event?.description}
         </Text>
 
-        <Text size="md" weight={500} color="gray" style={{ marginTop: 10 }}>
+        <Text size="md" w={500} color="gray" style={{ marginTop: 10 }}>
           Video Link
         </Text>
         <a href={event?.video_link} target="_blank">
           {event?.video_link}
         </a>
-        <Text size="md" weight={500} color="gray" style={{ marginTop: 10 }}>
+        <Text size="md" w={500} color="gray" style={{ marginTop: 10 }}>
           Member
         </Text>
         <Text size="lg" style={{ marginTop: 5 }}>
           {event?.number_of_member}
         </Text>
 
-        <Text size="md" weight={500} color="gray" style={{ marginTop: 10 }}>
+        <Text size="md" w={500} color="gray" style={{ marginTop: 10 }}>
           Virtual Money
         </Text>
         <Text size="lg" style={{ marginTop: 5 }}>

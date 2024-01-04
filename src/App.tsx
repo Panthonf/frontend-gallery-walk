@@ -8,7 +8,7 @@ import "@mantine/core/styles.css";
 import styles from "./styles.module.css";
 import "@mantine/dates/styles.css";
 
-import { MantineProvider, createTheme, Button, Input, Select, Card } from "@mantine/core";
+import { MantineProvider, createTheme, Button, Input, Select } from "@mantine/core";
 import { generateColors } from "@mantine/colors-generator";
 
 import Homepage from "./homepage.tsx";

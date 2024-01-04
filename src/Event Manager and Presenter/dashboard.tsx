@@ -1,346 +1,376 @@
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import axios from "axios";
 import {
-    Text,
-    Divider,
-    Grid,
-    Card,
-    Button,
-    Flex,
-    TextInput,
-    TextInputProps, Select, Group, Container, SimpleGrid, Box, Center, Menu, ActionIcon, rem, Anchor, AspectRatio, Stack,
+  Text,
+  Divider,
+  Grid,
+  Card,
+  Button,
+  Flex,
+  TextInput,
+  Select,
+  Group,
+  Container,
+  SimpleGrid,
+  Menu,
+  ActionIcon,
+  Anchor,
+  AspectRatio,
+  Stack,
 } from "@mantine/core";
 import { Pagination } from "@mantine/core";
 import Navbar from "../components/navbar";
 import moment from "moment";
 
-import { useClipboard } from '@mantine/hooks';
+import { useClipboard } from "@mantine/hooks";
+
 // import styles from "../components/styles.module.css";
 // import { IconSearch, IconArrowRight } from '@tabler/icons-react';
 
 import {
-    IconSquarePlus, IconArrowsJoin, IconChevronDown, IconSearch, IconArrowMoveDown, IconTrash,
-    IconFileZip, IconDots, IconEye, IconDotsVertical, IconDownload, IconQrcode, IconCopy, IconCopyCheck, IconArrowNarrowRight,
-    IconEdit
+  IconSquarePlus,
+  IconArrowsJoin,
+  IconChevronDown,
+  IconSearch,
+  IconTrash,
+  IconEye,
+  IconDotsVertical,
+  IconQrcode,
+  IconCopy,
+  IconCopyCheck,
+  IconArrowNarrowRight,
+  IconEdit,
 } from "@tabler/icons-react";
 
 import styles from "../styles.module.css";
 
-export default function Dashboard(props: TextInputProps) {
+export default function Dashboard() {
+  const [activeNavbarIndex] = useState(0);
 
-    const [activeNavbarIndex] = useState(0);
+  const [query, setQuery] = useState("");
+  const [page, setPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
+  const [totalEvents, setTotalEvents] = useState(0);
+  const [events, setEvents] = useState([]);
 
-    const [query, setQuery] = useState("");
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+  document.title = `Dashboard | Event Manager`;
 
-    const [events, setEvents] = useState([]);
-
-    document.title = `Dashboard | Event Manager`;
-
-    useEffect(() => {
-        const fetchData = async () => {
-            try {
-                const response = await axios.get(
-                    "http://localhost:8080/events/search",
-                    {
-                        withCredentials: true,
-                        params: { query, page, pageSize },
-                    }
-                );
-                setEvents(response.data.data);
-            } catch (error) {
-                console.error("Error fetching events:", error);
-            }
-        };
-
-        fetchData();
-    }, [page, pageSize, query]);
-
-    const [thumbnails, setThumbnails] = useState<{ [key: number]: string }>({});
-
-    useEffect(() => {
-        const fetchThumbnails = async () => {
-            try {
-                const thumbnailData = await Promise.all(
-                    events.map(async (event: EventType) => {
-                        try {
-                            const thumbnail = await getThumbnail(event.id);
-                            return { eventId: event.id, thumbnail };
-                        } catch (thumbnailError) {
-                            // console.error(
-                            //   `Error fetching thumbnail for event ${event.id}:`,
-                            //   thumbnailError
-                            // );
-                            return { eventId: event.id, thumbnail: "" }; // Return an empty string or some default value in case of an error
-                        }
-                    })
-                );
-
-                const thumbnailMap: { [key: number]: string } = {};
-                thumbnailData.forEach((data) => {
-                    thumbnailMap[data.eventId] = data.thumbnail;
-                });
-
-                // console.log("Thumbnail Map:", thumbnailMap);
-                setThumbnails(thumbnailMap);
-            } catch (error) {
-                console.error("Error fetching thumbnails:", error);
-            }
-        };
-
-        fetchThumbnails();
-    }, [events]);
-
-    async function getThumbnail(event_id: number) {
-        const thumbnail = await axios.get(
-            `http://localhost:8080/events/thumbnail/${event_id}`,
-            {
-                withCredentials: true,
-            }
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/events/search",
+          {
+            withCredentials: true,
+            params: { query, page, pageSize },
+          }
         );
-        return thumbnail.data.data[0].thumbnail_url;
-    }
-
-    type EventType = {
-        id: number;
-        event_name: string;
-        start_date: string;
-        end_date: string;
-        virtual_money: number;
-        unit_money: string;
-        description: string;
-        video_link: string;
+        setEvents(response.data.data);
+        setTotalEvents(response.data.totalEvents);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
     };
 
-    const [activeTab, setActiveTab] = useState('Overview');
+    fetchData();
+  }, [page, pageSize, query]);
 
-    const handleTabChange = (event) => {
-        const selectedTab = event.target.value;
-        setActiveTab(selectedTab);
+  const [thumbnails, setThumbnails] = useState<{ [key: number]: string }>({});
+
+  useEffect(() => {
+    const fetchThumbnails = async () => {
+      try {
+        const thumbnailData = await Promise.all(
+          events.map(async (event: EventType) => {
+            try {
+              const thumbnail = await getThumbnail(event.id);
+              return { eventId: event.id, thumbnail };
+            } catch (thumbnailError) {
+              // console.error(
+              //   `Error fetching thumbnail for event ${event.id}:`,
+              //   thumbnailError
+              // );
+              return { eventId: event.id, thumbnail: "" }; // Return an empty string or some default value in case of an error
+            }
+          })
+        );
+
+        const thumbnailMap: { [key: number]: string } = {};
+        thumbnailData.forEach((data) => {
+          thumbnailMap[data.eventId] = data.thumbnail;
+        });
+
+        // console.log("Thumbnail Map:", thumbnailMap);
+        setThumbnails(thumbnailMap);
+      } catch (error) {
+        console.error("Error fetching thumbnails:", error);
+      }
     };
 
-    const clipboard = useClipboard({ timeout: 500 });
+    fetchThumbnails();
+  }, [events]);
 
-    const card = events.map((event: EventType) => (
-        <Card key={event.id}
-            className={styles.cardContainer}
-            p="1rem"
-            radius="md"
-        >
-            <Grid columns={24} p={0}>
-                <Grid.Col span={3} p={0}>
-                    {thumbnails[event.id] && (
-                        <AspectRatio ratio={1} p={0}><img src={thumbnails[event.id]} /></AspectRatio>
-                    )}
-                </Grid.Col>
+  async function getThumbnail(event_id: number) {
+    const thumbnail = await axios.get(
+      `http://localhost:8080/events/thumbnail/${event_id}`,
+      {
+        withCredentials: true,
+      }
+    );
+    return thumbnail.data.data[0].thumbnail_url;
+  }
 
-                <Grid.Col span={18} pl="1rem">
+  type EventType = {
+    id: number;
+    event_name: string;
+    start_date: string;
+    end_date: string;
+    virtual_money: number;
+    unit_money: string;
+    description: string;
+    video_link: string;
+  };
 
-                    <Text size="topic" c="redcolor.4" fw={500} truncate="end">{event.event_name}</Text>
+  const [activeTab, setActiveTab] = useState("Overview");
 
-                    <Grid gutter="4rem" columns={12} my="xs">
-                        <Grid.Col span="content">
-                            <Text size="xsmall" mb="xs">Start event</Text>
-                            <Text>
-                                {moment(event.start_date).format("MMMM Do YYYY, HH:mm A")}
-                            </Text>
+  const handleTabChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedTab = event.target.value;
+    setActiveTab(selectedTab);
+  };
 
-                        </Grid.Col>
+  const clipboard = useClipboard({ timeout: 500 });
 
-                        <Grid.Col span="content">
-                            <Text size="xsmall" mb="xs">End event</Text>
-                            <Text>
-                                {moment(event.end_date).format("MMMM Do YYYY, HH:mm A")}
-                            </Text>
-                        </Grid.Col>
+  const card = events.map((event: EventType) => (
+    <Card key={event.id} className={styles.cardContainer} p="1rem" radius="md">
+      <Grid columns={24} p={0}>
+        <Grid.Col span={3} p={0}>
+          {thumbnails[event.id] && (
+            <AspectRatio ratio={1} p={0}>
+              <img src={thumbnails[event.id]} />
+            </AspectRatio>
+          )}
+        </Grid.Col>
 
-                        <Grid.Col span={2}>
-                            <Text size="xsmall" mb="xs">Location</Text>
-                            <Text truncate="end" maw="max-content">30th Building</Text>
-                        </Grid.Col>
+        <Grid.Col span={18} pl="1rem">
+          <Text size="topic" c="redcolor.4" fw={500} truncate="end">
+            {event.event_name}
+          </Text>
 
-                        <Grid.Col span={2}>
-                            <Text size="xsmall" mb="xs">Projects</Text>
-                            <Text>12</Text>
-                        </Grid.Col>
-                    </Grid>
+          <Grid gutter="4rem" columns={12} my="xs">
+            <Grid.Col span="content">
+              <Text size="xsmall" mb="xs">
+                Start event
+              </Text>
+              <Text>
+                {moment(event.start_date).format("MMMM Do YYYY, HH:mm A")}
+              </Text>
+            </Grid.Col>
 
-                    <Divider size="xs" color="graycolor.2" />
+            <Grid.Col span="content">
+              <Text size="xsmall" mb="xs">
+                End event
+              </Text>
+              <Text>
+                {moment(event.end_date).format("MMMM Do YYYY, HH:mm A")}
+              </Text>
+            </Grid.Col>
 
-                    <div style={{ marginTop: "1rem" }}>
-                        <Text size="xsmall" mb="xs">Description</Text>
-                        <Text lineClamp={2}>
-                            {event.description}
-                        </Text>
-                    </div>
-                </Grid.Col>
+            <Grid.Col span={2}>
+              <Text size="xsmall" mb="xs">
+                Location
+              </Text>
+              <Text truncate="end" maw="max-content">
+                30th Building
+              </Text>
+            </Grid.Col>
 
-                <Grid.Col span="content">
+            <Grid.Col span={2}>
+              <Text size="xsmall" mb="xs">
+                Projects
+              </Text>
+              <Text>12</Text>
+            </Grid.Col>
+          </Grid>
 
-                    <Stack
-                        h={180}
-                        align="flex-end"
-                        justify="space-between"
+          <Divider size="xs" color="graycolor.2" />
+
+          <div style={{ marginTop: "1rem" }}>
+            <Text size="xsmall" mb="xs">
+              Description
+            </Text>
+            <Text lineClamp={2}>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: event.description,
+                }}
+              />
+            </Text>
+          </div>
+        </Grid.Col>
+
+        <Grid.Col span="content">
+          <Stack h={180} align="flex-end" justify="space-between">
+            <div>
+              <ActionIcon.Group>
+                <ActionIcon variant="default" size="lg" aria-label="Gallery">
+                  <IconQrcode size={16} />
+                </ActionIcon>
+                <ActionIcon
+                  variant="default"
+                  size="lg"
+                  aria-label="Settings"
+                  onClick={() => clipboard.copy(event.id.toString())}
+                >
+                  {clipboard.copied ? (
+                    <IconCopyCheck size={16} />
+                  ) : (
+                    <IconCopy size={16} />
+                  )}
+                </ActionIcon>
+                <Menu position="bottom-end" shadow="sm">
+                  <Menu.Target>
+                    <ActionIcon variant="default" size="lg">
+                      <IconDotsVertical size={16} />
+                    </ActionIcon>
+                  </Menu.Target>
+                  <Menu.Dropdown>
+                    <Menu.Item leftSection={<IconEdit size={14} />}>
+                      Edit event
+                    </Menu.Item>
+                    <Menu.Item
+                      leftSection={<IconTrash size={14} />}
+                      color="red"
                     >
-                        <div>
-                            <ActionIcon.Group>
-                                <ActionIcon variant="default" size="lg" aria-label="Gallery">
-                                    <IconQrcode size={16} />
-                                </ActionIcon>
-                                <ActionIcon variant="default" size="lg" aria-label="Settings"
-                                    onClick={() => clipboard.copy('Hello, world!')}
-                                >
-                                    {clipboard.copied ?
-                                        <IconCopyCheck size={16} /> :
-                                        <IconCopy size={16} />}
-                                </ActionIcon>
-                                <Menu position="bottom-end" shadow="sm">
-                                    <Menu.Target>
-                                        <ActionIcon variant="default" size="lg">
-                                            <IconDotsVertical size={16} />
-                                        </ActionIcon>
-                                    </Menu.Target>
-                                    <Menu.Dropdown>
-                                        <Menu.Item leftSection={<IconEdit size={14} />}>
-                                            Edit event
-                                        </Menu.Item>
-                                        <Menu.Item
-                                            leftSection={<IconTrash size={14} />}
-                                            color="red"
-                                        >
-                                            Delete event
-                                        </Menu.Item>
-                                    </Menu.Dropdown>
-                                </Menu>
-                            </ActionIcon.Group>
+                      Delete event
+                    </Menu.Item>
+                  </Menu.Dropdown>
+                </Menu>
+              </ActionIcon.Group>
 
-                            <Flex align="center" mt="md">
-                                <IconEye size={16} />
-                                <Text ml="sm">0</Text>
-                            </Flex>
-                        </div>
+              <Flex align="center" mt="md">
+                <IconEye size={16} />
+                <Text ml="sm">0</Text>
+              </Flex>
+            </div>
 
-                        <Anchor href={`/event/${event.id}`} underline="never" ta="end">
-                            <Button rightSection={<IconArrowNarrowRight size={14} />} size="small">
-                                Event
-                            </Button>
-                        </Anchor>
+            <Anchor href={`/event/${event.id}`} underline="never" ta="end">
+              <Button
+                rightSection={<IconArrowNarrowRight size={14} />}
+                size="small"
+              >
+                Event
+              </Button>
+            </Anchor>
+          </Stack>
+        </Grid.Col>
+      </Grid>
+    </Card>
+  ));
 
-                    </Stack>
+  return (
+    <body
+      style={{
+        display: "flex",
+      }}
+    >
+      {/* navbar */}
+      <Navbar activeIndex={activeNavbarIndex} />
+
+      {totalEvents}
+      <Grid w="100%" p="xl">
+        <Grid.Col span={12}>
+          <Text c="redcolor.4" fw={500} size="topic">
+            Dashboard
+          </Text>
+          <Select
+            size="small"
+            w="max-content"
+            rightSection={<IconChevronDown size={12} />}
+            data={["Overview", "Event manager", "Presenter"]}
+            defaultValue="Overview"
+            onSelect={(selectedTab: ChangeEvent<HTMLInputElement>) =>
+              handleTabChange(selectedTab)
+            }
+          />
+        </Grid.Col>
+
+        <Grid.Col span={12}>
+          {activeTab === "Overview" && (
+            <div>
+              <Grid justify="space-between">
+                <Grid.Col span={6}>
+                  <TextInput
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Search events"
+                    rightSection={<IconSearch size={14} />}
+                  />
                 </Grid.Col>
-            </Grid>
-        </Card>
-    ));
-
-    return (
-        <body
-            style={{
-                display: "flex",
-            }}
-        >
-            {/* navbar */}
-            <Navbar activeIndex={activeNavbarIndex} />
-
-            <Grid w="100%" p="xl">
-                <Grid.Col span={12}>
-                    <Text c="redcolor.4" fw={500} size="topic">
-                        Dashboard
-                    </Text>
-                    <Select
-                        size="small"
-                        w="max-content"
-                        rightSection={<IconChevronDown size={12} />}
-
-                        data={["Overview", "Event manager", "Presenter"]}
-                        defaultValue="Overview"
-                        onSelect={(selectedTab) => handleTabChange(selectedTab)}
-                    />
+                <Grid.Col span={6}>
+                  <Flex gap="lg" justify="end">
+                    <Button
+                      color="redcolor.4"
+                      size="sm"
+                      w="20%"
+                      justify="center"
+                      variant="filled"
+                      rightSection={<IconSquarePlus size={14} />}
+                    >
+                      <Text c="pinkcolor.1">Create Event!</Text>
+                    </Button>
+                    <Button
+                      color="deepredcolor.9"
+                      size="sm"
+                      w="20%"
+                      justify="center"
+                      variant="filled"
+                      rightSection={<IconArrowsJoin size={14} />}
+                    >
+                      <Text c="pinkcolor.1">Join event</Text>
+                    </Button>
+                  </Flex>
                 </Grid.Col>
 
                 <Grid.Col span={12}>
-                    {activeTab === "Overview" && (
-                        <div>
-                            <Grid justify="space-between">
-                                <Grid.Col span={6}>
-                                    <TextInput
-                                        value={query}
-                                        onChange={(event) => setQuery(event.target.value)}
-                                        placeholder="Search events"
-                                        rightSection={<IconSearch size={14} />}
-                                    />
-                                </Grid.Col>
-                                <Grid.Col span={6}>
-                                    <Flex gap="lg" justify="end">
+                  {/* <Divider mb="lg" /> */}
 
-                                        <Button
-                                            color="redcolor.4"
-                                            size="sm"
-                                            w="20%"
-                                            justify="center"
-                                            variant="filled"
-                                            rightSection={<IconSquarePlus size={14} />}
-                                        >
-                                            <Text c="pinkcolor.1">Create Event!</Text>
-                                        </Button>
-                                        <Button
-                                            color="deepredcolor.9"
-                                            size="sm"
-                                            w="20%"
-                                            justify="center"
-                                            variant="filled"
-                                            rightSection={<IconArrowsJoin size={14} />}
-                                        >
-                                            <Text c="pinkcolor.1">Join event</Text>
-                                        </Button>
-                                    </Flex>
-                                </Grid.Col>
+                  <Text size="base" fw={500} c="dark.9" my="1rem">
+                    Next Events
+                  </Text>
 
-                                <Grid.Col span={12}>
-                                    {/* <Divider mb="lg" /> */}
+                  <Container fluid p="0">
+                    <SimpleGrid cols={{ base: 1, sm: 1 }}>{card}</SimpleGrid>
+                  </Container>
 
-                                    <Text size="base" fw={500} c="dark.9" my="1rem">Next Events</Text>
+                  <Pagination.Root
+                    color="redcolor.4"
+                    size="sm"
+                    total={totalEvents}
+                    value={page}
+                    onChange={(newPage) => setPage(newPage)}
+                  >
+                    <Group gap={5} justify="center">
+                      <Pagination.First />
+                      <Pagination.Previous />
+                      <Pagination.Items />
+                      <Pagination.Next />
+                      <Pagination.Last />
+                    </Group>
+                  </Pagination.Root>
 
-                                    <Container fluid p="0">
-                                        <SimpleGrid cols={{ base: 1, sm: 1 }}>
-                                            {card}
-                                        </SimpleGrid>
-                                    </Container>
-
-                                    <Pagination.Root
-                                        color="redcolor.4" size="sm"
-                                        total={events.length}
-                                        value={page}
-                                        onChange={(newPage) => setPage(newPage)}
-                                    >
-                                        <Group gap={5} justify="center">
-                                            <Pagination.First />
-                                            <Pagination.Previous />
-                                            <Pagination.Items />
-                                            <Pagination.Next />
-                                            <Pagination.Last />
-                                        </Group>
-                                    </Pagination.Root>
-
-                                    {/* <Pagination
+                  {/* <Pagination
                                         total={events.length}
                                         value={page}
                                         onChange={(newPage) => setPage(newPage)}
                                     /> */}
-                                </Grid.Col>
-                            </Grid>
-                        </div>
-                    )}
-                    {activeTab === "Event manager" && (
-                        <div></div>
-                    )}
-                    {activeTab === "Presenter" && (
-                        <div></div>
-                    )}
                 </Grid.Col>
-
-
-            </Grid>
-        </body>
-    );
+              </Grid>
+            </div>
+          )}
+          {activeTab === "Event manager" && <div></div>}
+          {activeTab === "Presenter" && <div></div>}
+        </Grid.Col>
+      </Grid>
+    </body>
+  );
 }
