@@ -25,7 +25,7 @@ export default function Dashboard(props: TextInputProps) {
 
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(2);
+  const [pageSize, setPageSize] = useState(5);
 
   const [events, setEvents] = useState([]);
 
