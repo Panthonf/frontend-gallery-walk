@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Text, Card, Flex, Anchor, Grid, Box } from "@mantine/core";
+import { Text, Card, Flex, Anchor, Grid, Box, Image } from "@mantine/core";
 
 import moment from "moment";
 
 import styles from "../styles.module.css";
+import QRCode from "qrcode";
 
 interface EventType {
   event_name: string;
@@ -21,6 +22,7 @@ interface EventType {
 
 export default function Event() {
   const { eventId } = useParams();
+  const [qrCodeDataUrl, setQRCodeDataUrl] = useState("");
 
   const [event, setEvent] = useState<EventType | null>(null);
   useEffect(() => {
@@ -62,6 +64,19 @@ export default function Event() {
     setIsPublished((prev) => !prev);
   };
 
+  useEffect(() => {
+    const generateQRCode = async () => {
+      try {
+        const dataUrl = await QRCode.toDataURL("ddd");
+        setQRCodeDataUrl(dataUrl);
+      } catch (error) {
+        console.error("Error generating QR code:", error);
+      }
+    };
+
+    generateQRCode();
+  });
+
   return (
     <body
       style={{
@@ -79,7 +94,6 @@ export default function Event() {
             <Text c="redcolor.4" fw={500} size="topic" mb="xs">
               {event?.event_name}
             </Text>
-
             <Flex mb="md" gap="2rem">
               <div>
                 <Text mb="xs" c="graycolor.3">
@@ -99,13 +113,14 @@ export default function Event() {
                 </Text>
               </div>
             </Flex>
-
             <Box mb="md">
               <Text w={500} c="graycolor.3" mb="xs">
                 Description
               </Text>
               <Text>{event?.description}</Text>
             </Box>
+            QR Code
+            <Image src={qrCodeDataUrl} alt="QR Code" />
           </Card>
         </Grid.Col>
 
