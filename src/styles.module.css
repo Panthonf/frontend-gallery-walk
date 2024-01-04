@@ -45,7 +45,7 @@ body {
 }
 
 .inputcomponent {
-    margin-top: 1rem;
+
     font-size: 14px;
     color: var(--deepredcolor);
     border: rem(1px) solid;
@@ -64,6 +64,13 @@ body {
     position: absolute;
     background-color: var(--whitecolor);
     box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.select {
+    border: none;
+    background-color: none;
+    padding: 0;
+    font-size: 0.75rem;
 }
 
 .radio {
@@ -87,3 +94,22 @@ body {
     border-radius: 0.5rem;
     cursor: pointer;
 } */
+
+.dropdown {
+    background-color: none;
+    border: none;
+}
+
+.cardContainer {
+    padding: 0;
+    margin-bottom: 1rem;
+    border-right: 1rem solid var(--redcolor);
+    border-radius: 0.5rem;
+    box-shadow: rgba(149, 157, 165, 0.2) 0px 1px 10px;
+    background: var(--whitecolor);
+}
+
+.gridContainer {
+    display: flex-wrap;
+    
+}
