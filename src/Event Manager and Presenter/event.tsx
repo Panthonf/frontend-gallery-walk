@@ -44,6 +44,19 @@ export default function Event() {
       }
     };
     fetchData();
+    
+    const generateQRCode = async () => {
+      try {
+        const dataUrl = await QRCode.toDataURL("ddd");
+        setQRCodeDataUrl(dataUrl);
+      } catch (error) {
+        console.error("Error generating QR code:", error);
+      }
+    };
+
+    if (eventId) {
+      generateQRCode();
+    }
 
     document.title = `${event?.event_name} | Virtual Event Manager`;
   }, [eventId, event?.event_name]);
@@ -63,19 +76,6 @@ export default function Event() {
       });
     setIsPublished((prev) => !prev);
   };
-
-  useEffect(() => {
-    const generateQRCode = async () => {
-      try {
-        const dataUrl = await QRCode.toDataURL("ddd");
-        setQRCodeDataUrl(dataUrl);
-      } catch (error) {
-        console.error("Error generating QR code:", error);
-      }
-    };
-
-    generateQRCode();
-  });
 
   return (
     <body
