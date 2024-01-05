@@ -9,13 +9,33 @@ import {
   Grid,
   Box,
   Image,
-  Button,
+  ActionIcon,
+  Menu,
+  Group,
+  Switch,
+  Paper,
+  SimpleGrid,
+  Collapse,
+  UnstyledButton,
 } from "@mantine/core";
+import { useClipboard, useDisclosure } from "@mantine/hooks";
 
 import moment from "moment";
 
 import styles from "../styles.module.css";
 import QRCode from "qrcode";
+import {
+  IconChevronDown,
+  IconCoins,
+  IconCopy,
+  IconCopyCheck,
+  IconDotsVertical,
+  IconEdit,
+  IconLayoutGridAdd,
+  IconQrcode,
+  IconTrash,
+  IconUserQuestion,
+} from "@tabler/icons-react";
 
 interface EventType {
   event_name: string;
@@ -34,13 +54,14 @@ const BASE_ENDPOINT = import.meta.env.VITE_BASE_ENDPOINTMENT;
 export default function Event() {
   const { eventId } = useParams();
   const [qrCodeDataUrl, setQRCodeDataUrl] = useState("");
+  const clipboard = useClipboard({ timeout: 500 });
 
   const [event, setEvent] = useState<EventType | null>(null);
   useEffect(() => {
     const fetchData = async () => {
       try {
         await axios
-          .get(`${BASE_ENDPOINT}events/${eventId}`, {
+          .get(`http://localhost:8080/events/${eventId}`, {
             withCredentials: true,
           })
           .then((res) => {
@@ -57,15 +78,11 @@ export default function Event() {
     fetchData();
 
     const generateQRCode = async () => {
-      const url = `${
-        import.meta.env.VITE_FRONTEND_ENDPOINT
-      }/guest/event/${eventId}`;
       try {
-        const dataUrl = await QRCode.toDataURL(url, {
-          errorCorrectionLevel: "H",
-          width: 300,
-          margin: 1,
-        });
+        const url = `${
+          import.meta.env.VITE_FRONTEND_ENDPOINT
+        }/guest/event/${eventId}`;
+        const dataUrl = await QRCode.toDataURL(url);
         setQRCodeDataUrl(dataUrl);
       } catch (error) {
         console.error("Error generating QR code:", error);
@@ -95,12 +112,76 @@ export default function Event() {
     setIsPublished((prev) => !prev);
   };
 
-  const download = () => {
-    const link = document.createElement("a");
-    link.href = qrCodeDataUrl;
-    link.download = "QRCode.png";
-    link.click();
+  // stat container
+  const icons = {
+    projects: IconLayoutGridAdd,
+    guests: IconUserQuestion,
+    money: IconCoins,
   };
+
+  const data = [
+    {
+      title: "Projects",
+      icon: "projects",
+      value: "12",
+      label: "Project from event presenter",
+    },
+    {
+      title: "Guests",
+      icon: "guests",
+      value: "1234",
+      label: "Number of guests",
+    },
+    {
+      title: "All virtual money",
+      icon: "money",
+      value: "745",
+      label: "Number of virtual money all of event",
+    },
+  ];
+
+  const stats = data.map((stat) => {
+    const Icon = icons[stat.icon];
+
+    return (
+      <Paper withBorder p="md" radius="md" key={stat.title} bg="none">
+        <Group justify="space-between">
+          <Text size="xs" c="dimmed">
+            {stat.title}
+          </Text>
+          <Icon size={16} />
+        </Group>
+
+        <Group align="flex-end" gap="xs" mt={25}>
+          <Text size="base" fw={500}>
+            {stat.value}
+          </Text>
+        </Group>
+
+        <Text fz="xs" c="dimmed" mt={7}>
+          {stat.label}
+        </Text>
+      </Paper>
+      // <Paper withBorder p="md" radius="md" key={stat.title} bg="none" w="100%">
+      //     <Group justify="apart">
+      //         <div>
+      //             <Text c="graycolor.3" tt="uppercase" fw={500} fz="xsmall">
+      //                 {stat.title}
+      //             </Text>
+      //             <Text fw={500} fz="topic">
+      //                 {stat.value}
+      //             </Text>
+      //         </div>
+
+      //     </Group>
+      //     <Text c="dimmed" fz="sm" mt="md">
+      //         Lorem, ipsum dolor sit amet consectetur adipisicing elit.
+      //     </Text>
+      // </Paper>
+    );
+  });
+
+  const [opened, { toggle }] = useDisclosure(false);
 
   return (
     <body
@@ -116,41 +197,135 @@ export default function Event() {
           <Anchor href="/dashboard">Back</Anchor>
 
           <Card className={styles.cardContainer} p="1rem" radius="md">
-            <Text c="redcolor.4" fw={500} size="topic" mb="xs">
-              {event?.event_name}
-            </Text>
-            <Flex mb="md" gap="2rem">
-              <div>
-                <Text mb="xs" c="graycolor.3">
-                  Start event
+            <Grid>
+              <Grid.Col span={9}>
+                <Text c="redcolor.4" fw={500} size="topic" mb="xs">
+                  {event?.event_name}
                 </Text>
-                <Text>
-                  {moment(event?.start_date).format("MMMM Do YYYY, HH:mm A")}
-                </Text>
-              </div>
+                <Flex>
+                  <Box>
+                    <Flex mb="md" gap="2rem">
+                      <div>
+                        <Text mb="xs" c="graycolor.3">
+                          Start event
+                        </Text>
+                        <Text>
+                          {moment(event?.start_date).format(
+                            "MMMM Do YYYY, HH:mm A"
+                          )}
+                        </Text>
+                      </div>
+                      <div>
+                        <Text mb="xs" c="graycolor.3">
+                          End event
+                        </Text>
+                        <Text>
+                          {moment(event?.end_date).format(
+                            "MMMM Do YYYY, HH:mm A"
+                          )}
+                        </Text>
+                      </div>
+                    </Flex>
+                    <Box mb="md">
+                      <Text w={500} c="graycolor.3" mb="xs">
+                        Virtual Money
+                      </Text>
+                      <Text>
+                        {event?.virtual_money} {event?.unit_money}
+                      </Text>
+                    </Box>
+                  </Box>
 
-              <div>
-                <Text mb="xs" c="graycolor.3">
-                  End event
-                </Text>
-                <Text>
-                  {moment(event?.end_date).format("MMMM Do YYYY, HH:mm A")}
-                </Text>
-              </div>
-            </Flex>
-            <Box mb="md">
-              <Text w={500} c="graycolor.3" mb="xs">
-                Description
-              </Text>
-              <Text>{event?.description}</Text>
-            </Box>
-            QR Code
-            <Image src={qrCodeDataUrl} alt="QR Code" w={200} h="auto" />
-            <Button w="200" onClick={download}>Download</Button>
+                  <SimpleGrid cols={{ base: 1, sm: 3 }}>{stats}</SimpleGrid>
+                </Flex>
+                {/* <Box mb="md">
+                                    <Text w={500} c="graycolor.3" mb="xs">Description</Text>
+                                    <Text>{event?.description}</Text>
+                                </Box> */}
+              </Grid.Col>
+
+              <Grid.Col span="content" m="auto">
+                <Image src={qrCodeDataUrl} alt="QR Code" w="250" />
+              </Grid.Col>
+
+              <Grid.Col span="content">
+                <Group>
+                  <ActionIcon.Group>
+                    <ActionIcon
+                      variant="default"
+                      size="lg"
+                      aria-label="Gallery"
+                    >
+                      <IconQrcode size={16} />
+                    </ActionIcon>
+                    <ActionIcon
+                      variant="default"
+                      size="lg"
+                      aria-label="Settings"
+                      onClick={() => clipboard.copy(event.id.toString())}
+                    >
+                      {clipboard.copied ? (
+                        <IconCopyCheck size={16} />
+                      ) : (
+                        <IconCopy size={16} />
+                      )}
+                    </ActionIcon>
+                    <Menu position="bottom-end" shadow="sm">
+                      <Menu.Target>
+                        <ActionIcon variant="default" size="lg">
+                          <IconDotsVertical size={16} />
+                        </ActionIcon>
+                      </Menu.Target>
+                      <Menu.Dropdown>
+                        <Menu.Item leftSection={<IconEdit size={14} />}>
+                          Edit event
+                        </Menu.Item>
+                        <Menu.Item
+                          leftSection={<IconTrash size={14} />}
+                          color="red"
+                        >
+                          Delete event
+                        </Menu.Item>
+                      </Menu.Dropdown>
+                    </Menu>
+                  </ActionIcon.Group>
+                </Group>
+                <Flex align="center" mt="md">
+                  <Switch
+                    checked={isPublished}
+                    onChange={handlePublishToggle}
+                    onLabel="On"
+                    offLabel="Off"
+                    id="publish-toggle"
+                    size="md"
+                  />
+                  <Text ml="md">Publish</Text>
+                </Flex>
+              </Grid.Col>
+            </Grid>
           </Card>
         </Grid.Col>
 
-        <Grid.Col span={12}></Grid.Col>
+        <Grid.Col span={12}>
+          <Group justify="flex-start" mb={5}>
+            <UnstyledButton onClick={toggle}>
+              <Group align="center">
+                <Text mr="md">Description</Text>
+                <IconChevronDown size={14} />
+              </Group>
+            </UnstyledButton>
+          </Group>
+
+          <Collapse in={opened} mt="md">
+            <Text>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: event?.description.toString(),
+                }}
+              />
+            </Text>
+          </Collapse>
+        </Grid.Col>
       </Grid>
 
       {/* <Card
