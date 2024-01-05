@@ -17,6 +17,7 @@ import {
   Anchor,
   AspectRatio,
   Stack,
+  Image,
 } from "@mantine/core";
 import { Pagination } from "@mantine/core";
 import Navbar from "../components/navbar";
@@ -117,6 +118,11 @@ export default function Dashboard() {
         withCredentials: true,
       }
     );
+    console.log("thumbnail", thumbnail.data.success);
+
+    // if (thumbnail.data.success === false) {
+    //   return "https://via.placeholder.com/300x200.png?text=No+thumbnail+found";
+    // }
     return thumbnail.data.data[0].thumbnail_url;
   }
 
@@ -144,9 +150,18 @@ export default function Dashboard() {
     <Card key={event.id} className={styles.cardContainer} p="1rem" radius="md">
       <Grid columns={24} p={0}>
         <Grid.Col span={3} p={0}>
-          {thumbnails[event.id] && (
+          {thumbnails[event.id] ? (
             <AspectRatio ratio={1} p={0}>
-              <img src={thumbnails[event.id]} />
+              <Image radius="md" src={thumbnails[event.id]} />
+            </AspectRatio>
+          ) : (
+            <AspectRatio ratio={1} p={0}>
+              <Image
+                radius="md"
+                src={null}
+                // h={200}
+                fallbackSrc={`https://placehold.co/600x400/f27474/FFF?text=${event.event_name}`}
+              />
             </AspectRatio>
           )}
         </Grid.Col>
@@ -275,8 +290,6 @@ export default function Dashboard() {
     >
       {/* navbar */}
       <Navbar activeIndex={activeNavbarIndex} />
-
-      {totalEvents}
       <Grid w="100%" p="xl">
         <Grid.Col span={12}>
           <Text c="redcolor.4" fw={500} size="topic">
@@ -316,7 +329,14 @@ export default function Dashboard() {
                       variant="filled"
                       rightSection={<IconSquarePlus size={14} />}
                     >
-                      <Text c="pinkcolor.1">Create Event!</Text>
+                      <Text
+                        c="pinkcolor.1"
+                        onClick={() => {
+                          window.location.href = "/create-event";
+                        }}
+                      >
+                        Create Event!
+                      </Text>
                     </Button>
                     <Button
                       color="deepredcolor.9"
@@ -345,7 +365,7 @@ export default function Dashboard() {
                   <Pagination.Root
                     color="redcolor.4"
                     size="sm"
-                    total={totalEvents}
+                    total={Math.ceil(totalEvents / pageSize)}
                     value={page}
                     onChange={(newPage) => setPage(newPage)}
                   >
