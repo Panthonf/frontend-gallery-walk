@@ -1,7 +1,16 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Text, Card, Flex, Anchor, Grid, Box, Image } from "@mantine/core";
+import {
+  Text,
+  Card,
+  Flex,
+  Anchor,
+  Grid,
+  Box,
+  Image,
+  Button,
+} from "@mantine/core";
 
 import moment from "moment";
 
@@ -20,6 +29,8 @@ interface EventType {
   unit_money: string;
 }
 
+const BASE_ENDPOINT = import.meta.env.VITE_BASE_ENDPOINTMENT;
+
 export default function Event() {
   const { eventId } = useParams();
   const [qrCodeDataUrl, setQRCodeDataUrl] = useState("");
@@ -29,7 +40,7 @@ export default function Event() {
     const fetchData = async () => {
       try {
         await axios
-          .get(`http://localhost:8080/events/${eventId}`, {
+          .get(`${BASE_ENDPOINT}events/${eventId}`, {
             withCredentials: true,
           })
           .then((res) => {
@@ -44,10 +55,17 @@ export default function Event() {
       }
     };
     fetchData();
-    
+
     const generateQRCode = async () => {
+      const url = `${
+        import.meta.env.VITE_FRONTEND_ENDPOINT
+      }/guest/event/${eventId}`;
       try {
-        const dataUrl = await QRCode.toDataURL("ddd");
+        const dataUrl = await QRCode.toDataURL(url, {
+          errorCorrectionLevel: "H",
+          width: 300,
+          margin: 1,
+        });
         setQRCodeDataUrl(dataUrl);
       } catch (error) {
         console.error("Error generating QR code:", error);
@@ -75,6 +93,13 @@ export default function Event() {
         console.log(err);
       });
     setIsPublished((prev) => !prev);
+  };
+
+  const download = () => {
+    const link = document.createElement("a");
+    link.href = qrCodeDataUrl;
+    link.download = "QRCode.png";
+    link.click();
   };
 
   return (
@@ -120,7 +145,8 @@ export default function Event() {
               <Text>{event?.description}</Text>
             </Box>
             QR Code
-            <Image src={qrCodeDataUrl} alt="QR Code" />
+            <Image src={qrCodeDataUrl} alt="QR Code" w={200} h="auto" />
+            <Button w="200" onClick={download}>Download</Button>
           </Card>
         </Grid.Col>
 
