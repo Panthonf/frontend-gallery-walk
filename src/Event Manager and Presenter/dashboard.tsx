@@ -275,8 +275,6 @@ export default function Dashboard() {
         >
             {/* navbar */}
             <Navbar activeIndex={activeNavbarIndex} />
-
-            {totalEvents}
             <Grid w="100%" p="xl">
                 <Grid.Col span={12}>
                     <Text c="redcolor.4" fw={500} size="topic">

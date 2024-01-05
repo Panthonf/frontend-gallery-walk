@@ -10,6 +10,7 @@ import {
   Divider,
   Flex,
   Collapse,
+  LoadingOverlay,
 } from "@mantine/core";
 import moment from "moment";
 import ProjectsDashboard from "./projectsDashboard";
@@ -139,7 +140,11 @@ export default function GuestEventDashboard() {
             </Anchor>
             <Collapse in={opened}>
               <Text mt="xs">
-                {eventData?.description || "No description available."}
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: eventData?.description.toString() || "",
+                  }}
+                />
               </Text>
               <Flex mt="lg" justify="start">
                 <Anchor href={eventData?.video_link} underline="always">
@@ -169,7 +174,13 @@ export default function GuestEventDashboard() {
 }
 
 const LoadingIndicator = () => (
-  <div style={{ textAlign: "center", marginTop: "20px" }}>Loading...</div>
+  <LoadingOverlay
+    visible={true}
+    zIndex={1000}
+    overlayProps={{ radius: "sm", blur: 2 }}
+    loaderProps={{ color: "", type: "oval" }}
+    transitionProps={{ duration: 2000 }}
+  />
 );
 
 type EventType = {

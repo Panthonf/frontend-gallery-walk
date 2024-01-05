@@ -28,7 +28,6 @@ import Event from "./Event Manager and Presenter/event.tsx";
 import GuestEventDashboard from "./Guest/guestEventDashboard.tsx";
 import GuestLogin from "./Guest/guestLogin.tsx";
 import { NotFoundTitle } from "./components/notFoundTitle.tsx";
-import { EventAccess } from "./eventAccess.tsx";
 
 // import Test from "./test.tsx";
 // import { DateTimePicker } from "@mantine/dates";
@@ -90,10 +89,12 @@ export default function App() {
     <Router>
       <MantineProvider theme={theme}>
         <Routes>
+          {/* Public Routes */}
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
+          {/* Event Manager and Presenter Routes */}
           <Route element={<PrivateRoutes />}>
             <Route
               element={<Dashboard />}
@@ -104,17 +105,17 @@ export default function App() {
             <Route path="/event/:eventId" element={<Event />} />
           </Route>
 
+          {/* Guest Routes */}
           <Route
             path="/guest/event/:eventId"
             element={<GuestEventDashboard />}
           />
-
           <Route path="/guest/event" element={<GuestEventDashboard />} />
           <Route path="/guest/login" element={<GuestLogin />}></Route>
+
+          {/* 404 */}
           <Route path="*" element={<NotFoundTitle />} />
           <Route path="/404" element={<NotFoundTitle />} />
-
-          <Route path="/event/:eventId/access" element={<EventAccess />} />
         </Routes>
       </MantineProvider>
     </Router>
