@@ -14,6 +14,7 @@ import {
   Button,
   Input,
   Select,
+  Modal,
 } from "@mantine/core";
 import { generateColors } from "@mantine/colors-generator";
 
@@ -80,6 +81,12 @@ const theme = createTheme({
       classNames: {
         input: styles.select,
       },
+    }),
+    Modal: Modal.extend({
+      classNames: {
+        title: styles.title,
+      }
+      
     }),
   },
 });
