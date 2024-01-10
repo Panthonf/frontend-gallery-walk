@@ -52,6 +52,7 @@ export default function Dashboard() {
     const [pageSize, setPageSize] = useState(5);
     const [totalEvents, setTotalEvents] = useState(0);
     const [events, setEvents] = useState([]);
+    
 
     document.title = `Dashboard | Event Manager`;
 

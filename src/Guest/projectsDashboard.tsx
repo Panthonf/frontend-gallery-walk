@@ -41,8 +41,6 @@ export default function ProjectsDashboard(props: {
             params: { query, page, pageSize },
           }
         );
-
-        console.log("projects fff", response.data.data);
         setTotalProjects(response.data.totalProjects);
         setProjectsData(response.data.data);
       } catch (error) {
@@ -118,7 +116,7 @@ export default function ProjectsDashboard(props: {
                     size="sm"
                     mt="sm"
                     component="a"
-                    href={`/events/${props.eventId}/projects/${project.id}`}
+                    href={`/guest/event/${props.eventId}/project/${project.id}`}
                   >
                     View Project
                   </Button>
