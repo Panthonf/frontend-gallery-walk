@@ -140,132 +140,139 @@ export default function Dashboard() {
 
     const clipboard = useClipboard({ timeout: 500 });
 
-    const card = events.map((event: EventType) => (
-        <Card key={event.id} className={styles.cardContainer} p="1rem" radius="md">
-            <Grid columns={24} p={0}>
-                <Grid.Col span={3} p={0}>
-                    {thumbnails[event.id] && (
-                        <AspectRatio ratio={1} p={0}>
-                            <img src={thumbnails[event.id]} />
-                        </AspectRatio>
-                    )}
-                </Grid.Col>
 
-                <Grid.Col span={18} pl="1rem">
-                    <Text size="topic" c="redcolor.4" fw={500} truncate="end">
-                        {event.event_name}
-                    </Text>
+    // thuumbnail container
+    const defaultThumbnailUrl = `https://placehold.co/400?text=`;
 
-                    <Grid gutter="4rem" columns={12} my="xs">
-                        <Grid.Col span="content">
-                            <Text size="xsmall" mb="xs">
-                                Start event
-                            </Text>
-                            <Text>
-                                {moment(event.start_date).format("MMMM Do YYYY, HH:mm A")}
-                            </Text>
-                        </Grid.Col>
+    const card = events.map((event: EventType) => {
+        const thumbnailUrl = thumbnails[event.id] || `${defaultThumbnailUrl}${encodeURIComponent(event.event_name)}`;
 
-                        <Grid.Col span="content">
-                            <Text size="xsmall" mb="xs">
-                                End event
-                            </Text>
-                            <Text>
-                                {moment(event.end_date).format("MMMM Do YYYY, HH:mm A")}
-                            </Text>
-                        </Grid.Col>
-
-                        <Grid.Col span={2}>
-                            <Text size="xsmall" mb="xs">
-                                Location
-                            </Text>
-                            <Text truncate="end" maw="max-content">
-                                30th Building
-                            </Text>
-                        </Grid.Col>
-
-                        <Grid.Col span={2}>
-                            <Text size="xsmall" mb="xs">
-                                Projects
-                            </Text>
-                            <Text>12</Text>
-                        </Grid.Col>
-                    </Grid>
-
-                    <Divider size="xs" color="graycolor.2" />
-
-                    <div style={{ marginTop: "1rem" }}>
-                        <Text size="xsmall" mb="xs">
-                            Description
+        return (
+            <Card key={event.id} className={styles.cardContainer} p="1rem" radius="md">
+                <Grid columns={24} p={0}>
+                    <Grid.Col span="auto" p={0}>
+                        {thumbnailUrl && (
+                            <AspectRatio ratio={1} maw={200} p={0}>
+                                <img src={thumbnailUrl} style={{ borderRadius: "0.2rem" }} />
+                            </AspectRatio>
+                        )}
+                    </Grid.Col>
+                    <Grid.Col span={18} pl="1rem">
+                        <Text size="topic" c="redcolor.4" fw={500} truncate="end">
+                            {event.event_name}
                         </Text>
-                        <Text lineClamp={2}>
-                            <div
-                                dangerouslySetInnerHTML={{
-                                    __html: event.description,
-                                }}
-                            />
-                        </Text>
-                    </div>
-                </Grid.Col>
 
-                <Grid.Col span="content">
-                    <Stack h={180} align="flex-end" justify="space-between">
-                        <div>
-                            <ActionIcon.Group>
-                                <ActionIcon variant="default" size="lg" aria-label="Gallery">
-                                    <IconQrcode size={16} />
-                                </ActionIcon>
-                                <ActionIcon
-                                    variant="default"
-                                    size="lg"
-                                    aria-label="Settings"
-                                    onClick={() => clipboard.copy(event.id.toString())}
-                                >
-                                    {clipboard.copied ? (
-                                        <IconCopyCheck size={16} />
-                                    ) : (
-                                        <IconCopy size={16} />
-                                    )}
-                                </ActionIcon>
-                                <Menu position="bottom-end" shadow="sm">
-                                    <Menu.Target>
-                                        <ActionIcon variant="default" size="lg">
-                                            <IconDotsVertical size={16} />
-                                        </ActionIcon>
-                                    </Menu.Target>
-                                    <Menu.Dropdown>
-                                        <Menu.Item leftSection={<IconEdit size={14} />}>
-                                            Edit event
-                                        </Menu.Item>
-                                        <Menu.Item
-                                            leftSection={<IconTrash size={14} />}
-                                            color="red"
-                                        >
-                                            Delete event
-                                        </Menu.Item>
-                                    </Menu.Dropdown>
-                                </Menu>
-                            </ActionIcon.Group>
+                        <Grid gutter="4rem" columns={12} my="xs">
+                            <Grid.Col span="content">
+                                <Text size="xsmall" mb="xs">
+                                    Start event
+                                </Text>
+                                <Text>
+                                    {moment(event.start_date).format("MMMM Do YYYY, HH:mm A")}
+                                </Text>
+                            </Grid.Col>
 
-                            <Flex align="center" mt="md">
-                                <IconEye size={16} />
-                                <Text ml="sm">0</Text>
-                            </Flex>
+                            <Grid.Col span="content">
+                                <Text size="xsmall" mb="xs">
+                                    End event
+                                </Text>
+                                <Text>
+                                    {moment(event.end_date).format("MMMM Do YYYY, HH:mm A")}
+                                </Text>
+                            </Grid.Col>
+
+                            <Grid.Col span={2}>
+                                <Text size="xsmall" mb="xs">
+                                    Location
+                                </Text>
+                                <Text truncate="end" maw="max-content">
+                                    30th Building
+                                </Text>
+                            </Grid.Col>
+
+                            <Grid.Col span={2}>
+                                <Text size="xsmall" mb="xs">
+                                    Projects
+                                </Text>
+                                <Text>12</Text>
+                            </Grid.Col>
+                        </Grid>
+
+                        <Divider size="xs" color="graycolor.2" />
+
+                        <div style={{ marginTop: "1rem" }}>
+                            <Text size="xsmall" mb="xs">
+                                Description
+                            </Text>
+                            <Text lineClamp={2}>
+                                <div
+                                    dangerouslySetInnerHTML={{
+                                        __html: event.description,
+                                    }}
+                                />
+                            </Text>
                         </div>
+                    </Grid.Col>
 
-                        <Anchor href={`/event/${event.id}`} underline="never" ta="end">
-                            <Button
-                                rightSection={<IconArrowNarrowRight size={14} />}
-                                size="small"
-                            >
-                                Event
-                            </Button>
-                        </Anchor>
-                    </Stack>
-                </Grid.Col>
-            </Grid>
-        </Card>
-    ));
+                    <Grid.Col span="content">
+                        <Stack h={180} align="flex-end" justify="space-between">
+                            <div>
+                                <ActionIcon.Group>
+                                    <ActionIcon variant="default" size="lg" aria-label="Gallery">
+                                        <IconQrcode size={16} />
+                                    </ActionIcon>
+                                    <ActionIcon
+                                        variant="default"
+                                        size="lg"
+                                        aria-label="Settings"
+                                        onClick={() => clipboard.copy(event.id.toString())}
+                                    >
+                                        {clipboard.copied ? (
+                                            <IconCopyCheck size={16} />
+                                        ) : (
+                                            <IconCopy size={16} />
+                                        )}
+                                    </ActionIcon>
+                                    <Menu position="bottom-end" shadow="sm">
+                                        <Menu.Target>
+                                            <ActionIcon variant="default" size="lg">
+                                                <IconDotsVertical size={16} />
+                                            </ActionIcon>
+                                        </Menu.Target>
+                                        <Menu.Dropdown>
+                                            <Menu.Item leftSection={<IconEdit size={14} />}>
+                                                Edit event
+                                            </Menu.Item>
+                                            <Menu.Item
+                                                leftSection={<IconTrash size={14} />}
+                                                color="red"
+                                            >
+                                                Delete event
+                                            </Menu.Item>
+                                        </Menu.Dropdown>
+                                    </Menu>
+                                </ActionIcon.Group>
+
+                                <Flex align="center" mt="md">
+                                    <IconEye size={16} />
+                                    <Text ml="sm">0</Text>
+                                </Flex>
+                            </div>
+
+                            <Anchor href={`/event/${event.id}`} underline="never" ta="end">
+                                <Button
+                                    rightSection={<IconArrowNarrowRight size={14} />}
+                                    size="small"
+                                >
+                                    Event
+                                </Button>
+                            </Anchor>
+                        </Stack>
+                    </Grid.Col>
+                </Grid>
+            </Card>
+        );
+    });
 
     return (
         <body
