@@ -3,6 +3,7 @@ import {
   Card,
   Center,
   Flex,
+  Highlight,
   Pagination,
   Select,
   Text,
@@ -41,8 +42,6 @@ export default function ProjectsDashboard(props: {
             params: { query, page, pageSize },
           }
         );
-
-        console.log("projects fff", response.data.data);
         setTotalProjects(response.data.totalProjects);
         setProjectsData(response.data.data);
       } catch (error) {
@@ -61,12 +60,9 @@ export default function ProjectsDashboard(props: {
         style={{ margin: "auto", width: "70%" }}
         mt="lg"
         shadow="sm"
-        mb="md"
+        // mb="lg"
       >
         <Text>
-          <Text size="xl" fw={700}>
-            {totalProjects} Projects
-          </Text>
           <Flex
             mt="sm"
             justify="center"
@@ -88,7 +84,8 @@ export default function ProjectsDashboard(props: {
               onChange={(project) => setQuery(project.target.value)}
             />
             <Select
-              w={90}
+              searchable
+              w="80"
               placeholder={pageSize.toString()}
               data={["5", "10", "15", "20"]}
               defaultValue="5"
@@ -96,18 +93,26 @@ export default function ProjectsDashboard(props: {
                 setPageSize(value === null ? 5 : Number(value));
                 setPage(1);
               }}
+              onSearchChange={(value) => {
+                setPageSize(value === null ? 5 : Number(value));
+                setPage(1);
+              }}
             />
           </Flex>
-
+          <Text size="md" my="md" fw={500}>
+            {totalProjects} Projects
+          </Text>
           {projectsData.length > 0 ? (
             <div>
               {projectsData.map((project: ProjectType) => (
                 <Card mt="sm" key={project.id}>
                   <Text size="lg" fw={700}>
-                    {project.title}
+                    <Highlight highlight={query}>{project.title}</Highlight>
                   </Text>
                   <Text mt="md" truncate>
-                    {project.description}
+                    <Highlight highlight={query}>
+                      {project.description}
+                    </Highlight>
                   </Text>
                   <Text size="md" c="gray" mt="sm">
                     {moment(project.created_at).format("MMMM Do YY HH:mm a")}
@@ -118,7 +123,7 @@ export default function ProjectsDashboard(props: {
                     size="sm"
                     mt="sm"
                     component="a"
-                    href={`/events/${props.eventId}/projects/${project.id}`}
+                    href={`/guest/event/${props.eventId}/project/${project.id}`}
                   >
                     View Project
                   </Button>
