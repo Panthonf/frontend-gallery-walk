@@ -46,7 +46,8 @@ const theme = createTheme({
     pinkcolor: generateColors("#F9D1D1"),
     deepredcolor: generateColors("#210909"),
     graycolor: generateColors("#6A6161"),
-    dark: generateColors("#1E1E1E"),
+    darkcolor: generateColors("#1E1E1E"),
+    greencolor: generateColors("#36AE7C"),
   },
 
   components: {
