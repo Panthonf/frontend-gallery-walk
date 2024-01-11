@@ -473,7 +473,7 @@ export default function CreateEvent() {
                                     >
                                         <Grid>
                                             <Grid.Col span={12}>
-                                                <Text fw={600} c="redcolor.4" size="md">
+                                                <Text fw={500} c="redcolor.4" size="md">
                                                     Event Manager Details
                                                 </Text>
                                             </Grid.Col>
@@ -578,7 +578,7 @@ export default function CreateEvent() {
                                         }}
                                     >
                                         <Grid.Col span={12}>
-                                            <Text fw={600} c="deepredcolor.9" size="md">
+                                            <Text fw={500} c="deepredcolor.9" size="md">
                                                 Presenter Details
                                             </Text>
                                             <Text size="sm" c="graycolor.2">
