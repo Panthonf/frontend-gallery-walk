@@ -5,6 +5,7 @@
     --deepredcolor: #2b0b0b;
     --graycolor: #6a6161;
     --darkcolor: #1e1e1e;
+    --greencolor: #36AE7C;
 }
 
 body {
@@ -104,8 +105,8 @@ p {
 }
 
 .cardContainer {
-    padding: 0;
-    margin-bottom: 1rem;
+    padding: 1rem;
+    margin: 1rem auto auto auto;
     border-right: 1rem solid var(--redcolor);
     border-radius: 0.2rem;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 1px 10px;
@@ -140,3 +141,5 @@ p {
         border-radius: 0.2rem;
     }
 }
+
+
