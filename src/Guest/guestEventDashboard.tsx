@@ -261,6 +261,7 @@ import {
   Text,
   Title,
   Image,
+  Divider,
 } from "@mantine/core";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import ProjectsDashboard from "./projectsDashboard";
@@ -425,36 +426,32 @@ export default function GuestEventDashboard() {
         <Card.Section>
           <Image src={thumbnailUrl} height={200} />
         </Card.Section>
-        <Text mt="lg" size="xs" fs="italic">
-          {`${moment(eventData?.start_date).format(
-            "MMMM Do YY HH:mm a"
-          )} - ${moment(eventData?.end_date).format("MMMM Do YY HH:mm a")}`}
-        </Text>
 
         {/* Virtual Money Card */}
         <Flex justify="space-between" align="center">
-          <Title mt="xs" order={1} fw={700} c="#EB5353">
+          <Title mt="lg" order={1} fw={700}>
             {eventData?.event_name}
           </Title>
-          <Card
-            withBorder
-            radius="md"
-            padding="xl"
-            bg="var(--mantine-color-body)"
-          >
-            <Text fz="xs" tt="uppercase" fw={700} c="dimmed">
-              Your Virtual Money
-            </Text>
-            <Text fz="lg" fw={500}>
-              {guestData?.virtual_money} {eventData?.unit_money}
-            </Text>
-          </Card>
         </Flex>
-        <Anchor mt="sm" onClick={toggle} underline="always">
-          Show Details
-        </Anchor>
+        <Text size="xs" mt="5" c="#9093A4">
+          {`${moment(eventData?.start_date).format(
+            "MMMM Do YY HH:mm A"
+          )} - ${moment(eventData?.end_date).format("MMMM Do YY HH:mm A")}`}
+        </Text>
+        <Divider mt="lg" mb="lg" />
+        <Flex justify="flex-start ">
+          <Anchor
+            variant="filled"
+            onClick={toggle}
+            size="xs"
+            underline="always"
+            c="gray"
+          >
+            See Description
+          </Anchor>
+        </Flex>
         <Collapse in={opened}>
-          <Text mt="xs">
+          <Text mt="lg">
             <div
               dangerouslySetInnerHTML={{
                 __html: eventData?.description.toString() || "",
@@ -485,6 +482,24 @@ export default function GuestEventDashboard() {
         </Collapse>
       </Card>
 
+      <Card
+        mt="lg"
+        shadow="sm"
+        padding="xl"
+        component="a"
+        style={{ margin: "auto", width: "70%" }}
+        withBorder
+        radius="md"
+        bg="var(--mantine-color-body)"
+      >
+        <Text fz="xs" tt="uppercase" fw={700} c="dimmed">
+          Your Virtual Money
+        </Text>
+        <Divider mt="md" mb="md" />
+        <Text fz="lg" fw={500}>
+          {guestData?.virtual_money.toLocaleString()} {eventData?.unit_money}
+        </Text>
+      </Card>
       <ProjectsDashboard eventId={eventData?.id.toString()} />
     </div>
   );

@@ -11,7 +11,6 @@ import {
   NumberInput,
   LoadingOverlay,
   TextInput,
-  Pagination,
   ScrollArea,
   Divider,
 } from "@mantine/core";
@@ -22,7 +21,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { LoadingIndicator } from "../components/loading";
 import { IconCoin, IconSend } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
-import { isNotEmpty, useForm } from "@mantine/form";
+import { useForm } from "@mantine/form";
 import Swal from "sweetalert2";
 
 export default function GuestProject() {
