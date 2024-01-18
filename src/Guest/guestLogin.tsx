@@ -1,32 +1,92 @@
-import { Button, Center, Text } from "@mantine/core";
-import { IconBrandGoogleFilled } from "@tabler/icons-react";
+import {
+    Text,
+    Center,
+    Container,
+    Button,
+    Divider,
+} from "@mantine/core";
 
-export default function GuestLogin() {
+import "@mantine/core/styles.css";
 
-  const handleGoogleLogin = () => {
-    window.location.href =
-      import.meta.env.VITE_BASE_ENDPOINTMENT + `guests/login/google`;
-  };
-  return (
-    (document.title = `Guest Login`),
-    (
-      <div>
-        <h1>Guest Login</h1>
-        <Center>
-          <Button
-            color="deepredcolor.9"
-            size="md"
-            w="100%"
-            justify="center"
-            variant="outline"
-            mt="xl"
-            leftSection={<IconBrandGoogleFilled size={14} />}
-            onClick={handleGoogleLogin}
-          >
-            <Text c="deepredcolor.9">Login with Google account</Text>
-          </Button>
-        </Center>
-      </div>
-    )
-  );
+// import styles css
+import styles from "../styles.module.css";
+
+import {
+    IconBrandGoogleFilled,
+    IconBrandFacebookFilled,
+} from "@tabler/icons-react";
+
+export default function Login() {
+
+    // google login
+    const handleGoogleLogin = () => {
+        window.location.href = import.meta.env.VITE_BASE_ENDPOINTMENT + `guests/login/google`;
+    };
+
+    return (
+        <body>
+
+            <Center style={{
+                height: "100vh",
+            }}>
+                <Container size="xs" p="3rem" className={styles.logincontainer}>
+                    <Text size="topic" c="redcolor.4" fw={500}>
+                        Guest
+                    </Text>
+
+                    <Text mt="lg">
+                        Lorem ipsum dolor sit amet consectetur adipisicing
+                        elit. Quasi at amet perspiciatis in, quas nobis, sit
+                        id blanditiis recusandae saepe atque laudantium
+                        ratione asperiores culpa numquam provident,
+                        obcaecati repellat? Autem!
+                    </Text>
+                    <Center>
+                        <Button
+                            color="deepredcolor.9"
+                            size="md"
+                            w="100%"
+                            justify="center"
+                            variant="outline"
+                            mt="xl"
+                            leftSection={
+                                <IconBrandGoogleFilled size={14} />
+                            }
+                            onClick={handleGoogleLogin}>
+                            <Text c="deepredcolor.9">
+                                Login with Google account
+                            </Text>
+                        </Button>
+                    </Center>
+                    <Divider
+                        my="lg"
+                        label="or"
+                        c="graycolor.2"
+                        labelPosition="center"
+                    />
+                    <Center>
+                        <Button
+                            color="deepredcolor.9"
+                            size="md"
+                            w="100%"
+                            justify="center"
+                            variant="outline"
+                            leftSection={
+                                <IconBrandFacebookFilled size={14} />
+                            }
+                            // onClick={handleGoogleLogin}
+                            >
+                            <Text c="deepredcolor.9">
+                                Login with Facebook account
+                            </Text>
+                        </Button>
+                    </Center>
+                </Container>
+
+            </Center>
+        </body>
+    );
 }
+
+
+

@@ -214,7 +214,7 @@ export default function Event() {
                 )}
             </AspectRatio>
 
-            <Grid justify="center" align="center" w="95%">
+            <Grid justify="center" align="center">
                 <Grid.Col span={12} style={{ position: "absolute", top: "5rem" }}>
 
                     <Grid w="95%" m="auto" justify="space-between" grow>
@@ -295,7 +295,7 @@ export default function Event() {
                         </Grid.Col>
                     </Grid>
 
-                    <Card className={styles.cardContainer}>
+                    <Card className={styles.cardContainer} w="95%">
                         <Grid>
                             <Grid.Col span={9}>
                                 <Text c="redcolor.4" fw={500} size="topic" mb="xs">
