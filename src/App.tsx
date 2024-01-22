@@ -30,6 +30,7 @@ import GuestEventDashboard from "./Guest/guestEventDashboard.tsx";
 import GuestLogin from "./Guest/guestLogin.tsx";
 import { NotFoundTitle } from "./components/notFoundTitle.tsx";
 import GuestProject from "./Guest/guestProject.tsx";
+import Projects from "./Event Manager and Presenter/project.tsx";
 
 // import Test from "./test.tsx";
 // import { DateTimePicker } from "@mantine/dates";
@@ -87,8 +88,7 @@ const theme = createTheme({
     Modal: Modal.extend({
       classNames: {
         title: styles.title,
-      }
-      
+      },
     }),
   },
 });
@@ -112,6 +112,7 @@ export default function App() {
             />
             <Route path="/create-event" element={<CreateEvent />} />
             <Route path="/event/:eventId" element={<Event />} />
+            <Route path="/project/:projectId" element={<Projects />} />
           </Route>
 
           {/* Guest Routes */}

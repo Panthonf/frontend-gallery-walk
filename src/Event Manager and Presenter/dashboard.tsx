@@ -43,6 +43,7 @@ import {
 } from "@tabler/icons-react";
 
 import styles from "../styles.module.css";
+import ProjectsDashboard from "./projectsDashboard";
 
 export default function Dashboard() {
   const [activeNavbarIndex] = useState(0);
@@ -93,7 +94,6 @@ export default function Dashboard() {
       console.error("Error fetching events:", error);
     }
   };
-
 
   useEffect(() => {
     const fetchThumbnails = async () => {
@@ -399,7 +399,11 @@ export default function Dashboard() {
             </div>
           )}
           {activeTab === "Event manager" && <div></div>}
-          {activeTab === "Presenter" && <div></div>}
+          {activeTab === "Presenter" && (
+            <div>
+              <ProjectsDashboard />
+            </div>
+          )}
         </Grid.Col>
       </Grid>
     </body>
