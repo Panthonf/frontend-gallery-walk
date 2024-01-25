@@ -434,13 +434,9 @@ export default function CreateEvent() {
     const [opened, { open, close }] = useDisclosure(false)
 
     return (
-        <body
-            style={{
-                display: "flex",
-            }}
-        >
+        <body>
             {/* navbar */}
-            <Navbar activeIndex={activeNavbarIndex} />
+            <Navbar />
 
             <Center
                 style={{
