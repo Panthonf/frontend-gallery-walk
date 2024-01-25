@@ -304,8 +304,8 @@ export default function Dashboard() {
         <body>
             {/* navbar */}
             <Navbar />
-            
-            <Grid w="100%" p="xl">
+
+            <Grid w="80%" p="xl" mx="auto">
                 <Grid.Col span={12}>
                     <Text c="redcolor.4" fw={500} size="topic">
                         Dashboard
@@ -336,20 +336,23 @@ export default function Dashboard() {
                                 </Grid.Col>
                                 <Grid.Col span={6}>
                                     <Flex gap="lg" justify="end">
-                                        <Button
-                                            color="redcolor.4"
-                                            size="sm"
-                                            w="20%"
-                                            justify="center"
-                                            variant="filled"
-                                            rightSection={<IconSquarePlus size={14} />}
-                                        >
-                                            <Text c="pinkcolor.1">Create Event!</Text>
-                                        </Button>
+                                        <a href="/create-event">
+                                            <Button
+                                                color="redcolor.4"
+                                                size="sm"
+                                                w="max-content"
+                                                justify="center"
+                                                variant="filled"
+                                                rightSection={<IconSquarePlus size={14} />}
+                                            >
+                                                <Text c="pinkcolor.1">Create Event!</Text>
+                                            </Button>
+                                        </a>
+
                                         <Button
                                             color="deepredcolor.9"
                                             size="sm"
-                                            w="20%"
+                                            w="max-content"
                                             justify="center"
                                             variant="filled"
                                             rightSection={<IconArrowsJoin size={14} />}
@@ -399,6 +402,8 @@ export default function Dashboard() {
                     {activeTab === "Presenter" && <div></div>}
                 </Grid.Col>
             </Grid>
+
+            <div className={styles.footer}></div>
         </body>
     );
 }
