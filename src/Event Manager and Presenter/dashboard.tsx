@@ -46,7 +46,6 @@ import styles from "../styles.module.css";
 import ProjectsDashboard from "./projectsDashboard";
 
 export default function Dashboard() {
-    const [activeNavbarIndex] = useState(0);
 
     const [query, setQuery] = useState("");
     const [page, setPage] = useState(1);
@@ -170,7 +169,7 @@ export default function Dashboard() {
         video_link: string;
     };
 
-    const [activeTab, setActiveTab] = useState("Overview");
+    const [activeTab, setActiveTab] = useState("Event manager");
 
     const handleTabChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const selectedTab = event.target.value;
@@ -324,7 +323,7 @@ export default function Dashboard() {
             {/* navbar */}
             <Navbar />
 
-            <Grid w="100%" p="xl">
+            <Grid w="80%" p="xl" mx="auto">
                 <Grid.Col span={12}>
                     <Text c="redcolor.4" fw={500} size="topic">
                         Dashboard
@@ -333,8 +332,8 @@ export default function Dashboard() {
                         size="small"
                         w="max-content"
                         rightSection={<IconChevronDown size={12} />}
-                        data={["Overview", "Event manager", "Presenter"]}
-                        defaultValue="Overview"
+                        data={["Event manager", "Presenter"]}
+                        defaultValue="Event manager"
                         onSelect={(selectedTab: ChangeEvent<HTMLInputElement>) =>
                             handleTabChange(selectedTab)
                         }
@@ -342,7 +341,7 @@ export default function Dashboard() {
                 </Grid.Col>
 
                 <Grid.Col span={12}>
-                    {activeTab === "Overview" && (
+                    {activeTab === "Event manager" && (
                         <div>
                             <Grid justify="space-between">
                                 <Grid.Col span={6}>
@@ -355,26 +354,17 @@ export default function Dashboard() {
                                 </Grid.Col>
                                 <Grid.Col span={6}>
                                     <Flex gap="lg" justify="end">
-                                        <Button
-                                            color="redcolor.4"
-                                            size="sm"
-                                            w="20%"
-                                            justify="center"
-                                            variant="filled"
-                                            rightSection={<IconSquarePlus size={14} />}
-                                        >
-                                            <Text c="pinkcolor.1">Create Event!</Text>
-                                        </Button>
-                                        <Button
-                                            color="deepredcolor.9"
-                                            size="sm"
-                                            w="20%"
-                                            justify="center"
-                                            variant="filled"
-                                            rightSection={<IconArrowsJoin size={14} />}
-                                        >
-                                            <Text c="pinkcolor.1">Join event</Text>
-                                        </Button>
+                                        <a href="/create-event">
+                                            <Button
+                                                color="redcolor.4"
+                                                size="sm"
+                                                justify="center"
+                                                variant="filled"
+                                                rightSection={<IconSquarePlus size={14} />}
+                                            >
+                                                <Text c="pinkcolor.1">Create Event!</Text>
+                                            </Button>
+                                        </a>
                                     </Flex>
                                 </Grid.Col>
 
@@ -415,7 +405,6 @@ export default function Dashboard() {
                             </Grid>
                         </div>
                     )}
-                    {activeTab === "Event manager" && <div></div>}
                     {activeTab === "Presenter" && (
                         <div>
                             <div>

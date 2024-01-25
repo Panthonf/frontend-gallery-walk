@@ -50,8 +50,8 @@ export default function GuestProject() {
         value <= 0
           ? "Amount must be greater than 0"
           : value > guestData?.virtual_money
-          ? "Amount must be less than your virtual money"
-          : null,
+            ? "Amount must be less than your virtual money"
+            : null,
     },
   });
 
@@ -74,8 +74,7 @@ export default function GuestProject() {
     async function fetchProjectData() {
       const response = await axios
         .get(
-          `${
-            import.meta.env.VITE_BASE_ENDPOINTMENT
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT
           }projects/get-data/${projectId}`,
           {
             withCredentials: true,
@@ -97,8 +96,7 @@ export default function GuestProject() {
     async function fetchProjectComments() {
       try {
         const response = await axios.get(
-          `${
-            import.meta.env.VITE_BASE_ENDPOINTMENT
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT
           }guests/get-project-comments?projectId=${projectId}`,
           {
             withCredentials: true,
@@ -143,10 +141,8 @@ export default function GuestProject() {
     toggle.open();
     await axios
       .post(
-        `${
-          import.meta.env.VITE_BASE_ENDPOINTMENT
-        }guests/give-virtual-money?projectId=${projectId}&guestId=${
-          guestData?.id
+        `${import.meta.env.VITE_BASE_ENDPOINTMENT
+        }guests/give-virtual-money?projectId=${projectId}&guestId=${guestData?.id
         }`,
         {
           amount: form.values.amount,
@@ -268,10 +264,15 @@ export default function GuestProject() {
               Project id: {projectId}
             </Text> */}
               <Title>{projectData?.title}</Title>
-              <Text>{projectData?.description}</Text>
+              <Divider mb="lg" />
+              <Text>
+                <div dangerouslySetInnerHTML={{
+                  __html: projectData.description.toString() || "",
+                }}></div>
+              </Text>
               <Flex justify="space-between" mt="md" align="center">
                 <Badge>
-                  {moment(projectData?.created_at).format("do mm yyyy hh:mm a")}
+                  {moment(projectData?.created_at).format("DD/MM/yyyy HH:mm:ss a")}
                 </Badge>
 
                 <Modal

@@ -110,7 +110,9 @@ export default function ProjectsDashboard(props: {
                                                     Description
                                                 </Text>
                                                 <Text lineClamp={2}>
-                                                    {project.description}
+                                                    <div dangerouslySetInnerHTML={{
+                                                        __html: project.description.toString() || "",
+                                                    }}></div>
                                                 </Text>
                                             </div>
                                         </Grid.Col>
