@@ -10,12 +10,14 @@ import {
   Flex,
   Highlight,
   Button,
+  Badge,
+  Anchor,
 } from "@mantine/core";
 import { IconSearch } from "@tabler/icons-react";
 import axios from "axios";
-import DOMPurify from "dompurify";
 import moment from "moment";
 import { ReactNode, useEffect, useState } from "react";
+import parse from "html-react-parser";
 
 export default function ProjectsDashboard() {
   const [total, setTotal] = useState(0);
@@ -79,13 +81,26 @@ export default function ProjectsDashboard() {
       {projects && projects.length > 0 ? (
         projects.map((project: ProjectType) => (
           <Card padding="lg" key={project.id} shadow="sm" radius="sm" mt="md">
-            <Title>
-              <Highlight highlight={query}>{project.title}</Highlight>
-            </Title>{" "}
+            <Flex justify="space-between">
+              <Title>
+                <Highlight highlight={query}>{project.title}</Highlight>
+              </Title>
+              <Badge color="redcolor.4" variant="light" p="sm">
+                <Anchor
+                  href={`/event/${project.event_id}`}
+                  style={{ color: "inherit" }}
+                  fw={700}
+                >
+                  Go to event
+                </Anchor>
+              </Badge>
+            </Flex>
             <Divider mb="lg" mt="lg" />
-            <Highlight highlight={query}>
-              {DOMPurify.sanitize(project?.description ?? "")}
-            </Highlight>
+            <Text lineClamp={2}>
+              {project.description
+                ? parse(project.description)
+                : "No description"}
+            </Text>
             <Text mt="md" size="xs" c="gray">
               Created at:{" "}
               {moment(project.created_at).format("DD/MM/yyyy HH:mm:ss")}
@@ -131,6 +146,7 @@ export default function ProjectsDashboard() {
 }
 
 type ProjectType = {
+  event_id: ReactNode;
   length: number;
   map(
     arg0: (project: ProjectType) => import("react/jsx-runtime").JSX.Element
