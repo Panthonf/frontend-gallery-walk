@@ -5,11 +5,11 @@
     --deepredcolor: #2b0b0b;
     --graycolor: #6a6161;
     --darkcolor: #1e1e1e;
-    --greencolor: #36AE7C;
+    --greencolor: #36ae7c;
 }
 
 body {
-    height: max-content;
+    min-height: 100%;
     font-size: 14px;
     color: var(--darkcolor);
     background-color: var(--whitecolor);
@@ -19,12 +19,28 @@ p {
     margin: 0;
 }
 
+/* .footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: 1.5rem;
+    background-color: var(--redcolor);
+    margin-top: rem(120px);
+    border-top: rem(1px) solid
+        light-dark(var(--mantine-color-gray-2), var(--mantine-color-dark-5));
+} */
+
+.pagecontainer {
+    position: relative;
+    min-height: 100vh;
+}
+
 .footer {
     position: fixed;
     bottom: 0;
-    width: 100vw;
-    height: 1.5rem;
-    background-color: var(--redcolor);
+    width: 100%;
+    height: 1.5rem; /* Footer height */
+    background-color: #eb5353;
 }
 
 .header {
@@ -105,7 +121,7 @@ p {
 }
 
 .cardContainer {
-    padding: 1rem;
+    padding: 2rem;
     margin: 1rem auto auto auto;
     border-right: 1rem solid var(--redcolor);
     border-radius: 0.2rem;
@@ -128,7 +144,8 @@ p {
 .title {
     font-size: 1rem;
     font-weight: 500;
-    color: var(--graycolor);
+    color: var(--darkcolor);
+    font-weight: 600;
 }
 
 .scrollBar {
@@ -141,5 +158,3 @@ p {
         border-radius: 0.2rem;
     }
 }
-
-
