@@ -76,6 +76,25 @@ export default function Dashboard() {
     fetchData();
   }, [page, pageSize, query]);
 
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:8080/events/search",
+          {
+            withCredentials: true,
+            params: { query, page, pageSize },
+          }
+        );
+        setEvents(response.data.data);
+        setTotalEvents(response.data.totalEvents);
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+    fetchData();
+  }, [page, pageSize, query]);
+
   const [thumbnails, setThumbnails] = useState<{ [key: number]: string }>({});
   const fetchProjectsData = async () => {
     try {
@@ -301,13 +320,10 @@ export default function Dashboard() {
   });
 
   return (
-    <body
-      style={{
-        display: "flex",
-      }}
-    >
+    <body>
       {/* navbar */}
-      <Navbar activeIndex={activeNavbarIndex} />
+      <Navbar />
+
       <Grid w="100%" p="xl">
         <Grid.Col span={12}>
           <Text c="redcolor.4" fw={500} size="topic">
@@ -401,7 +417,9 @@ export default function Dashboard() {
           {activeTab === "Event manager" && <div></div>}
           {activeTab === "Presenter" && (
             <div>
-              <ProjectsDashboard />
+              <div>
+                <ProjectsDashboard />
+              </div>
             </div>
           )}
         </Grid.Col>
