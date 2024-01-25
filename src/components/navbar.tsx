@@ -1,95 +1,160 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Center, Tooltip, UnstyledButton, Stack, rem, Container } from '@mantine/core';
+import { Avatar, Divider, Grid, Group, Menu, Text, UnstyledButton, rem } from '@mantine/core';
 import {
+    IconChevronDown,
+    IconHeart,
     IconLayoutDashboard,
+    IconLogout,
+    IconMessage,
+    IconPlayerPause,
+    IconSettings,
     IconSquarePlus,
+    IconStar,
+    IconSwitchHorizontal,
+    IconTrash,
 
 } from '@tabler/icons-react';
 
 import styles from "./styles.module.css";
 
-interface NavbarLinkProps {
-    icon: typeof IconLayoutDashboard;
-    label: string;
-    active?: boolean;
-    onClick?(): void;
-}
 
-interface NavbarProps {
-    activeIndex: number;
-}
 
-function NavbarLink({ icon: Icon, label, active, onClick }: NavbarLinkProps) {
-    return (
-        <Tooltip label={label} position="right" transitionProps={{ duration: 0 }}>
-            <UnstyledButton onClick={onClick} className={styles.link} data-active={active || undefined}>
-                <Icon style={{ width: rem(20), height: rem(20), padding: rem(1) }} stroke={1.5} />
-            </UnstyledButton>
-        </Tooltip>
-    );
-}
+export default function Navbar() {
 
-const mockdata = [
-    { icon: IconLayoutDashboard, label: 'Dashboard' },
-    { icon: IconSquarePlus, label: 'Create-Event' },
-];
-
-export default function Navbar({ activeIndex }: NavbarProps) {
-
-    const [active, setActive] = useState(0);
-
-    const links = mockdata.map((link, index) => (
-        <NavLink
-            to={`/${link.label.toLowerCase()}`}
-            key={link.label}
-            className={styles.link}
-        >
-            <NavbarLink
-                {...link}
-                active={index === activeIndex}
-                onClick={() => setActive(index)}
-            />
-        </NavLink>
-    ));
+    const [userMenuOpened, setUserMenuOpened] = useState(false);
 
     return (
         <body>
-            <Container p="xl" style={{
-                height: "100vh",
+            <div style={{
+                padding: "1rem"
             }}>
-                <Center>
+                <Grid justify="space-between">
+                    <Grid.Col span={1}>
+                        <Text>
+                            Gallery walk
+                        </Text>
+                    </Grid.Col>
 
-                </Center>
+                    <Grid.Col span="auto">
+                        <a href="/dashboard">
+                            <UnstyledButton mr="lg">
+                                <Text>Dashboard</Text>
+                            </UnstyledButton>
+                        </a>
 
-                <div className={styles.navbarMain}>
-                    <Stack justify="center" gap={0}>
-                        {links}
-                    </Stack>
-                </div>
+                        <a href="/create-event">
+                            <UnstyledButton>
+                                <Text>Create Event</Text>
+                            </UnstyledButton>
+                        </a>
 
+                    </Grid.Col>
 
-            </Container>
+                    <Grid.Col span={4} ta="end">
+                        <Menu
+                            width={260}
+                            position="bottom-end"
+                            transitionProps={{ transition: 'pop-top-right' }}
+                            onClose={() => setUserMenuOpened(false)}
+                            onOpen={() => setUserMenuOpened(true)}
+                            withinPortal
+                        >
+                            <Menu.Target>
+                                <UnstyledButton>
+                                    <Group gap={7}>
+                                        {/* <Avatar src={user.image} alt={user.name} radius="xl" size={20} />
+                                        <Text fw={500} size="sm" lh={1} mr={3}>
+                                            {user.name}
+                                        </Text> */}
+                                        <Text>Panthon Kansap</Text>
+                                        <IconChevronDown style={{ width: rem(12), height: rem(12) }} stroke={1.5} />
+                                    </Group>
+                                </UnstyledButton>
+                            </Menu.Target>
+                            <Menu.Dropdown>
+                                <Menu.Item
+                                    leftSection={
+                                        <IconHeart
+                                            style={{ width: rem(16), height: rem(16) }}
+
+                                            stroke={1.5}
+                                        />
+                                    }
+                                >
+                                    Liked posts
+                                </Menu.Item>
+                                <Menu.Item
+                                    leftSection={
+                                        <IconStar
+                                            style={{ width: rem(16), height: rem(16) }}
+
+                                            stroke={1.5}
+                                        />
+                                    }
+                                >
+                                    Saved posts
+                                </Menu.Item>
+                                <Menu.Item
+                                    leftSection={
+                                        <IconMessage
+                                            style={{ width: rem(16), height: rem(16) }}
+
+                                            stroke={1.5}
+                                        />
+                                    }
+                                >
+                                    Your comments
+                                </Menu.Item>
+
+                                <Menu.Label>Settings</Menu.Label>
+                                <Menu.Item
+                                    leftSection={
+                                        <IconSettings style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
+                                    }
+                                >
+                                    Account settings
+                                </Menu.Item>
+                                <Menu.Item
+                                    leftSection={
+                                        <IconSwitchHorizontal style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
+                                    }
+                                >
+                                    Change account
+                                </Menu.Item>
+                                <Menu.Item
+                                    leftSection={
+                                        <IconLogout style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
+                                    }
+                                >
+                                    Logout
+                                </Menu.Item>
+
+                                <Menu.Divider />
+
+                                <Menu.Label>Danger zone</Menu.Label>
+                                <Menu.Item
+                                    leftSection={
+                                        <IconPlayerPause style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
+                                    }
+                                >
+                                    Pause subscription
+                                </Menu.Item>
+                                <Menu.Item
+                                    color="red"
+                                    leftSection={<IconTrash style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
+                                >
+                                    Delete account
+                                </Menu.Item>
+                            </Menu.Dropdown>
+                        </Menu>
+                    </Grid.Col>
+                </Grid>
+            </div>
+
+            <Divider size="xs" />
+
         </body>
     );
 
 }
-
-{/* <div className={styles.navbarMain}>
-                    <Stack justify="center" gap={0}>
-                        {links}
-                    </Stack>
-                </div> */}
-{/* <nav className={styles.navbar}>
-                    <Center>
-                    </Center>
-                    <div className={styles.navbarMain}>
-                        <Stack justify="center" gap={0}>
-                            {links}
-                        </Stack>
-                    </div>
-                    <Stack justify="center" gap={0}>
-                        <NavbarLink icon={IconSwitchHorizontal} label="Change account" />
-                        <NavbarLink icon={IconLogout} label="Logout" />
-                    </Stack>
-                </nav> */}
