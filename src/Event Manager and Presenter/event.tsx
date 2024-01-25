@@ -359,7 +359,9 @@ export default function Event() {
         return (
             <>
                 <Flex align="flex-end">
-                    <Text lineClamp={5}>{event?.description}</Text>
+                    <Text lineClamp={5}>
+                        <div dangerouslySetInnerHTML={{ __html: event?.description }} />
+                    </Text>
                     <ActionIcon variant="subtle" onClick={open} color="redcolor.4">
                         <IconArrowsDiagonal size={14} stroke={1.5} />
                     </ActionIcon>
@@ -375,7 +377,7 @@ export default function Event() {
                     padding="lg"
                     className={styles.scrollBar} // Use your actual style class
                 >
-                    <Text>{event?.description}</Text>
+                    <Text><div dangerouslySetInnerHTML={{ __html: event?.description }} /></Text>
                 </Modal>
             </>
         );
@@ -505,12 +507,12 @@ export default function Event() {
             <div>
                 <Affix position={{ top: 90, left: 20 }}>
                     <a href="/dashboard">
-                            <Button size="xs" leftSection={<IconArrowLeft size={14} />}>
-                                <Text c="pinkcolor.1" size="small">
-                                    Back
-                                </Text>
-                            </Button>
-                        </a>
+                        <Button size="xs" leftSection={<IconArrowLeft size={14} />}>
+                            <Text c="pinkcolor.1" size="small">
+                                Back
+                            </Text>
+                        </Button>
+                    </a>
                 </Affix>
 
                 <Box w="80%" mx="auto">
