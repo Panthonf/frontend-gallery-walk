@@ -441,8 +441,8 @@ export default function CreateEvent() {
             <Center
                 style={{
                     height: "max-content",
-                    width: "100vw",
                     padding: "3rem",
+                    
                 }}
             >
                 <div>
