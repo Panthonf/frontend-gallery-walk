@@ -7,7 +7,7 @@ export default defineConfig(({ command }) => {
     plugins: [react()],
     base: "/", // You might need to adjust this depending on your project's setup
     build: {
-      outDir: isProduction ? 'production-build' : 'build',
+      outDir: isProduction ? 'dist' : 'build',
       rollupOptions: {
         output: {
           manualChunks: {
