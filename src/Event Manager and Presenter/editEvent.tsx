@@ -23,7 +23,7 @@ import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
 import Navbar from "../components/navbar";
-import Swal from "sweetalert2";
+// import Swal from "sweetalert2";
 
 function EditEvent() {
   const refStartTime = useRef<HTMLInputElement>(null);
@@ -139,51 +139,6 @@ function EditEvent() {
       <IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
     </ActionIcon>
   );
-
-  const onSubmit = async () => {
-    try {
-      const updatedEvent = {
-        ...event,
-        description: editor?.getHTML() ?? "",
-        event_name: event?.event_name ?? "",
-        start_date: moment(event?.start_date, "YYYY-MM-DD HH:mm").toISOString(),
-        end_date: moment(event?.end_date, "YYYY-MM-DD HH:mm").toISOString(),
-        submit_start: moment(
-          event?.submit_start,
-          "YYYY-MM-DD HH:mm"
-        ).toISOString(),
-        submit_end: moment(event?.submit_end, "YYYY-MM-DD HH:mm").toISOString(),
-      };
-
-      setEvent(updatedEvent);
-
-      await axios
-        .put(
-          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
-          updatedEvent,
-          {
-            withCredentials: true,
-          }
-        )
-        .then((res) => {
-          console.log("update event", res.data);
-          Swal.fire({
-            title: "Event Updated",
-            text: "Event has been updated successfully",
-            icon: "success",
-            confirmButtonText: "Ok",
-          });
-        });
-    } catch (error) {
-      console.log(error);
-      Swal.fire({
-        title: "Error",
-        text: "Event could not be updated",
-        icon: "error",
-        confirmButtonText: "Ok",
-      });
-    }
-  };
 
   const handleInputChange = (fieldName: string, value: string | DateValue) => {
     // Use moment to handle date values consistently

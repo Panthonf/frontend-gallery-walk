@@ -9,18 +9,11 @@ import {
     Flex,
     // Progress,
     Text,
-    Title,
     Image,
     Divider,
     Grid,
-    Select,
-    Container,
-    SimpleGrid,
-    Button,
     AspectRatio,
-    Stack,
     ActionIcon,
-    Menu,
     Box,
     Group,
     UnstyledButton,
@@ -32,8 +25,8 @@ import ProjectsDashboard from "./projectsDashboard";
 import moment from "moment";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingIndicator } from "../components/loading";
-import { IconArrowNarrowRight, IconArrowsDiagonal, IconArrowsJoin, IconChevronDown, IconChevronUp, IconCopyCheck, IconDotsVertical, IconEdit, IconEye, IconQrcode, IconSquarePlus, IconTrash } from "@tabler/icons-react";
-import { relative } from "path";
+import {  IconArrowsDiagonal, IconChevronDown, IconChevronUp } from "@tabler/icons-react";
+// import { relative } from "path";
 
 type EventType = {
     id: number;

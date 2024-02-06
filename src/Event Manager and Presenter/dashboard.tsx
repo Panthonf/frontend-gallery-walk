@@ -47,7 +47,7 @@ import ProjectsDashboard from "./projectsDashboard";
 export default function Dashboard() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize,] = useState(5);
   const [totalEvents, setTotalEvents] = useState(0);
   const [events, setEvents] = useState([]);
 

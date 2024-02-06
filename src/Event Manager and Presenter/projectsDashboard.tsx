@@ -2,23 +2,17 @@ import {
   Card,
   Divider,
   TextInput,
-  Title,
   Text,
   Pagination,
   Group,
-  Select,
-  Flex,
-  Highlight,
   Button,
-  Badge,
-  Anchor,
   Grid,
   Container,
   SimpleGrid,
 } from "@mantine/core";
-import { IconSearch, IconSquarePlus } from "@tabler/icons-react";
+import { IconSearch } from "@tabler/icons-react";
 import axios from "axios";
-import moment from "moment";
+// import moment from "moment";
 import { ReactNode, useEffect, useState } from "react";
 import parse from "html-react-parser";
 
@@ -43,7 +37,7 @@ export default function ProjectsDashboard() {
   const [projects, setProjects] = useState<ProjectType | null>();
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, ] = useState(5);
 
   useEffect(() => {
     const fetchProjects = async () => {
@@ -387,7 +381,6 @@ export default function ProjectsDashboard() {
     //             <Pagination.Last />
     //         </Group>
     //     </Pagination.Root>
-
     //     <Divider mb="lg" mt="lg" />
     // </div>
   );
