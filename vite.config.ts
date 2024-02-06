@@ -8,7 +8,7 @@ export default defineConfig({
     outDir: "dist",
     emptyOutDir: true, // Ensure the output directory is empty before building
     lib: {
-      entry: "src/index.ts",
+      entry: "src/main.ts",
       name: "react-vite",
       fileName: (format) => `react-vite.${format}.js`,
     },
