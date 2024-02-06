@@ -6,6 +6,8 @@
     --graycolor: #6a6161;
     --darkcolor: #1e1e1e;
     --greencolor: #36ae7c;
+    --yellowcolor: #F9D923;
+    --bluecolor: #187498;
 }
 
 body {
@@ -40,7 +42,14 @@ p {
     bottom: 0;
     width: 100%;
     height: 1.5rem; /* Footer height */
-    background-color: #eb5353;
+}
+
+.footer.event {
+    background-color: var(--redcolor);
+}
+
+.footer.presenter {
+    background-color: var(--bluecolor);
 }
 
 .header {
@@ -109,12 +118,6 @@ p {
     border-right: 1rem solid var(--deepredcolor);
 }
 
-/* .box {
-    border: 1rem soild #1e1e1e;
-    border-radius: 0.5rem;
-    cursor: pointer;
-} */
-
 .dropdown {
     background-color: none;
     border: none;
@@ -122,11 +125,26 @@ p {
 
 .cardContainer {
     padding: 2rem;
-    margin: 1rem auto auto auto;
-    border-right: 1rem solid var(--redcolor);
+    /* margin: 1rem auto auto auto; */
+    /* border-right: 1rem solid var(--redcolor); */
     border-radius: 0.2rem;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 1px 10px;
     background: var(--whitecolor);
+}
+
+.cardContainer.presenter {
+    border-right: 1rem solid var(--bluecolor);
+}
+
+.commentContainer {
+    width: 100%;
+    padding: 1rem;
+    box-shadow: none;
+    background: var(--whitecolor);
+}
+
+.commentContainer.presenter {
+    border: 0.05rem solid var(--bluecolor);
 }
 
 .gridContainer {
