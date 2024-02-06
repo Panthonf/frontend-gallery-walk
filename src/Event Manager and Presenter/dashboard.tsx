@@ -17,20 +17,19 @@ import {
     Anchor,
     AspectRatio,
     Stack,
+    UnstyledButton,
 } from "@mantine/core";
 import { Pagination } from "@mantine/core";
 import Navbar from "../components/navbar";
 import moment from "moment";
 
-import { useClipboard } from "@mantine/hooks";
+import { useClipboard, useToggle } from "@mantine/hooks";
 
 // import styles from "../components/styles.module.css";
 // import { IconSearch, IconArrowRight } from '@tabler/icons-react';
 
 import {
     IconSquarePlus,
-    IconArrowsJoin,
-    IconChevronDown,
     IconSearch,
     IconTrash,
     IconEye,
@@ -49,9 +48,12 @@ export default function Dashboard() {
 
     const [query, setQuery] = useState("");
     const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(5);
+    const [pageSize, setPageSize] = useState(3);
     const [totalEvents, setTotalEvents] = useState(0);
     const [events, setEvents] = useState([]);
+
+    const [activeTab, setActiveTab] = useState("Event manager");
+    const [value, toggle] = useToggle(["Event manager", "Presenter"]);
 
     document.title = `Dashboard | Event Manager`;
 
@@ -169,13 +171,6 @@ export default function Dashboard() {
         video_link: string;
     };
 
-    const [activeTab, setActiveTab] = useState("Event manager");
-
-    const handleTabChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedTab = event.target.value;
-        setActiveTab(selectedTab);
-    };
-
     const clipboard = useClipboard({ timeout: 500 });
 
     // thuumbnail container
@@ -192,6 +187,7 @@ export default function Dashboard() {
                 className={styles.cardContainer}
                 p="1rem"
                 radius="md"
+                mb="0.3rem"
             >
                 <Grid columns={24} p={0}>
                     <Grid.Col span="auto" p={0}>
@@ -212,7 +208,7 @@ export default function Dashboard() {
                                     Start event
                                 </Text>
                                 <Text>
-                                    {moment(event.start_date).format("MMMM Do YYYY, HH:mm A")}
+                                    {moment(event.start_date).format("LL [at] ")}
                                 </Text>
                             </Grid.Col>
 
@@ -221,7 +217,7 @@ export default function Dashboard() {
                                     End event
                                 </Text>
                                 <Text>
-                                    {moment(event.end_date).format("MMMM Do YYYY, HH:mm A")}
+                                    {moment(event.end_date).format("LL [at] ")}
                                 </Text>
                             </Grid.Col>
 
@@ -328,7 +324,7 @@ export default function Dashboard() {
                     <Text c="redcolor.4" fw={500} size="topic">
                         Dashboard
                     </Text>
-                    <Select
+                    {/* <Select
                         size="small"
                         w="max-content"
                         rightSection={<IconChevronDown size={12} />}
@@ -337,7 +333,22 @@ export default function Dashboard() {
                         onSelect={(selectedTab: ChangeEvent<HTMLInputElement>) =>
                             handleTabChange(selectedTab)
                         }
-                    />
+                    /> */}
+
+
+                    <Flex align="center" gap="md" mt="sm">
+                        <Button variant="transparent" size="xs"
+                            color={activeTab === "Event manager" ? "redcolor.4" : "graycolor.2"} onClick={() =>
+                                setActiveTab("Event manager")}>
+                            Event manager
+                        </Button>
+                        <Text>|</Text>
+                        <Button variant="transparent" size="xs"
+                            color={activeTab === "Presenter" ? "bluecolor.6" : "graycolor.2"} onClick={() =>
+                                setActiveTab("Presenter")}>
+                            Presenter
+                        </Button>
+                    </Flex>
                 </Grid.Col>
 
                 <Grid.Col span={12}>
@@ -371,12 +382,12 @@ export default function Dashboard() {
                                 <Grid.Col span={12}>
                                     {/* <Divider mb="lg" /> */}
 
-                                    <Text size="base" fw={500} c="dark.9" my="1rem">
+                                    <Text size="base" fw={500} c="dark.9" mt="1rem" mb="2rem">
                                         Next Events
                                     </Text>
 
                                     <Container fluid p="0">
-                                        <SimpleGrid cols={{ base: 1, sm: 1 }}>{card}</SimpleGrid>
+                                        <SimpleGrid cols={{ base: 1, sm: 1 }} m="0">{card}</SimpleGrid>
                                     </Container>
 
                                     <Pagination.Root
