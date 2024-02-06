@@ -165,7 +165,7 @@ export default function Event() {
   const fetchData = async () => {
     try {
       await axios
-        .get(`http://localhost:8080/events/${eventId}`, {
+        .get(`${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`, {
           withCredentials: true,
         })
         .then((res) => {
@@ -185,7 +185,7 @@ export default function Event() {
     const fetchData = async () => {
       try {
         await axios
-          .get(`http://localhost:8080/events/${eventId}`, {
+          .get(`${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`, {
             withCredentials: true,
           })
           .then((res) => {
@@ -263,7 +263,7 @@ export default function Event() {
 
   const handlePublishToggle = async () => {
     await axios
-      .put(`http://localhost:8080/events/${eventId}/publish`, {
+      .put(`${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}/publish`, {
         withCredentials: true,
       })
       .then((res) => {
@@ -339,7 +339,7 @@ export default function Event() {
     const fetchThumbnails = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:8080/events/thumbnail/${eventId}`,
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/thumbnail/${eventId}`,
           {
             withCredentials: true,
           }
@@ -903,7 +903,7 @@ export default function Event() {
                         formData.append("file", file as Blob);
                         axios
                           .post(
-                            `http://localhost:8080/events/upload/thumbnail/${eventId}`,
+                            `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/upload/thumbnail/${eventId}`,
                             formData,
                             {
                               withCredentials: true,

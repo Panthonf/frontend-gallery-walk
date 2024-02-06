@@ -67,7 +67,7 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/events/search",
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/search`,
           {
             withCredentials: true,
             params: { query, page, pageSize },
@@ -87,7 +87,7 @@ export default function Dashboard() {
     const fetchData = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:8080/events/search",
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/search`,
           {
             withCredentials: true,
             params: { query, page, pageSize },
@@ -158,7 +158,7 @@ export default function Dashboard() {
 
   async function getThumbnail(event_id: number) {
     const thumbnail = await axios.get(
-      `http://localhost:8080/events/thumbnail/${event_id}`,
+      `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/thumbnail/${event_id}`,
       {
         withCredentials: true,
       }
