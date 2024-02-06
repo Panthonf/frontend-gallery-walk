@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "@flaticon/flaticon-uicons": "^3.0.0",
-    "@mantine/code-highlight": "^7.2.2",
     "@mantine/colors-generator": "^7.3.0",
     "@mantine/core": "^7.2.2",
     "@mantine/dates": "^7.2.2",
