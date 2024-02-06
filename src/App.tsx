@@ -101,7 +101,7 @@ const theme = createTheme({
 
 export default function App() {
   return (
-    <Router>
+    <Router basename="/">
       <MantineProvider theme={theme}>
         <Routes>
           {/* Public Routes */}
