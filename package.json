@@ -60,7 +60,8 @@
     "react-dom": "^18.2.0",
     "sanitize-html": "^2.11.0",
     "sweetalert2": "^11.10.2",
-    "ts-node": "^10.9.2"
+    "ts-node": "^10.9.2",
+    "unique-names-generator": "^4.7.1"
   },
   "devDependencies": {
     "@types/dotenv": "^8.2.0",
