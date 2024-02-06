@@ -1,5 +1,5 @@
 import { Title, Text, Button, Container, Group, Center } from "@mantine/core";
-import classes from "./NotFoundTitle.module.css";
+import classes from "./notFoundTitle.module.css";
 import { useNavigate } from "react-router-dom";
 
 export function NotFoundTitle() {
