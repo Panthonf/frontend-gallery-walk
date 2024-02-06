@@ -1,14 +1,14 @@
 import {
     Card,
-    Title,
+    // Title,
     Text,
     Flex,
-    Divider,
+    // Divider,
     Button,
     TextInput,
     Grid,
     ActionIcon,
-    Anchor,
+    // Anchor,
     Stack,
     Modal,
     Box,
@@ -18,8 +18,8 @@ import {
     Paper,
     GridCol,
     Center,
-    Container,
-    rem,
+    // Container,
+    // rem,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -27,7 +27,7 @@ import axios from "axios";
 import moment from "moment";
 import Swal from "sweetalert2";
 import DOMPurify from "dompurify";
-import { useForm } from "@mantine/form";
+// import { useForm } from "@mantine/form";
 import { RichTextEditor, Link } from "@mantine/tiptap";
 import { useEditor } from "@tiptap/react";
 import Highlight from "@tiptap/extension-highlight";
@@ -36,14 +36,14 @@ import Underline from "@tiptap/extension-underline";
 import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
-import { IconArrowLeft, IconArrowNarrowRight, IconArrowsDiagonal, IconBrandInstagram, IconBrandTwitter, IconBrandYoutube, IconCoins, IconEdit, IconLayoutGridAdd, IconUserQuestion } from "@tabler/icons-react";
+import { IconArrowLeft, IconArrowNarrowRight, IconArrowsDiagonal, IconCoins, IconEdit, IconLayoutGridAdd, IconUserQuestion } from "@tabler/icons-react";
 import Navbar from "../components/navbar";
 
 import styles from "../styles.module.css";
 import { useDisclosure } from "@mantine/hooks";
 
-import { generateRandomName, generateShortName } from "../components/generate_name";
-import { colors } from "unique-names-generator";
+import { generateRandomName } from "../components/generate_name";
+// import { colors } from "unique-names-generator";
 
 type ProjectType = {
     id: string;

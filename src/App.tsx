@@ -15,7 +15,7 @@ import {
   Input,
   Select,
   Modal,
-  Card,
+  // Card,
 } from "@mantine/core";
 import { generateColors } from "@mantine/colors-generator";
 
