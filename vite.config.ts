@@ -10,7 +10,7 @@ export default defineConfig({
     lib: {
       entry: "src/main.tsx",
       name: "react-vite",
-      fileName: (format) => `react-vite.${format}.js`,
+      fileName: "index",
     },
     rollupOptions: {
       external: ["react", "react-router", "react-router-dom", "react-redux"],
