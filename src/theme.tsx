@@ -1,12 +1,12 @@
-import React, { ReactNode } from "react";
+import { ReactNode } from "react";
 import { MantineProvider, createTheme } from "@mantine/core";
 
-const theme: readonly string[] = createTheme({
+const theme = createTheme({
   colors: {
-    white: "#FFFDFD",
-    red: "#EB5353",
-    pink: "#F9D1D1",
-    deepRed: "#2B0B0B",
+    white: ["#FFFDFD", "#FFFDFD", "#FFFDFD", "#FFFDFD", "#FFFDFD", "#FFFDFD", "#FFFDFD", "#FFFDFD", "#FFFDFD", "#FFFDFD"],
+    red: ["#EB5353", "#EB5353", "#EB5353", "#EB5353", "#EB5353", "#EB5353", "#EB5353", "#EB5353", "#EB5353", "#EB5353"],
+    lightRed: ["#F9D1D1", "#F9D1D1", "#F9D1D1", "#F9D1D1", "#F9D1D1", "#F9D1D1", "#F9D1D1", "#F9D1D1", "#F9D1D1", "#F9D1D1"],
+    black: ["#2B0B0B", "#2B0B0B", "#2B0B0B", "#2B0B0B", "#2B0B0B", "#2B0B0B", "#2B0B0B", "#2B0B0B", "#2B0B0B", "#2B0B0B"],
   },
 });
 
