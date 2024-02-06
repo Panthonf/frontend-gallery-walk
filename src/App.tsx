@@ -15,6 +15,7 @@ import {
   Input,
   Select,
   Modal,
+  Card,
 } from "@mantine/core";
 import { generateColors } from "@mantine/colors-generator";
 
@@ -44,12 +45,15 @@ const theme = createTheme({
     topic: "16px",
   },
   colors: {
+    whitecolor: generateColors("#fffdfd"),
     redcolor: generateColors("#EB5353"),
     pinkcolor: generateColors("#F9D1D1"),
     deepredcolor: generateColors("#210909"),
     graycolor: generateColors("#6A6161"),
     darkcolor: generateColors("#1E1E1E"),
     greencolor: generateColors("#36AE7C"),
+    yellowcolor: generateColors("#F9D923"),
+    bluecolor: generateColors("#187498"),
   },
 
   components: {
@@ -58,7 +62,8 @@ const theme = createTheme({
         color: "redcolor.4",
         variant: "filled",
         radius: "xs",
-        size: "lg",
+        size: "sm",
+        fw: "200"
       },
     }),
     Text: {
