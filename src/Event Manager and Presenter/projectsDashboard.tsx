@@ -19,13 +19,14 @@ import {
 } from "@mantine/core";
 import { IconArrowNarrowRight, IconArrowsJoin, IconChevronDown, IconSearch, IconSquarePlus } from "@tabler/icons-react";
 import axios from "axios";
-import moment from "moment";
+// import moment from "moment";
 import { ReactNode, useEffect, useState } from "react";
 import parse from "html-react-parser";
 
 import styles from "../styles.module.css";
 import { eventNames } from "process";
 import { useDisclosure } from "@mantine/hooks";
+import moment from "moment";
 
 
 type ProjectType = {
@@ -51,25 +52,25 @@ export default function ProjectsDashboard() {
     const [pageSize, setPageSize] = useState(5);
     const [opened, { open, close }] = useDisclosure(false);
 
-    useEffect(() => {
-        const fetchProjects = async () => {
-            await axios
-                .get(`${import.meta.env.VITE_BASE_ENDPOINTMENT}projects/by-user`, {
-                    withCredentials: true,
-                    params: { query, page, pageSize },
-                })
-                .then((res) => {
-                    console.log("gg", res.data);
-                    setProjects(res.data.data);
-                    setTotal(res.data.totalProjects);
-                })
-                .catch((err) => {
-                    console.log(err);
-                });
-        };
+  useEffect(() => {
+    const fetchProjects = async () => {
+      await axios
+        .get(`${import.meta.env.VITE_BASE_ENDPOINTMENT}projects/by-user`, {
+          withCredentials: true,
+          params: { query, page, pageSize },
+        })
+        .then((res) => {
+          console.log("gg", res.data);
+          setProjects(res.data.data);
+          setTotal(res.data.totalProjects);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    };
 
-        fetchProjects();
-    }, [query, page, pageSize]);
+    fetchProjects();
+  }, [query, page, pageSize]);
 
     const [eventLink, setEventLink] = useState('');
 

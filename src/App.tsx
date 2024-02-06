@@ -32,6 +32,7 @@ import GuestLogin from "./Guest/guestLogin.tsx";
 import { NotFoundTitle } from "./components/notFoundTitle.tsx";
 import GuestProject from "./Guest/guestProject.tsx";
 import Projects from "./Event Manager and Presenter/project.tsx";
+import EditEvent from "./Event Manager and Presenter/editEvent.tsx";
 
 // import Test from "./test.tsx";
 // import { DateTimePicker } from "@mantine/dates";
@@ -117,6 +118,7 @@ export default function App() {
             />
             <Route path="/create-event" element={<CreateEvent />} />
             <Route path="/event/:eventId" element={<Event />} />
+            <Route path="/event/edit/:eventId" element={<EditEvent />} />
             <Route path="/project/:projectId" element={<Projects />} />
           </Route>
 

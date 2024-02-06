@@ -1,28 +1,23 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
-import { Avatar, Divider, Grid, Group, Menu, Text, UnstyledButton, rem } from '@mantine/core';
+import {  Divider, Grid, Group, Menu, Text, UnstyledButton, rem } from '@mantine/core';
 import {
     IconChevronDown,
     IconHeart,
-    IconLayoutDashboard,
     IconLogout,
     IconMessage,
     IconPlayerPause,
     IconSettings,
-    IconSquarePlus,
     IconStar,
     IconSwitchHorizontal,
     IconTrash,
 
 } from '@tabler/icons-react';
 
-import styles from "./styles.module.css";
-
 
 
 export default function Navbar() {
 
-    const [userMenuOpened, setUserMenuOpened] = useState(false);
+    const [, setUserMenuOpened] = useState(false);
 
     return (
         <body>
