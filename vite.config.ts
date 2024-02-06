@@ -1,13 +1,12 @@
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 
-export default defineConfig(({ command }) => {
-  const isProduction = command === 'build';
+export default defineConfig(() => {
   return {
     plugins: [react()],
-    base: "/", // You might need to adjust this depending on your project's setup
+    base: "/",
     build: {
-      outDir: isProduction ? 'dist' : 'build',
+      outDir: "dist",
       rollupOptions: {
         output: {
           manualChunks: {
@@ -16,7 +15,7 @@ export default defineConfig(({ command }) => {
           },
         },
         input: {
-          main: "index.html", // Path to your index.html file
+          main: "index.html",
         },
       },
     },
