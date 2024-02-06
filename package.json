@@ -14,7 +14,7 @@
     "@mantine/carousel": "^7.2.2",
     "@mantine/code-highlight": "^7.2.2",
     "@mantine/colors-generator": "^7.3.0",
-    "@mantine/core": "^7.3.2",
+    "@mantine/core": "^7.2.2",
     "@mantine/dates": "^7.2.2",
     "@mantine/dropzone": "^7.2.2",
     "@mantine/form": "^7.3.1",
@@ -59,7 +59,7 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "sanitize-html": "^2.11.0",
-    "sweetalert2": "^11.10.2",
+    "sweetalert2": "^11.10.5",
     "ts-node": "^10.9.2",
     "unique-names-generator": "^4.7.1"
   },
