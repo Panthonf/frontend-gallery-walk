@@ -101,7 +101,7 @@ const theme = createTheme({
 
 export default function App() {
   return (
-    <Router basename="https://frontend-gallery-walk.vercel.app/">
+    <Router basename="/login">
       <MantineProvider theme={theme}>
         <Routes>
           {/* Public Routes */}
