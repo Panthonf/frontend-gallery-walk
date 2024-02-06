@@ -64,7 +64,7 @@ const theme = createTheme({
         variant: "filled",
         radius: "xs",
         size: "sm",
-        fw: "200"
+        fw: "200",
       },
     }),
     Text: {
@@ -101,7 +101,7 @@ const theme = createTheme({
 
 export default function App() {
   return (
-    <Router basename='/gallery-walk'>
+    <Router basename={"/"}>
       <MantineProvider theme={theme}>
         <Routes>
           {/* Public Routes */}
