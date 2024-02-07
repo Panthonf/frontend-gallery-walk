@@ -1249,7 +1249,7 @@ export default function Event() {
                       </>
                     ) : (
                       <>
-                        {event?.location}
+                        {event?.location ? (event?.location) : "No location"}
                         {canEdit && (
                           <Button
                             rightSection={<IconEdit></IconEdit>}

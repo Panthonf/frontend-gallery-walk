@@ -4,7 +4,7 @@ import {
   TextInput,
   Text,
   Button,
-  Anchor,
+  // Anchor,
   Grid,
   Container,
   SimpleGrid,
@@ -13,6 +13,7 @@ import {
   Modal,
   Box,
   Group,
+  Anchor,
 } from "@mantine/core";
 import {
   IconArrowNarrowRight,
@@ -31,6 +32,8 @@ import moment from "moment";
 import { Pagination } from "@mantine/core";
 
 type ProjectType = {
+  event_data: object;
+  virtual_money: ReactNode;
   event_id: ReactNode;
   event_name: string;
   length: number;
@@ -50,7 +53,7 @@ export default function ProjectsDashboard() {
   const [projects, setProjects] = useState<ProjectType | null>();
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize,] = useState(5);
+  const [pageSize] = useState(5);
   const [opened, { open, close }] = useDisclosure(false);
 
   useEffect(() => {
@@ -61,7 +64,7 @@ export default function ProjectsDashboard() {
           params: { query, page, pageSize },
         })
         .then((res) => {
-          // console.log("gg", res.data);
+          console.log("gg", res.data);
           setProjects(res.data.data);
           setTotal(res.data.totalProjects);
         })
@@ -81,7 +84,9 @@ export default function ProjectsDashboard() {
     }
   };
 
-  const handleInputChange = (e: { target: { value: SetStateAction<string>; }; }) => {
+  const handleInputChange = (e: {
+    target: { value: SetStateAction<string> };
+  }) => {
     setEventLink(e.target.value);
   };
 
@@ -184,18 +189,62 @@ export default function ProjectsDashboard() {
                             <Text size="xsmall" mb="xs">
                               Virtual money
                             </Text>
+                            <Text truncate="end" maw="max-content">
+                              {moment().isBetween(
+                                (
+                                  projects.event_data as {
+                                    start_date: string;
+                                    end_date: string;
+                                  }
+                                )?.start_date,
+                                (
+                                  projects.event_data as {
+                                    start_date: string;
+                                    end_date: string;
+                                  }
+                                )?.end_date
+                              ) ? (
+                                <Text c="redcolor.4" size="xsmall">
+                                  Will be available after event ends
+                                </Text>
+                              ) : (
+                                projects.virtual_money
+                              )}
+                            </Text>
                           </Grid.Col>
                           <Grid.Col span="auto">
                             <Text size="xsmall" mb="xs">
                               Location
                             </Text>
                             <Text truncate="end" maw="max-content">
-                              30th Building
+                              {(projects.event_data as { location: string })
+                                ?.location
+                                ? (projects.event_data as { location: string })
+                                    ?.location
+                                : "-"}
                             </Text>
                           </Grid.Col>
                           <Grid.Col span="auto">
                             <Text size="xsmall" mb="xs">
                               Status
+                            </Text>
+                            <Text truncate="end" maw="max-content">
+                              {moment().isBetween(
+                                (
+                                  projects.event_data as {
+                                    start_date: string;
+                                    end_date: string;
+                                  }
+                                )?.start_date,
+                                (
+                                  projects.event_data as {
+                                    start_date: string;
+                                    end_date: string;
+                                  }
+                                )?.end_date
+                              )
+                                ? "Event ongoing"
+                                : "Event ended"}
                             </Text>
                           </Grid.Col>
                         </Grid>
