@@ -61,7 +61,7 @@ export default function ProjectsDashboard() {
           params: { query, page, pageSize },
         })
         .then((res) => {
-          console.log("gg", res.data);
+          // console.log("gg", res.data);
           setProjects(res.data.data);
           setTotal(res.data.totalProjects);
         })

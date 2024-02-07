@@ -40,6 +40,7 @@ import {
   IconClock,
   IconPhotoUp,
   IconPhotoX,
+  IconMapPin,
 } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import Swal from "sweetalert2";
@@ -96,6 +97,7 @@ export default function CreateEvent() {
       description: "",
       virtualMoney: 10000,
       unit: "Unit",
+      location: "",
     },
 
     validate: {
@@ -263,8 +265,7 @@ export default function CreateEvent() {
 
   const onSubmit = async () => {
     const formData = form.values;
-    // console.log("formData", formData);
-    // console.log("trans formed values", form.getTransformedValues());
+    console.log("form data", formData);
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -290,6 +291,7 @@ export default function CreateEvent() {
                 unit_money: formData.unit,
                 description: formData.description,
                 number_of_member: 10,
+                location: formData.location,
               },
               {
                 withCredentials: true,
@@ -570,6 +572,15 @@ export default function CreateEvent() {
                             {...form.getInputProps("description")}
                           />
                         </RichTextEditor>
+                      </Grid.Col>
+
+                      <Grid.Col span={12}>
+                        <TextInput
+                          rightSection={<IconMapPin size={14} />}
+                          label="Location"
+                          placeholder="Location"
+                          {...form.getInputProps("location")}
+                        />
                       </Grid.Col>
                     </Grid>
                   </div>
@@ -920,6 +931,12 @@ export default function CreateEvent() {
                             "hh:mm A"
                           )}
                         </Text>
+                      </div>
+                      <div>
+                        <Text span fw={500}>
+                          Location:{" "}
+                        </Text>
+                        {form.values.location.toString()}
                       </div>
                     </Text>
 

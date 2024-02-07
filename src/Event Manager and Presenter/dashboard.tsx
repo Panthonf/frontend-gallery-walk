@@ -73,6 +73,7 @@ export default function Dashboard() {
             params: { query, page, pageSize },
           }
         );
+        console.log("event", response.data.data);
         setEvents(response.data.data);
         setTotalEvents(response.data.totalEvents);
       } catch (error) {
@@ -167,6 +168,7 @@ export default function Dashboard() {
   }
 
   type EventType = {
+    location: string;
     id: number;
     event_name: string;
     start_date: string;
@@ -228,7 +230,7 @@ export default function Dashboard() {
                   Location
                 </Text>
                 <Text truncate="end" maw="max-content">
-                  30th Building
+                {event.location || "-"}
                 </Text>
               </Grid.Col>
 

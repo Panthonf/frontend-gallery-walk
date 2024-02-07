@@ -82,6 +82,7 @@ interface EventType {
   virtual_money: number;
   unit_money: string;
   thumbnail_url: string;
+  location: string;
 }
 
 type ProjectType = {
@@ -122,6 +123,7 @@ export default function Event() {
   const [editSubmissionEnd, setEditSubmissionEnd] = useState(false);
   const [editVirtualMoney, setEditVirtualMoney] = useState(false);
   const [editDescription, setEditDescription] = useState(false);
+  const [editLocation, setEditLocation] = useState(false);
 
   const [canEdit, setCanEdit] = useState(false);
 
@@ -169,7 +171,7 @@ export default function Event() {
           withCredentials: true,
         })
         .then((res) => {
-          console.log(res.data.data);
+          // console.log(res.data.data);
           setTotalProjects(res.data.totalProjects);
           setEvent(res.data.data);
         })
@@ -189,7 +191,7 @@ export default function Event() {
             withCredentials: true,
           })
           .then((res) => {
-            console.log(res.data.data);
+            // console.log(res.data.data);
             setTotalProjects(res.data.totalProjects);
             setEvent(res.data.data);
           })
@@ -211,7 +213,7 @@ export default function Event() {
             }
           )
           .then((res) => {
-            console.log("role", res.data.role);
+            // console.log("role", res.data.role);
             if (res.data.role === "manager") {
               setCanEdit(true);
             }
@@ -244,7 +246,7 @@ export default function Event() {
         })
         .then((res) => {
           setProjects(res.data.data);
-          console.log("project data dd", res.data);
+          // console.log("project data dd", res.data);
         })
         .catch((err) => {
           console.log("projects err", err);
@@ -263,11 +265,14 @@ export default function Event() {
 
   const handlePublishToggle = async () => {
     await axios
-      .put(`${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}/publish`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        console.log("dd", res.data);
+      .put(
+        `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}/publish`,
+        {
+          withCredentials: true,
+        }
+      )
+      .then(() => {
+        // console.log("dd", res.data);
       })
       .catch((err) => {
         console.log(err);
@@ -339,14 +344,15 @@ export default function Event() {
     const fetchThumbnails = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/thumbnail/${eventId}`,
+          `${
+            import.meta.env.VITE_BASE_ENDPOINTMENT
+          }events/thumbnail/${eventId}`,
           {
             withCredentials: true,
           }
         );
 
         const eventData = response.data.data[0];
-        // console.log(eventData);
         setThumbnails(eventData.thumbnail_url);
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -390,8 +396,7 @@ export default function Event() {
                 withCredentials: true,
               }
             )
-            .then((res) => {
-              console.log("dd", res.data);
+            .then(() => {
               Swal.fire({
                 title: "Success",
                 text: "Create project success",
@@ -614,6 +619,7 @@ export default function Event() {
       startDate: moment(event?.start_date).format("MMMM D, YYYY HH:mm"),
       eventName: event?.event_name,
       endDate: moment(event?.end_date).format("MMMM D, YYYY HH:mm"),
+      location: event?.location,
     },
 
     validate: {
@@ -699,7 +705,6 @@ export default function Event() {
   };
 
   const handleSubmissionStart = () => {
-    console.log("event?.submit_start", event?.submit_start);
     if (editSubmissionStart) {
       if (event?.submit_start) {
         form3?.setFieldValue(
@@ -744,6 +749,17 @@ export default function Event() {
       virtualMoneyForm?.setFieldValue("unitMoney", event?.unit_money);
     }
     setEditVirtualMoney(!editVirtualMoney);
+  };
+
+  const handleEditLocation = () => {
+    if (editLocation) {
+      if (event?.location) {
+        form2?.setFieldValue("location", event?.location);
+      }
+    } else {
+      form2.setFieldValue("location", event?.location);
+    }
+    setEditLocation(!editLocation);
   };
 
   const pickerControlStartTime = (
@@ -799,19 +815,20 @@ export default function Event() {
             submit_end: moment(form3?.values.submissionEnd).toISOString(),
             virtual_money: virtualMoneyForm?.values.virtualMoney,
             unit_money: virtualMoneyForm?.values.unitMoney,
+            location: form2?.values.location,
           },
           {
             withCredentials: true,
           }
         )
         .then((res) => {
-          console.log("update start date", res.data);
           setEditStartDateEvent(false);
           setEditEventName(false);
           setEditEndDateEvent(false);
           setEditSubmissionStart(false);
           setEditSubmissionEnd(false);
           setEditVirtualMoney(false);
+          setEditLocation(false);
           setEvent(res.data.data);
         })
         .catch((err) => {
@@ -897,20 +914,21 @@ export default function Event() {
 
                   <Button
                     onClick={() => {
-                      console.log("file", file);
                       if (file) {
                         const formData = new FormData();
                         formData.append("file", file as Blob);
                         axios
                           .post(
-                            `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/upload/thumbnail/${eventId}`,
+                            `${
+                              import.meta.env.VITE_BASE_ENDPOINTMENT
+                            }events/upload/thumbnail/${eventId}`,
                             formData,
                             {
                               withCredentials: true,
                             }
                           )
                           .then((res) => {
-                            console.log("update thumbnail", res.data);
+                            // console.log("update thumbnail", res.data);
                             setThumbnails(res.data.data.thumbnail_url);
                             close();
                           })
@@ -1193,6 +1211,54 @@ export default function Event() {
                       >
                         Save
                       </Button>
+                    )}
+                  </div>
+                  <div>
+                    <Text size="xsmall" c="graycolor.3">
+                      Location
+                    </Text>
+                    {editLocation ? (
+                      <>
+                        <TextInput
+                          label="Location"
+                          placeholder="Location"
+                          value={form2?.values.location}
+                          required
+                          onChange={(e) => {
+                            // console.log("e", e.target.value);
+                            form2?.setFieldValue("location", e.target.value);
+                          }}
+                        />
+                        <Button
+                          onClick={handleEditLocation}
+                          variant="white"
+                          size="xs"
+                          mt="md"
+                        >
+                          Cancel
+                        </Button>
+                        <Button
+                          variant="light"
+                          size="xs"
+                          mt="md"
+                          rightSection
+                          type="submit"
+                        >
+                          Save
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        {event?.location}
+                        {canEdit && (
+                          <Button
+                            rightSection={<IconEdit></IconEdit>}
+                            onClick={handleEditLocation}
+                            variant="white"
+                            size="xs"
+                          />
+                        )}
+                      </>
                     )}
                   </div>
                 </Flex>
@@ -1568,7 +1634,7 @@ export default function Event() {
                                 value={virtualMoneyForm?.values.virtualMoney}
                                 required
                                 onChange={(e) => {
-                                  console.log("e", e.target.value);
+                                  //  console.log("e", e.target.value);
                                   virtualMoneyForm?.setFieldValue(
                                     "virtualMoney",
                                     parseInt(e.target.value)
@@ -1582,7 +1648,7 @@ export default function Event() {
                                 value={virtualMoneyForm?.values.unitMoney}
                                 required
                                 onChange={(e) => {
-                                  console.log("e", e.target.value);
+                                  // console.log("e", e.target.value);
                                   virtualMoneyForm?.setFieldValue(
                                     "unitMoney",
                                     e.target.value
@@ -1744,7 +1810,7 @@ export default function Event() {
                   data={["5", "10", "15", "20"]}
                   value={pageSize.toString()}
                   onChange={(e) => {
-                    console.log("e", e);
+                    // console.log("e", e);
                     if (e !== null) {
                       setPageSize(parseInt(e));
                     }
