@@ -94,6 +94,7 @@ export default function Dashboard() {
             params: { query, page, pageSize },
           }
         );
+        console.log("event fff", response.data);
         setEvents(response.data.data);
         setTotalEvents(response.data.totalEvents);
       } catch (error) {
@@ -168,6 +169,7 @@ export default function Dashboard() {
   }
 
   type EventType = {
+    total_projects: number;
     location: string;
     id: number;
     event_name: string;
@@ -230,7 +232,7 @@ export default function Dashboard() {
                   Location
                 </Text>
                 <Text truncate="end" maw="max-content">
-                {event.location || "-"}
+                  {event.location || "-"}
                 </Text>
               </Grid.Col>
 
@@ -238,7 +240,7 @@ export default function Dashboard() {
                 <Text size="xsmall" mb="xs">
                   Projects
                 </Text>
-                <Text>12</Text>
+                <Text>{event.total_projects || 0}</Text>
               </Grid.Col>
             </Grid>
 
