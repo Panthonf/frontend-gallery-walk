@@ -69,7 +69,7 @@ export default function Dashboard() {
         const response = await axios.get(
           "https://backend-gallery-walk-production.up.railway.app/isLoggedIn"
         );
-        console.log(response.data); // Log the response
+        console.log("dffffdd", response.data); // Log the response
       } catch (error) {
         console.error("Error fetching isLoggedIn:", error); // Log any errors
       }
