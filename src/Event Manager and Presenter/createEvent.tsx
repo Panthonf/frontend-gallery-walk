@@ -280,7 +280,7 @@ export default function CreateEvent() {
         try {
           await axios
             .post(
-              `${BASE_ENDPOINT}events`,
+              `${import.meta.env.VITE_BASE_ENDPOINTMENT}events`,
               {
                 event_name: formData.eventName,
                 start_date: form.getTransformedValues().startDateTimeEvent,
