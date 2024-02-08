@@ -9,7 +9,7 @@ interface AuthResponse {
 
 const PrivateRoutes = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [token, setToken] = useState<boolean | null>(null);
+  const [token, setToken] = useState<boolean | null>(true);
 
   useEffect(() => {
     axios
