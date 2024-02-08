@@ -1,5 +1,4 @@
 import { Outlet, Navigate } from "react-router-dom";
-import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
 
 interface AuthResponse {
@@ -9,23 +8,32 @@ interface AuthResponse {
 
 const PrivateRoutes = () => {
   const [loading, setLoading] = useState<boolean>(true);
-  const [token, setToken] = useState<boolean | null>(true);
+  const [token, setToken] = useState<boolean | null>(null);
 
   useEffect(() => {
-    axios
-      .get<AuthResponse>(import.meta.env.VITE_CHECK_LOGIN, {
-        withCredentials: true,
-      })
-      .then((res: AxiosResponse<AuthResponse>) => {
-        console.log("Authentication status:", res.data.authenticated);
-        setToken(res.data.authenticated);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error checking authentication:", err);
+    const checkAuthentication = async () => {
+      try {
+        const response = await fetch(import.meta.env.VITE_CHECK_LOGIN, {
+          method: "GET",
+          credentials: "include", // Include cookies in the request
+        });
+        if (response.ok) {
+          const data: AuthResponse = await response.json();
+          console.log("Authentication status:", data.authenticated);
+          setToken(data.authenticated);
+        } else {
+          console.error("Failed to fetch authentication status:", response.status);
+          setToken(false);
+        }
+      } catch (error) {
+        console.error("Error checking authentication:", error);
         setToken(false);
+      } finally {
         setLoading(false);
-      });
+      }
+    };
+
+    checkAuthentication();
   }, []);
 
   if (loading) {
