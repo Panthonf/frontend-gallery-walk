@@ -12,7 +12,7 @@ const PrivateRoutes = () => {
 
   useEffect(() => {
     axios
-      .get<AuthResponse>(import.meta.env.VITE_CHECK_LOGIN, {
+      .get<AuthResponse>(import.meta.env.VITE_CHECK_LOGIN || "https://backend-gallery-walk-production.up.railway.app/isLoggedIn" , {
         withCredentials: true,
       })
       .then((res: AxiosResponse<AuthResponse>) => {
