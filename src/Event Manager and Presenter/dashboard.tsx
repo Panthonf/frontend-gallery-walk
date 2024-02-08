@@ -64,6 +64,28 @@ export default function Dashboard() {
   document.title = `Dashboard | Event Manager`;
 
   useEffect(() => {
+    const isAuthenticated = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_CHECK_LOGIN}`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log("authenticated", response.data.authenticated);
+        if(response.data.authenticated === false){
+          console.log("authenticated false", response.data.authenticated);
+          window.location.href = "/login";
+        }
+        else{
+          console.log("authenticated true", response.data.authenticated);
+          window.location.href = "/dashboard";
+        }
+      } catch (error) {
+        console.error("dddd", error);
+      }
+    };
+    isAuthenticated();
     const fetchData = async () => {
       try {
         const response = await axios.get(
