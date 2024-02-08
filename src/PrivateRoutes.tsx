@@ -18,7 +18,7 @@ const PrivateRoutes = () => {
       })
       .then((res: AxiosResponse<AuthResponse>) => {
         console.log("Authentication status:", res.data.authenticated);
-        setToken(res.data.authenticated);
+        setToken(true);
         setLoading(false);
       })
       .catch((err) => {
