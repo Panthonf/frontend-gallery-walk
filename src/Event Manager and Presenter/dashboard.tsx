@@ -67,12 +67,12 @@ export default function Dashboard() {
     const fetchIsLoggedIn = async () => {
       try {
         // Retrieve the value of the 'Set-Cookie' cookie
-        const setCookie = document.cookie
-          .split("; ")
-          .find((row) => row.startsWith("Set-Cookie"))
-          ?.split("=")[1];
-
-        console.log("document.cookie", document.cookie);
+        const setCookie = decodeURIComponent(
+          document.cookie
+            .split("; ")
+            .find((row) => row.startsWith("Set-Cookie"))
+            ?.split("=")[1]
+        );
 
         const headers = {
           // Include the 'Set-Cookie' cookie value in the request headers
