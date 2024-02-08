@@ -22,6 +22,7 @@ const PrivateRoutes = () => {
       .catch((err) => {
         setToken(false);
         console.log("eee", err);
+        console.log("eee", err.response.data.authenticated);
       });
   }, []);
 
