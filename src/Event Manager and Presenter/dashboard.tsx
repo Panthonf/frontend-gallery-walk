@@ -88,7 +88,7 @@ export default function Dashboard() {
         );
         console.log(response.data); // Log the response
       } catch (error) {
-        console.error("Error fetching isLoggedIn:", error.message); // Log any errors
+        console.error("Error fetching isLoggedIn:", error); // Log any errors
       }
     };
 
