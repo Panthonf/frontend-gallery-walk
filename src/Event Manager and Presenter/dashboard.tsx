@@ -66,21 +66,8 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchIsLoggedIn = async () => {
       try {
-        // Retrieve the value of the 'Set-Cookie' cookie
-        const setCookie = document.cookie;
-        console.log("Set-Cookie:", setCookie);
-
-        const headers = {
-          // Include the 'Set-Cookie' cookie value in the request headers
-          "Set-Cookie": setCookie,
-        };
-
         const response = await axios.get(
-          "https://backend-gallery-walk-production.up.railway.app/isLoggedIn",
-          {
-            withCredentials: true, // Include credentials (e.g., session cookies)
-            headers: headers, // Pass the headers to the request
-          }
+          "https://backend-gallery-walk-production.up.railway.app/isLoggedIn"
         );
         console.log(response.data); // Log the response
       } catch (error) {
