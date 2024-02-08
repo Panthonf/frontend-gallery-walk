@@ -73,13 +73,11 @@ export default function Dashboard() {
           }
         );
         console.log("authenticated", response.data.authenticated);
-        if(response.data.authenticated === false){
+        if (response.data.authenticated === false) {
           console.log("authenticated false", response.data.authenticated);
           window.location.href = "/login";
-        }
-        else{
+        } else {
           console.log("authenticated true", response.data.authenticated);
-          window.location.href = "/dashboard";
         }
       } catch (error) {
         console.error("dddd", error);
