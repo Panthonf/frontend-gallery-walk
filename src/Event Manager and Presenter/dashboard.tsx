@@ -71,6 +71,7 @@ export default function Dashboard() {
           .find((row) => row.startsWith("Set-Token"))
           ?.split("=")[1];
         console.log("setToken", setToken);
+        console.log("document.cookie", document.cookie);
 
         const headers = {
           // Include the 'Set-Token' cookie value in the request headers
