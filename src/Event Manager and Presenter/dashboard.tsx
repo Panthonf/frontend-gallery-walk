@@ -72,7 +72,7 @@ export default function Dashboard() {
             withCredentials: true,
           }
         );
-        console.log("Authentication status:", response.data.authenticated);
+        console.log("Authentication status gg:", response.data);
       } catch (error) {
         console.error("Error checking authentication:", error);
       }
