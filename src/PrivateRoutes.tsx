@@ -12,8 +12,8 @@ const PrivateRoutes = () => {
 
   useEffect(() => {
     axios
-      .get<AuthResponse>("https://backend-gallery-walk-production.up.railway.app/isLoggedIn" , {
-        // withCredentials: true,
+      .get<AuthResponse>(import.meta.env.VITE_CHECK_LOGIN, {
+        withCredentials: true,
       })
       .then((res: AxiosResponse<AuthResponse>) => {
         console.log("ddd", res.data.authenticated);
@@ -22,7 +22,6 @@ const PrivateRoutes = () => {
       .catch((err) => {
         setToken(false);
         console.log("eee", err);
-        console.log("eee", err.response.data.authenticated);
       });
   }, []);
 
