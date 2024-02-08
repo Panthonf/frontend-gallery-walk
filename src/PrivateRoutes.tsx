@@ -17,6 +17,8 @@ const PrivateRoutes = () => {
       })
       .then((res: AxiosResponse<AuthResponse>) => {
         console.log("ddd", res.data.authenticated);
+        console.log("api", import.meta.env.VITE_CHECK_LOGIN);
+
         setToken(res.data.authenticated);
       })
       .catch((err) => {
