@@ -65,13 +65,12 @@ export default function Dashboard() {
 
   useEffect(() => {
     console.log("page", page, "query", query, "pageSize", pageSize);
-
     const fetchData = async () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/search`,
           {
-            withCredentials: true,
+            // withCredentials: true,
             params: { query, page, pageSize },
           }
         );
