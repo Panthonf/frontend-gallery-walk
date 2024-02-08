@@ -66,15 +66,32 @@ export default function Dashboard() {
   useEffect(() => {
     const fetchIsLoggedIn = async () => {
       try {
-        const response = await axios.get('https://backend-gallery-walk-production.up.railway.app/isLoggedIn', {
-          withCredentials: true, // Include credentials (e.g., session cookies)
-        });
+        const setToken = document.cookie
+          .split("; ")
+          .find((row) => row.startsWith("Set-Token"))
+          ?.split("=")[1];
+        console.log("setToken", setToken);
+
+        const headers = {
+          // Include the 'Set-Token' cookie value in the request headers
+          "Set-Token": setToken,
+        };
+        console.log("headers", headers);
+
+
+        const response = await axios.get(
+          "https://backend-gallery-walk-production.up.railway.app/isLoggedIn",
+          {
+            withCredentials: true, // Include credentials (e.g., session cookies)
+            headers: headers,
+          }
+        );
         console.log(response.data); // Log the response
       } catch (error) {
-        console.error('Error fetching isLoggedIn:', error); // Log any errors
+        console.error("Error fetching isLoggedIn:", error); // Log any errors
       }
     };
-    
+
     fetchIsLoggedIn();
     const fetchData = async () => {
       try {
