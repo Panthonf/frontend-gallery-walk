@@ -77,6 +77,7 @@ export default function Homepage() {
                                             <Button
                                                 w="15rem"
                                                 ml="xl"
+                                                size="lg"
                                                 justify="space-between"
                                                 rightSection={
                                                     <IconArrowRight

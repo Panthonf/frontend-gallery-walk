@@ -1,6 +1,3 @@
-// import react component
-import { Link } from "react-router-dom";
-
 // import mantine component
 import {
     Grid,
@@ -9,13 +6,10 @@ import {
     Flex,
     Button,
     Divider,
-    Input,
-    PasswordInput,
     Center,
-    Group
 } from "@mantine/core";
-import { useForm, hasLength } from "@mantine/form";
-import { useDisclosure } from '@mantine/hooks';
+// import { useForm, hasLength } from "@mantine/form";
+// import { useDisclosure } from '@mantine/hooks';
 import "@mantine/core/styles.css";
 
 // import styles css
@@ -24,8 +18,8 @@ import "@mantine/core/styles.css";
 import {
     IconBrandGoogleFilled,
     // IconBrandFacebookFilled,
-    IconLock,
-    IconMail,
+    // IconLock,
+    // IconMail,
 } from "@tabler/icons-react";
 
 // import components
@@ -40,43 +34,43 @@ export default function Register() {
 
 
     // mantine form value
-    const form = useForm({
-        initialValues: {
-            firstName: "",
-            lastName: "",
-            firstNameTH: "",
-            lastNameTH: "",
-            affiliation: "",
-            email: "",
-            termsOfService: false,
-            password: "",
-            confirmPassword: ""
-        },
+    // const form = useForm({
+    //     initialValues: {
+    //         firstName: "",
+    //         lastName: "",
+    //         firstNameTH: "",
+    //         lastNameTH: "",
+    //         affiliation: "",
+    //         email: "",
+    //         termsOfService: false,
+    //         password: "",
+    //         confirmPassword: ""
+    //     },
 
-        validate: {
-            firstName: (value) =>
-                value.length < 2 ? 'First name is too short' : null,
-            lastName: (value) =>
-                value.length < 2 ? 'Last name is too short' : null,
-            firstNameTH: (value) =>
-                value.length < 2 ? 'First name is too short' : null,
-            lastNameTH: (value) =>
-                value.length < 2 ? 'Last name is too short' : null,
-            affiliation: hasLength({ min: 2, max: 10 }, 'affiliation must be 2-10 characters long'),
-            email: (value) =>
-                /^\S+@\S+$/.test(value) ? null : "Invalid email",
-            password: hasLength({ min: 6, max: 12 }, 'password must be 6-12 characters long'),
-            confirmPassword: (value, values) =>
-                value !== values.password ? 'Passwords did not match' : null,
-        },
-        transformValues: (values) => ({
-            fullName: `${values.firstName} ${values.lastName}`,
-            fullNameTH: `${values.firstNameTH} ${values.lastNameTH}`,
+    //     validate: {
+    //         firstName: (value) =>
+    //             value.length < 2 ? 'First name is too short' : null,
+    //         lastName: (value) =>
+    //             value.length < 2 ? 'Last name is too short' : null,
+    //         firstNameTH: (value) =>
+    //             value.length < 2 ? 'First name is too short' : null,
+    //         lastNameTH: (value) =>
+    //             value.length < 2 ? 'Last name is too short' : null,
+    //         affiliation: hasLength({ min: 2, max: 10 }, 'affiliation must be 2-10 characters long'),
+    //         email: (value) =>
+    //             /^\S+@\S+$/.test(value) ? null : "Invalid email",
+    //         password: hasLength({ min: 6, max: 12 }, 'password must be 6-12 characters long'),
+    //         confirmPassword: (value, values) =>
+    //             value !== values.password ? 'Passwords did not match' : null,
+    //     },
+    //     transformValues: (values) => ({
+    //         fullName: `${values.firstName} ${values.lastName}`,
+    //         fullNameTH: `${values.firstNameTH} ${values.lastNameTH}`,
 
-        }),
-    });
+    //     }),
+    // });
 
-    const [visible, { toggle }] = useDisclosure(false);
+    // const [visible, { toggle }] = useDisclosure(false);
 
     return (
         <body>

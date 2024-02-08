@@ -9,7 +9,7 @@ import {
 import "@mantine/core/styles.css";
 
 // import styles css
-import styles from "./styles.module.css";
+import styles from "../styles.module.css";
 
 import {
     IconBrandGoogleFilled,
@@ -20,7 +20,7 @@ export default function Login() {
 
     // google login
     const handleGoogleLogin = () => {
-        window.location.href = import.meta.env.VITE_BACKEND_ENDPOINT;
+        window.location.href = import.meta.env.VITE_BASE_ENDPOINTMENT + `guests/login/google`;
     };
 
     return (
@@ -31,7 +31,7 @@ export default function Login() {
             }}>
                 <Container size="xs" p="3rem" className={styles.logincontainer}>
                     <Text size="topic" c="redcolor.4" fw={500}>
-                        Let's get Started!
+                        Guest
                     </Text>
 
                     <Text mt="lg">
@@ -87,3 +87,6 @@ export default function Login() {
         </body>
     );
 }
+
+
+
