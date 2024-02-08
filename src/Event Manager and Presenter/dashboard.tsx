@@ -64,18 +64,8 @@ export default function Dashboard() {
   document.title = `Dashboard | Event Manager`;
 
   useEffect(() => {
-    const fetchIsLoggedIn = async () => {
-      try {
-        const response = await axios.get(
-          "https://backend-gallery-walk-production.up.railway.app/isLoggedIn"
-        );
-        console.log("dffffdd", response.data); // Log the response
-      } catch (error) {
-        console.error("Error fetching isLoggedIn:", error); // Log any errors
-      }
-    };
+    console.log("page", page, "query", query, "pageSize", pageSize);
 
-    fetchIsLoggedIn();
     const fetchData = async () => {
       try {
         const response = await axios.get(
