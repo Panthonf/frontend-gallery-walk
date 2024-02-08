@@ -67,7 +67,7 @@ export default function Dashboard() {
     const isAuthenticated = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_CHECK_LOGIN}`,
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}get-session`,
           {
             withCredentials: true,
           }
