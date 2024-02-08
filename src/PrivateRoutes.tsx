@@ -13,7 +13,7 @@ const PrivateRoutes = () => {
   useEffect(() => {
     axios
       .get<AuthResponse>("https://backend-gallery-walk-production.up.railway.app/isLoggedIn" , {
-        withCredentials: true,
+        // withCredentials: true,
       })
       .then((res: AxiosResponse<AuthResponse>) => {
         console.log("ddd", res.data.authenticated);
