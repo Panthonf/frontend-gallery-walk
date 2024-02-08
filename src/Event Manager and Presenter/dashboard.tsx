@@ -64,13 +64,26 @@ export default function Dashboard() {
   document.title = `Dashboard | Event Manager`;
 
   useEffect(() => {
-    console.log("page", page, "query", query, "pageSize", pageSize);
+    const isAuthenticated = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_CHECK_LOGIN}`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log("Authentication status:", response.data.authenticated);
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+      }
+    }
+    isAuthenticated();
     const fetchData = async () => {
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/search`,
           {
-            // withCredentials: true,
+            withCredentials: true,
             params: { query, page, pageSize },
           }
         );
