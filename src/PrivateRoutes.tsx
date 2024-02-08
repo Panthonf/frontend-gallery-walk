@@ -8,6 +8,7 @@ interface AuthResponse {
 }
 
 const PrivateRoutes = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -16,18 +17,26 @@ const PrivateRoutes = () => {
         withCredentials: true,
       })
       .then((res: AxiosResponse<AuthResponse>) => {
-        console.log("ddd", res.data.authenticated);
-        console.log("api", import.meta.env.VITE_CHECK_LOGIN);
-
+        console.log("Authentication status:", res.data.authenticated);
         setToken(res.data.authenticated);
+        setLoading(false);
       })
       .catch((err) => {
+        console.error("Error checking authentication:", err);
         setToken(false);
-        console.log("eee", err);
+        setLoading(false);
       });
   }, []);
 
-  return token === null ? null : token ? <Outlet /> : <Navigate to="/login" />;
+  if (loading) {
+    return <div>Loading...</div>; // Display a loading indicator
+  }
+
+  if (token === null) {
+    return null; // If token is still null, wait for the authentication status
+  }
+
+  return token ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default PrivateRoutes;
