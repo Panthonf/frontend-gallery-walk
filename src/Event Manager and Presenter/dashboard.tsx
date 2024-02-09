@@ -64,15 +64,29 @@ export default function Dashboard() {
   document.title = `Dashboard | Event Manager`;
 
   useEffect(() => {
-    const isAuthenticated = async () => {
+    const setSession = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BASE_ENDPOINTMENT}users/get-session`,
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}set-session`,
           {
             withCredentials: true,
           }
         );
-        console.log("Authentication status gg:", response.data);
+        console.log("Session set:", response.data);
+      } catch (error) {
+        console.error("Error setting session:", error);
+      }
+    }
+    setSession();
+    const isAuthenticated = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}get-session`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log("Get Session:", response.data);
       } catch (error) {
         console.error("Error checking authentication:", error);
       }
