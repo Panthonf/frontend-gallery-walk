@@ -32,6 +32,9 @@ export default {
 # Deploy
 
 ```
+# Clone the repository
+git clone 
+
 # Use the official image as a parent image
 cd /path/to/your/app
 
