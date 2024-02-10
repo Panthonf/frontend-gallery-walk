@@ -1,0 +1,12 @@
+version: "3.9"
+
+services:
+  my-react-vite-app:
+    build: .
+    ports:
+      - "3000:3000"  # Map container port 3000 to host port 3000
+    volumes:
+      - ./src:/app/src:rw  # Optional: Mount source code for development
+    command: ["npm", "run", "dev"]
+
+# Add other services as needed (e.g., database)
