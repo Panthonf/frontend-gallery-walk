@@ -1,17 +1,14 @@
 FROM node:18-alpine
 
-# Ensure clean environment and prevent cache issues
-RUN rm -rf node_modules package-lock.json
-
 # Create the working directory
 WORKDIR /app
 
-# Copy package.json and other necessary files
+# Copy package.json and install dependencies first
 COPY package*.json ./
-COPY . .
-
-# Install dependencies
 RUN npm install
+
+# Copy the rest of the project files
+COPY . .
 
 # Expose port for your application
 EXPOSE 3000
