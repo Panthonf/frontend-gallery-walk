@@ -126,6 +126,7 @@ export default function Event() {
   const [editLocation, setEditLocation] = useState(false);
 
   const [canEdit, setCanEdit] = useState(false);
+  const [isPublished, setIsPublished] = useState(false);
 
   const editor = useEditor({
     extensions: [
@@ -174,6 +175,7 @@ export default function Event() {
           // console.log(res.data.data);
           setTotalProjects(res.data.totalProjects);
           setEvent(res.data.data);
+          setIsPublished(res.data.data.published);
         })
         .catch((err) => {
           console.log(err);
@@ -261,8 +263,7 @@ export default function Event() {
     document.title = `${event?.event_name} | Virtual Event Manager`;
   }, [eventId, event?.event_name, query, page, pageSize]);
 
-  const [isPublished, setIsPublished] = useState(event?.published || false);
-
+  
   const handlePublishToggle = async () => {
     await axios
       .put(
