@@ -172,10 +172,11 @@ export default function Event() {
           withCredentials: true,
         })
         .then((res) => {
-          // console.log(res.data.data);
+          console.log("jjj",res.data.data);
           setTotalProjects(res.data.totalProjects);
           setEvent(res.data.data);
           setIsPublished(res.data.data.published);
+
         })
         .catch((err) => {
           console.log(err);
@@ -196,6 +197,7 @@ export default function Event() {
             // console.log(res.data.data);
             setTotalProjects(res.data.totalProjects);
             setEvent(res.data.data);
+            setIsPublished(res.data.data.published);
           })
           .catch((err) => {
             console.log(err);
@@ -272,13 +274,14 @@ export default function Event() {
           withCredentials: true,
         }
       )
-      .then(() => {
-        // console.log("dd", res.data);
+      .then((res) => {
+        console.log("dd", res.data.data.published);
+        setIsPublished(res.data.data.published);
       })
       .catch((err) => {
         console.log(err);
+
       });
-    setIsPublished((prev) => !prev);
   };
 
   // stat container
