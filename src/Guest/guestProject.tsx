@@ -1,6 +1,4 @@
 import {
-  Anchor,
-  Badge,
   Button,
   Card,
   Flex,
@@ -11,15 +9,23 @@ import {
   NumberInput,
   LoadingOverlay,
   TextInput,
-  ScrollArea,
   Divider,
+  Loader,
+  Center,
+  ActionIcon,
+  Pagination,
 } from "@mantine/core";
 import axios from "axios";
 import moment from "moment";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LoadingIndicator } from "../components/loading";
-import { IconArrowLeft, IconArrowsDiagonal, IconCoin, IconSend } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconArrowsDiagonal,
+  IconCoin,
+  IconSend,
+} from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import Swal from "sweetalert2";
@@ -28,7 +34,12 @@ export default function GuestProject() {
   const { projectId } = useParams();
   const [projectData, setProjectData] = useState<projectType>();
   const [isLoading, setIsLoading] = useState(true);
+  const [isCommentsLoading, setIsCommentsLoading] = useState(true);
   const [opened, { open, close }] = useDisclosure(false);
+  const [
+    descriptionOpened,
+    { open: openDescription, close: closeDescription },
+  ] = useDisclosure(false);
   const [visible, toggle] = useDisclosure(false);
   const [guestData, setGuestData] = useState<GuestType>({
     virtual_money: 0,
@@ -36,7 +47,9 @@ export default function GuestProject() {
   });
 
   const [commentData, setCommentData] = useState<object[]>([]);
-  const viewport = useRef<HTMLDivElement>(null);
+  const [pageSize] = useState(5);
+  const [page, setPage] = useState(1);
+  const [totalComments, setTotalComments] = useState(0);
 
   const navigate = useNavigate();
 
@@ -70,6 +83,29 @@ export default function GuestProject() {
     },
   });
 
+  async function fetchProjectComments() {
+    try {
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_BASE_ENDPOINTMENT
+        }guests/get-project-comments?projectId=${projectId}`,
+        {
+          withCredentials: true,
+          params: { page, pageSize },
+        }
+      );
+
+      if (response.data.success === true) {
+        console.log("comments", response.data);
+        setCommentData(response.data.data);
+        setTotalComments(response.data.totalComments);
+      } else {
+        console.log("comments", response.data);
+      }
+    } catch (err) {
+      console.log("err ggg", err);
+    }
+  }
   useEffect(() => {
     async function fetchProjectData() {
       const response = await axios
@@ -86,6 +122,7 @@ export default function GuestProject() {
             console.log(res.data.data);
             setProjectData(res.data.data);
             setIsLoading(false);
+            setIsCommentsLoading(false);
           }
         })
         .catch((err) => {
@@ -102,12 +139,13 @@ export default function GuestProject() {
           }guests/get-project-comments?projectId=${projectId}`,
           {
             withCredentials: true,
+            params: { page, pageSize },
           }
         );
-
         if (response.data.success === true) {
           console.log("comments", response.data);
           setCommentData(response.data.data);
+          setTotalComments(response.data.totalComments);
         } else {
           console.log("comments", response.data);
         }
@@ -119,7 +157,7 @@ export default function GuestProject() {
     fetchProjectData();
     fetchGuestData();
     fetchProjectComments();
-  }, [navigate, projectId]);
+  }, [navigate, page, pageSize, projectId]);
 
   async function fetchGuestData() {
     await axios
@@ -131,11 +169,11 @@ export default function GuestProject() {
           console.log("guest data", res.data.data);
           setGuestData(res.data.data);
           setIsLoading(false);
+          setIsCommentsLoading(false);
         }
       })
       .catch((err) => {
         console.log("err", err);
-        // navigate("-1")
       });
   }
 
@@ -186,6 +224,7 @@ export default function GuestProject() {
   }
 
   async function addComment() {
+    setIsCommentsLoading(true);
     await axios
       .post(
         `${import.meta.env.VITE_BASE_ENDPOINTMENT}guests/add-comment`,
@@ -200,15 +239,15 @@ export default function GuestProject() {
       .then((res) => {
         if (res.data.success === true) {
           console.log("add comment", res.data);
-          Swal.fire({
-            icon: "success",
-            title: "Success",
-            text: `Comment added`,
-            timer: 1000,
-            showConfirmButton: false,
-          });
-          setIsLoading(false);
-          window.location.reload();
+          fetchProjectComments();
+          // Swal.fire({
+          //   icon: "success",
+          //   title: "Success",
+          //   text: `Comment added`,
+          //   timer: 1000,
+          //   showConfirmButton: false,
+          // });
+          setIsCommentsLoading(false);
         } else {
           Swal.fire({
             icon: "error",
@@ -243,13 +282,15 @@ export default function GuestProject() {
     id: number;
   };
 
-  if (isLoading) {
-    return <LoadingIndicator />;
-  }
+  // if (isLoading) {
+  //   return <LoadingIndicator />;
+  // }
 
   return (
-    <div>
-      {projectData ? (
+    <>
+      {isLoading ? (
+        <LoadingIndicator />
+      ) : (
         <div>
           <Flex
             mih={50}
@@ -267,23 +308,44 @@ export default function GuestProject() {
             <Text fs="normal" fz="lg">
               Project id: {projectId}
             </Text> */}
-              <Title style={{ color: 'red' }}>{projectData?.title}</Title>
-              <Divider mb="lg" />
-                <Text size="xsmall" mb="xs">
-                  Description
-                </Text>
-              <Text>
+              <Title c="red.6">{projectData?.title}</Title>
+              {/* <Divider mb="lg" /> */}
+              <Text mt="md" size="small" c="dimmed">
+                Description
+              </Text>
+              {/* <Flex justify="center" align="center" gap="xl"> */}
+              <Text lineClamp={4} mt="2">
                 <div
                   dangerouslySetInnerHTML={{
-                    __html: projectData.description.toString() || "",
+                    __html: projectData?.description?.toString() || "",
                   }}
                 ></div>
               </Text>
+              <ActionIcon
+                variant="subtle"
+                onClick={openDescription}
+                color="red.4"
+              >
+                <IconArrowsDiagonal size={14} stroke={1.5} />
+              </ActionIcon>
+              <Modal
+                opened={descriptionOpened}
+                onClose={closeDescription}
+                title="Description"
+              >
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: projectData?.description.toString() || "",
+                  }}
+                ></div>
+              </Modal>
+              {/* </Flex> */}
               <Flex justify="space-between" mt="md" align="center" gap="xl">
-                <Text size="small" mb="xs">
-                  {moment(projectData?.created_at).format("DD/MM/yyyy HH:mm:ss a")}
+                <Text size="small" mb="xs" c="dimmed">
+                  {moment(projectData?.created_at).format(
+                    "D MMMM YYYY HH:mm A"
+                  )}
                 </Text>
-
                 <Modal
                   opened={opened}
                   onClose={close}
@@ -296,7 +358,6 @@ export default function GuestProject() {
                     loaderProps={{ color: "pink", type: "bars" }}
                   />
                   <Text>You have {guestData?.virtual_money}</Text>
-
                   <form onSubmit={form.onSubmit(() => giveVirtualMoney())}>
                     <NumberInput
                       mt="md"
@@ -304,61 +365,51 @@ export default function GuestProject() {
                       placeholder="Enter amount"
                       {...form.getInputProps("amount")}
                     />
-
                     <Group justify="flex-end" mt="md">
                       <Button type="submit">Submit</Button>
                     </Group>
                   </form>
                 </Modal>
                 <Button
+                  radius="md"
                   variant="filled"
-                  color="red"
                   size="xs"
                   leftSection={<IconCoin />}
                   onClick={open}
+                  // variant="default"
+                  color="green.6"
                 >
                   Give Virtual Money
                 </Button>
               </Flex>
-            </Card>{" "}
-            {/* <Anchor underline="always" onClick={() => navigate(-1)}>
-              Back
-            </Anchor> */}
-            <Card radius="md" shadow="lg" miw={200} maw={600}>
-              <Title order={4}>Comments</Title>
 
-              {commentData.length > 0 ? (
-                <ScrollArea h={200} viewportRef={viewport}>
-                  {commentData.map((comment: object) => (
-                    <Card mt="sm" key={(comment as { id: string }).id}>
-                      <Text>{(comment as { comment: string }).comment}</Text>
-                      <Text size="md" c="gray" mt="sm">
-                        {moment(
-                          (comment as { created_at: string }).created_at
-                        ).format("MMMM Do YY HH:mm a")}
-                      </Text>
-                    </Card>
-                  ))}
-                </ScrollArea>
-              ) : (
-                <Text>No comments</Text>
-              )}
+              <Divider my="md" />
+
+              <Title mx="md" c="red.5" order={4}>
+                Comments
+              </Title>
               <form
                 onSubmit={commentForm.onSubmit(() => {
-                  console.log("comment", commentForm.values.comment),
-                    addComment();
+                  addComment(), commentForm.reset();
                 })}
               >
-                <Divider mt="md" mb="md" />
-                <Flex justify="center" align="center" style={{ marginTop: 16 }}>
+                <Flex
+                  mx="md"
+                  justify="left"
+                  align="center"
+                  style={{ marginTop: 16 }}
+                >
                   <TextInput
                     placeholder="Comment"
                     mr="sm"
                     {...commentForm.getInputProps("comment")}
+                    w="100%"
                   />
+                  {/* {commentForm.values.comment.length} */}
                   <Button
                     // variant="default"
-                    color="red"
+                    w="120"
+                    color="red.5"
                     size="s"
                     type="submit"
                     rightSection={<IconSend></IconSend>}
@@ -367,25 +418,81 @@ export default function GuestProject() {
                   </Button>
                 </Flex>
               </form>
-            </Card>
+              {commentData.length > 0 ? (
+                <>
+                  {isCommentsLoading ? (
+                    <Center>
+                      <Loader mt="lg" color="blue" />
+                    </Center>
+                  ) : (
+                    <>
+                      {commentData.map((comment: object) => (
+                        <Text mx="md" mt="md">
+                          {/* <Divider mt="4" /> */}
+                          <Flex justify="space-between" align="center">
+                            <Text mt="xs" size="xs" c="gray">
+                              {moment(
+                                (comment as { created_at: string }).created_at
+                              ).format("D MMMM YYYY HH:mm A")}{" "}
+                            </Text>
+                            <Text mt="xs" size="xs" c="gray">
+                              {moment(
+                                (comment as { created_at: string }).created_at
+                              ).fromNow()}
+                            </Text>
+                          </Flex>
+                          <Text
+                            style={{
+                              overflowWrap: "break-word",
+                            }}
+
+                            // mb="sm"
+                          >
+                            {(comment as { comment: string }).comment}
+                          </Text>
+                          <Divider mt="4" />
+                        </Text>
+                      ))}
+                      <Center mt="xs">
+                        <Pagination
+                          color="red.5"
+                          size="sm"
+                          mt="md"
+                          total={Math.ceil(totalComments / pageSize)}
+                          boundaries={2}
+                          value={page}
+                          onChange={(newPage) => setPage(newPage)}
+                        />
+                      </Center>
+                    </>
+                  )}
+                </>
+              ) : (
+                // </ScrollArea>
+                <Text mx="md" mt="md">
+                  No comments
+                </Text>
+              )}
+            </Card>{" "}
+            {/* <Anchor underline="always" onClick={() => navigate(-1)}>
+              Back
+            </Anchor> */}
             {/* <Anchor mb="md" underline="always" onClick={() => navigate(-1)}>
               Back
             </Anchor>  */}
             <Button
-                  // radius="lg"
-                  variant="filled"
-                  color="red"
-                  size="s"
-                  leftSection={<IconArrowLeft />}
-                  onClick={() => navigate(-1)}
-                >
-                  Back
+              // radius="lg"
+              variant="filled"
+              color="red"
+              size="s"
+              leftSection={<IconArrowLeft />}
+              onClick={() => navigate(-1)}
+            >
+              Back
             </Button>
           </Flex>
         </div>
-      ) : (
-        ""
       )}
-    </div>
+    </>
   );
 }
