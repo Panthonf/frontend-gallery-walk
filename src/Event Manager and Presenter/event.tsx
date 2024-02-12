@@ -446,6 +446,7 @@ export default function Event() {
 
     return (
       <>
+    {moment("2024-02-12 05:24:16.158").format("MMMM D, YYYY HH:mm a")}
         {editDescription ? (
           <>
             <EditDescriptionEvent
