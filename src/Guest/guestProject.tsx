@@ -19,7 +19,7 @@ import moment from "moment";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LoadingIndicator } from "../components/loading";
-import { IconCoin, IconSend } from "@tabler/icons-react";
+import { IconArrowLeft, IconArrowsDiagonal, IconCoin, IconSend } from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import Swal from "sweetalert2";
@@ -263,17 +263,20 @@ export default function GuestProject() {
             <Text fs="normal" fz="lg">
               Project id: {projectId}
             </Text> */}
-              <Title>{projectData?.title}</Title>
+              <Title style={{ color: 'red' }}>{projectData?.title}</Title>
               <Divider mb="lg" />
+                <Text size="xsmall" mb="xs">
+                  Description
+                </Text>
               <Text>
                 <div dangerouslySetInnerHTML={{
                   __html: projectData.description.toString() || "",
                 }}></div>
               </Text>
-              <Flex justify="space-between" mt="md" align="center">
-                <Badge>
+              <Flex justify="space-between" mt="md" align="center" gap="xl">
+                <Text size="small" mb="xs">
                   {moment(projectData?.created_at).format("DD/MM/yyyy HH:mm:ss a")}
-                </Badge>
+                </Text>
 
                 <Modal
                   opened={opened}
@@ -302,7 +305,6 @@ export default function GuestProject() {
                   </form>
                 </Modal>
                 <Button
-                  radius="lg"
                   variant="filled"
                   color="red"
                   size="xs"
@@ -353,20 +355,30 @@ export default function GuestProject() {
                     {...commentForm.getInputProps("comment")}
                   />
                   <Button
-                    variant="default"
-                    color="blue"
-                    size="xs"
-                    rightSection={<IconSend></IconSend>}
+                    // variant="default"
+                    color="red"
+                    size="s"
                     type="submit"
+                    rightSection={<IconSend></IconSend>}
                   >
                     Send
                   </Button>
                 </Flex>
               </form>
             </Card>
-            <Anchor mb="md" underline="always" onClick={() => navigate(-1)}>
+            {/* <Anchor mb="md" underline="always" onClick={() => navigate(-1)}>
               Back
-            </Anchor>
+            </Anchor>  */}
+            <Button
+                  // radius="lg"
+                  variant="filled"
+                  color="red"
+                  size="s"
+                  leftSection={<IconArrowLeft />}
+                  onClick={() => navigate(-1)}
+                >
+                  Back
+            </Button>
           </Flex>
         </div>
       ) : (
