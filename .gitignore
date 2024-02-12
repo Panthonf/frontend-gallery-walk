@@ -28,3 +28,6 @@ dist-ssr
 
 # dockerfile
 # docker-compose.yml
+
+# env
+.env
