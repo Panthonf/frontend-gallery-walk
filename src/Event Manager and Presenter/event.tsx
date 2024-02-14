@@ -50,7 +50,6 @@ import {
   IconPresentationAnalytics,
   IconInfoSquare,
   IconChartBar,
-  IconUsersGroup,
   IconClock,
 } from "@tabler/icons-react";
 import { isNotEmpty, useForm } from "@mantine/form";
@@ -172,11 +171,9 @@ export default function Event() {
           withCredentials: true,
         })
         .then((res) => {
-          console.log("jjj", res.data.data);
+          // console.log(res.data.data);
           setTotalProjects(res.data.totalProjects);
-
           setEvent(res.data.data);
-          setIsPublished(res.data.data.published);
         })
         .catch((err) => {
           console.log(err);
@@ -201,9 +198,6 @@ export default function Event() {
           })
           .catch((err) => {
             console.log(err);
-            if (err.response.data.success == false) {
-              window.location.href = "/dashboard";
-            }
           });
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -277,12 +271,12 @@ export default function Event() {
         }
       )
       .then((res) => {
-        console.log("dd", res.data.data.published);
-        setIsPublished(res.data.data.published);
+        console.log("dd", res.data);
       })
       .catch((err) => {
         console.log(err);
       });
+    setIsPublished((prev) => !prev);
   };
 
   // stat container
@@ -300,7 +294,7 @@ export default function Event() {
       label: "Project from event presenter",
     },
     {
-      title: "Guests",
+      title: "Comment by Guests",
       icon: "guests",
       value: "1234",
       label: "Number of guests",
@@ -441,53 +435,10 @@ export default function Event() {
       fetchData();
     }
   };
-  const handleDeleteEvent = async () => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: "Do you want to delete this event?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Yes",
-      cancelButtonText: "No",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          await axios
-            .delete(
-              `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
-              {
-                withCredentials: true,
-              }
-            )
-            .then(() => {
-              Swal.fire({
-                title: "Success",
-                text: "Delete event success",
-                icon: "success",
-                timer: 2000,
-                showConfirmButton: false,
-              }).then(() => {
-                window.location.href = "/dashboard";
-              });
-            })
-            .catch((err) => {
-              console.log(err);
-              Swal.fire({
-                title: "Error",
-                text: "Delete event error",
-                icon: "error",
-                confirmButtonText: "OK",
-              });
-            });
-        } catch (error) {
-          console.error("Error fetching events:", error);
-        }
-      }
-    });
-  };
 
   const ModalEvent = () => {
     const [opened, { open, close }] = useDisclosure(false);
+
     return (
       <>
         {editDescription ? (
@@ -531,19 +482,6 @@ export default function Event() {
                 />
               </Text>
             </Modal>
-
-            {canEdit && (
-              <Button
-                onClick={() => {
-                  // handleEditDescription();
-                  setEditDescription(!editDescription);
-                }}
-                leftSection={<IconEdit></IconEdit>}
-                variant="white"
-                size="xs"
-                mt="md"
-              />
-            )}
           </>
         )}
         {/* <Flex align="flex-end">
@@ -850,6 +788,34 @@ export default function Event() {
     </ActionIcon>
   );
 
+  const updateEventData = async () => {
+    try {
+      await axios
+        .put(
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+          {
+            event_name: form2?.values.eventName,
+            start_date: moment(form2?.values.startDate).toISOString(),
+            end_date: moment(form2?.values.endDate).toISOString(),
+          },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          setEditStartDateEvent(false);
+          setEditEventName(false);
+          setEditEndDateEvent(false);
+          setEvent(res.data.data);
+        })
+        .catch((err) => {
+          console.log("update start date err", err);
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
   const updateEvent = async () => {
     try {
       await axios
@@ -896,10 +862,10 @@ export default function Event() {
         {thumbnails && thumbnails && (
           <>
             {canEdit && (
-              <Flex justify="flex-end" mt="sm">
+              <Flex justify="flex-end">
                 <Button
                   onClick={open}
-                  leftSection={<IconEdit></IconEdit>}
+                  leftSection={<IconEdit size={14} />}
                   variant="white"
                   size="xs"
                 >
@@ -907,7 +873,7 @@ export default function Event() {
                 </Button>
               </Flex>
             )}
-            <AspectRatio ratio={970 / 150} maw="100vw" mt="3rem">
+            <AspectRatio ratio={970 / 150} maw="100vw" mt="sm">
               <Image src={thumbnails} alt={`Thumbnail for ${thumbnails}`} />
 
               <Modal
@@ -998,6 +964,51 @@ export default function Event() {
     );
   };
 
+  const handleDeleteEvent = async () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this event?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios
+            .delete(
+              `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+              {
+                withCredentials: true,
+              }
+            )
+            .then(() => {
+              Swal.fire({
+                title: "Success",
+                text: "Delete event success",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              }).then(() => {
+                window.location.href = "/dashboard";
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+              Swal.fire({
+                title: "Error",
+                text: "Delete event error",
+                icon: "error",
+                confirmButtonText: "OK",
+              });
+            });
+        } catch (error) {
+          console.error("Error fetching events:", error);
+        }
+      }
+    });
+  };
+
   return (
     <body>
       {/* {eventId} */}
@@ -1018,7 +1029,7 @@ export default function Event() {
             <div>
               <form
                 onSubmit={form2.onSubmit(() => {
-                  updateEvent();
+                  updateEventData();
                 })}
               >
                 {/* 
@@ -1037,15 +1048,19 @@ export default function Event() {
                     />
                   ) : (
                     <>
-                      {event?.event_name}
-                      {canEdit && (
-                        <Button
-                          rightSection={<IconEdit></IconEdit>}
-                          onClick={handleEditEventName}
-                          variant="white"
-                          size="xs"
-                        />
-                      )}
+                      <Flex align="center">
+                        <Text size="header" c="redcolor.4" fw={600}>
+                          {event?.event_name}
+                        </Text>
+                        {canEdit && (
+                          <Button
+                            rightSection={<IconEdit size={14} />}
+                            onClick={handleEditEventName}
+                            variant="white"
+                            size="xs"
+                          />
+                        )}
+                      </Flex>
                     </>
                   )}
 
@@ -1074,9 +1089,20 @@ export default function Event() {
                 </Text>
                 <Flex mb="md" gap="2rem">
                   <div>
-                    <Text size="xsmall" c="graycolor.3">
-                      Start of event
-                    </Text>
+                    <Flex align="center">
+                      <Text size="xsmall" c="graycolor.3">
+                        Start of event
+                      </Text>
+                      {canEdit && (
+                        <Button
+                          rightSection={<IconEdit size={14} />}
+                          onClick={handleEdit}
+                          variant="white"
+                          color="graycolor.2"
+                          size="xs"
+                        />
+                      )}
+                    </Flex>
 
                     {/* 
                     Start Date
@@ -1119,26 +1145,9 @@ export default function Event() {
                       </>
                     ) : (
                       <>
-                        <Flex align="center" justify="space-between">
-                          <Text>
-                            {/* {moment(
-                            `${moment(event?.start_date).format(
-                              "YYYY-MM-DD"
-                            )}T${moment(event?.start_date).format("HH:mm")}`,
-                            "YYYY-MM-DDTHH:mm"
-                          ).format()} */}
-                            {/* {moment(event?.start_date).format("YYYY-MM-DD HH:mm:ss")} */}
-                            {moment(event?.start_date).format("LL [at] HH:mm")}
-                          </Text>
-                          {canEdit && (
-                            <Button
-                              rightSection={<IconEdit></IconEdit>}
-                              onClick={handleEdit}
-                              variant="white"
-                              size="xs"
-                            />
-                          )}
-                        </Flex>
+                        <Text>
+                          {moment(event?.start_date).format("LL [at] HH:mm")}
+                        </Text>
                       </>
                     )}
 
@@ -1154,13 +1163,7 @@ export default function Event() {
                     ) : null}
 
                     {editStartDateEvent && (
-                      <Button
-                        variant="light"
-                        size="xs"
-                        mt="md"
-                        rightSection
-                        type="submit"
-                      >
+                      <Button variant="light" size="xs" mt="md" type="submit">
                         Save
                       </Button>
                     )}
@@ -1170,9 +1173,20 @@ export default function Event() {
                     End Date
                      */}
                   <div>
-                    <Text size="xsmall" c="graycolor.3">
-                      End of event
-                    </Text>
+                    <Flex align="center">
+                      <Text size="xsmall" c="graycolor.3">
+                        End of event
+                      </Text>
+                      {canEdit && (
+                        <Button
+                          rightSection={<IconEdit size={14} />}
+                          onClick={handleEditEndDate}
+                          variant="white"
+                          color="graycolor.2"
+                          size="xs"
+                        />
+                      )}
+                    </Flex>
 
                     {editEndDateEvent ? (
                       <>
@@ -1215,26 +1229,14 @@ export default function Event() {
                       </>
                     ) : (
                       <>
-                        <Flex align="center" justify="space-between">
-                          <Text>
-                            {/* {moment(
-                            `${moment(event?.start_date).format(
-                              "YYYY-MM-DD"
-                            )}T${moment(event?.start_date).format("HH:mm")}`,
-                            "YYYY-MM-DDTHH:mm"
-                          ).format()} */}
-                            {/* {moment(event?.start_date).format("YYYY-MM-DD HH:mm:ss")} */}
-                            {moment(event?.end_date).format("LL [at] HH:mm")}
+                        <Text>
+                          {moment(event?.end_date).format("LL [at] HH:mm")}
+                        </Text>
+                        {form2.errors.endDate && (
+                          <Text c="red">
+                            {form2.errors.endDate}
                           </Text>
-                          {canEdit && (
-                            <Button
-                              rightSection={<IconEdit></IconEdit>}
-                              onClick={handleEditEndDate}
-                              variant="white"
-                              size="xs"
-                            />
-                          )}
-                        </Flex>
+                        )}
                       </>
                     )}
 
@@ -1250,21 +1252,27 @@ export default function Event() {
                     ) : null}
 
                     {editEndDateEvent && (
-                      <Button
-                        variant="light"
-                        size="xs"
-                        mt="md"
-                        rightSection
-                        type="submit"
-                      >
+                      <Button variant="light" size="xs" mt="md" type="submit">
                         Save
                       </Button>
                     )}
                   </div>
                   <div>
-                    <Text size="xsmall" c="graycolor.3">
-                      Location
-                    </Text>
+                    <Flex align="center">
+                      <Text size="xsmall" c="graycolor.3">
+                        Location
+                      </Text>
+                      {canEdit && (
+                        <Button
+                          rightSection={<IconEdit size={14} />}
+                          onClick={handleEditLocation}
+                          variant="white"
+                          color="graycolor.2"
+                          size="xs"
+                        />
+                      )}
+                    </Flex>
+
                     {editLocation ? (
                       <>
                         <TextInput
@@ -1296,22 +1304,13 @@ export default function Event() {
                         </Button>
                       </>
                     ) : (
-                      <>
-                        {event?.location ? event?.location : "No location"}
-                        {canEdit && (
-                          <Button
-                            rightSection={<IconEdit></IconEdit>}
-                            onClick={handleEditLocation}
-                            variant="white"
-                            size="xs"
-                          />
-                        )}
-                      </>
+                      <>{event?.location ? event?.location : "No location"}</>
                     )}
                   </div>
                 </Flex>
               </form>
             </div>
+
             <Flex align="center" justify="flex-end" gap="md">
               <Group>
                 {canEdit && (
@@ -1329,9 +1328,7 @@ export default function Event() {
                 )}
                 <ActionIcon.Group>
                   <QrCodeModal />
-                  {/* <ActionIcon variant="default" size="lg" aria-label="Gallery">
-                    <IconQrcode size={16} />
-                  </ActionIcon> */}
+
                   <Menu position="bottom-end" shadow="sm">
                     <Menu.Target>
                       <ActionIcon variant="default" size="lg">
@@ -1345,14 +1342,11 @@ export default function Event() {
                       >
                         <Anchor
                           target="_blank"
-                          // href={`${
-                          //   import.meta.env.VITE_BASE_ENDPOINTMENT
-                          // }guests/events?eventId=${eventId}`}
                           onClick={() => {
                             guestClipboard.copy(
                               `${
                                 import.meta.env.VITE_BASE_ENDPOINTMENT
-                              }guests/events?eventId=${eventId}`
+                              }guests/access/event/${eventId}`
                             );
                             Swal.fire({
                               title: "Copied!",
@@ -1374,9 +1368,6 @@ export default function Event() {
                       >
                         <Anchor
                           target="_blank"
-                          // href={`${
-                          //   import.meta.env.VITE_BASE_ENDPOINTMENT
-                          // }presenters/${eventId}`}
                           onClick={() => {
                             presenterClipboard.copy(
                               `${
@@ -1407,15 +1398,10 @@ export default function Event() {
                         </ActionIcon>
                       </Menu.Target>
                       <Menu.Dropdown>
-                        {/* <Menu.Item leftSection={<IconEdit size={14} />}>
-                        Edit event
-                      </Menu.Item> */}
                         <Menu.Item
                           leftSection={<IconTrash size={14} />}
                           color="red"
-                          onClick={() => {
-                            handleDeleteEvent();
-                          }}
+                          onClick={handleDeleteEvent}
                         >
                           Delete event
                         </Menu.Item>
@@ -1436,7 +1422,7 @@ export default function Event() {
           mx="auto"
           h="max-content"
         >
-          <Tabs.List>
+          <Tabs.List mb="2rem">
             <Tabs.Tab
               value="gallery"
               leftSection={<IconInfoSquare size={14} />}
@@ -1469,9 +1455,21 @@ export default function Event() {
                     <Grid.Col span={8}>
                       <form onSubmit={form3.onSubmit(() => updateEvent())}>
                         <div>
-                          <Text size="xsmall" c="graycolor.3">
-                            Start submit project
-                          </Text>
+                          <Flex align="center">
+                            <Text size="xsmall" c="graycolor.3">
+                              Start submit project
+                            </Text>
+                            {canEdit && (
+                              <Button
+                                rightSection={<IconEdit size={14} />}
+                                onClick={handleSubmissionStart}
+                                variant="white"
+                                color="graycolor.2"
+                                size="xs"
+                              />
+                            )}
+                          </Flex>
+
                           {editSubmissionStart ? (
                             <>
                               <DateInput
@@ -1519,21 +1517,11 @@ export default function Event() {
                             </>
                           ) : (
                             <>
-                              <Flex align="center" justify="space-between">
-                                <Text>
-                                  {moment(event?.submit_start).format(
-                                    "LL [at] HH:mm"
-                                  )}
-                                </Text>
-                                {canEdit && (
-                                  <Button
-                                    rightSection={<IconEdit></IconEdit>}
-                                    onClick={handleSubmissionStart}
-                                    variant="white"
-                                    size="xs"
-                                  />
+                              <Text>
+                                {moment(event?.submit_start).format(
+                                  "LL [at] HH:mm"
                                 )}
-                              </Flex>
+                              </Text>
                             </>
                           )}
 
@@ -1562,9 +1550,21 @@ export default function Event() {
                             </Button>
                           )}
 
-                          <Text size="xsmall" c="graycolor.3">
-                            End submit project
-                          </Text>
+                          <Flex align="center">
+                            <Text size="xsmall" c="graycolor.3">
+                              End submit project
+                            </Text>
+                            {canEdit && (
+                              <Button
+                                rightSection={<IconEdit size={14} />}
+                                onClick={handleSubmissionEnd}
+                                variant="white"
+                                color="graycolor.2"
+                                size="xs"
+                              />
+                            )}
+                          </Flex>
+
                           <Text>
                             {editSubmissionEnd ? (
                               <>
@@ -1614,21 +1614,11 @@ export default function Event() {
                               </>
                             ) : (
                               <>
-                                <Flex align="center" justify="space-between">
-                                  <Text>
-                                    {moment(event?.submit_end).format(
-                                      "LL [at] HH:mm"
-                                    )}
-                                  </Text>
-                                  {canEdit && (
-                                    <Button
-                                      rightSection={<IconEdit></IconEdit>}
-                                      onClick={handleSubmissionEnd}
-                                      variant="white"
-                                      size="xs"
-                                    />
+                                <Text>
+                                  {moment(event?.submit_end).format(
+                                    "LL [at] HH:mm"
                                   )}
-                                </Flex>
+                                </Text>
                               </>
                             )}
 
@@ -1666,12 +1656,21 @@ export default function Event() {
                     </Grid.Col>
                     <Grid.Col span={8}>
                       <div>
-                        <Text size="xsmall" c="graycolor.3">
-                          Virtual Money
-                        </Text>
-                        {/* <Text>
-                          {event?.virtual_money} {event?.unit_money}
-                        </Text> */}
+                        <Flex align="center">
+                          <Text size="xsmall" c="graycolor.3">
+                            Virtual Money
+                          </Text>
+                          {canEdit && (
+                            <Button
+                              rightSection={<IconEdit size={14} />}
+                              onClick={handleEditVirtualMoney}
+                              variant="white"
+                              color="graycolor.2"
+                              size="xs"
+                            />
+                          )}
+                        </Flex>
+
                         <form
                           onSubmit={virtualMoneyForm.onSubmit(() =>
                             updateEvent()
@@ -1729,14 +1728,6 @@ export default function Event() {
                           ) : (
                             <>
                               {event?.virtual_money} {event?.unit_money}
-                              {canEdit && (
-                                <Button
-                                  rightSection={<IconEdit></IconEdit>}
-                                  onClick={handleEditVirtualMoney}
-                                  variant="white"
-                                  size="xs"
-                                />
-                              )}
                             </>
                           )}
                         </form>
@@ -1750,9 +1741,23 @@ export default function Event() {
                 </Grid.Col>
 
                 <Grid.Col mb="md">
-                  <Text w={500} c="graycolor.3" mb="xs">
-                    Description
-                  </Text>
+                  <Flex justify="flex-start" align="center" mb="xs">
+                    <Text w={500} c="graycolor.2">
+                      Description
+                      {canEdit && (
+                        <Button
+                          onClick={() => {
+                            setEditDescription(!editDescription);
+                          }}
+                          leftSection={<IconEdit size={14} />}
+                          variant="white"
+                          color="graycolor.2"
+                          size="xs"
+                        />
+                      )}
+                    </Text>
+                  </Flex>
+
                   <ModalEvent />
                 </Grid.Col>
               </Grid>
@@ -1869,7 +1874,7 @@ export default function Event() {
                 />
               </Flex>
 
-              <div style={{ height: "100vh" }}>
+              <div style={{ height: "100vh", marginTop: "2rem" }}>
                 {projects ? (
                   <div>
                     {projects.map((project: ProjectType) => (
@@ -1877,9 +1882,10 @@ export default function Event() {
                         key={project.id}
                         className={styles.cardContainer}
                         p="lg"
+                        mt="1rem"
                       >
                         <Grid align="flex-start" gutter="2rem">
-                          <Grid.Col span={3}>
+                          <Grid.Col span={2}>
                             <Text size="xsmall" c="graycolor.2">
                               Project name
                             </Text>
@@ -1893,20 +1899,12 @@ export default function Event() {
                             </Text>
                             <ModalProject project={project} />
                           </Grid.Col>
-                          <Grid.Col span={1.5}>
-                            <Text size="xsmall" c="graycolor.2" mb="0.5rem">
-                              Participants
-                            </Text>
-                            <Flex align="center" c="redcolor.4">
-                              <IconUsersGroup size={14} />
-                              <Text ml="md">0</Text>
-                            </Flex>
-                          </Grid.Col>
+
                           <Grid.Col span="content" ta="end">
-                            <Text size="small" c="gray">
+                            <Text size="sm" c="redcolor.4">
                               {project.virtual_money} {event?.unit_money}
                             </Text>
-                            <Text size="small" c="gray">
+                            <Text size="small" c="graycolor.2">
                               {moment(project?.created_at).format(
                                 "LL [at] HH:mm A"
                               )}

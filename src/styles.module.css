@@ -176,3 +176,7 @@ p {
         border-radius: 0.2rem;
     }
 }
+
+.hoverCard {
+    background-color: var(--whitecolor);
+}

@@ -18,9 +18,9 @@ import {
   Center,
 } from "@mantine/core";
 import {
-  IconArrowNarrowRight,
-  IconArrowsJoin,
-  IconSearch,
+    IconArrowNarrowRight,
+    IconArrowsJoin,
+    IconSearch,
 } from "@tabler/icons-react";
 import axios from "axios";
 import { ReactNode, SetStateAction, useEffect, useState } from "react";
@@ -32,29 +32,29 @@ import moment from "moment";
 import { Pagination } from "@mantine/core";
 
 type ProjectType = {
-  event_data: object;
-  virtual_money: ReactNode;
-  event_id: ReactNode;
-  event_name: string;
-  length: number;
-  map(
-    arg0: (project: ProjectType) => import("react/jsx-runtime").JSX.Element
-  ): ReactNode;
-  id: number;
-  title: string;
-  created_at: string;
-  description: string;
-  submit_start: string;
-  submit_end: string;
+    event_data: object;
+    virtual_money: ReactNode;
+    event_id: ReactNode;
+    event_name: string;
+    length: number;
+    map(
+        arg0: (project: ProjectType) => import("react/jsx-runtime").JSX.Element
+    ): ReactNode;
+    id: number;
+    title: string;
+    created_at: string;
+    description: string;
+    submit_start: string;
+    submit_end: string;
 };
 
 export default function ProjectsDashboard() {
-  const [total, setTotal] = useState(0);
-  const [projects, setProjects] = useState<ProjectType | null>();
-  const [query, setQuery] = useState("");
-  const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
-  const [opened, { open, close }] = useDisclosure(false);
+    const [total, setTotal] = useState(0);
+    const [projects, setProjects] = useState<ProjectType | null>();
+    const [query, setQuery] = useState("");
+    const [page, setPage] = useState(1);
+    const [pageSize] = useState(5);
+    const [opened, { open, close }] = useDisclosure(false);
 
   const [isLoading, setIsLoading] = useState(true);
 
@@ -74,9 +74,9 @@ export default function ProjectsDashboard() {
           // console.log(err);
         });
     };
-
     fetchProjects();
-  }, [query, page, pageSize]);
+  }
+  , [query, page, pageSize]);
 
   const [eventLink, setEventLink] = useState("");
 
@@ -349,4 +349,6 @@ export default function ProjectsDashboard() {
       </Grid>
     </div>
   );
+
 }
+

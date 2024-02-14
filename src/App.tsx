@@ -9,14 +9,16 @@ import styles from "./styles.module.css";
 import "@mantine/dates/styles.css";
 
 import {
-  MantineProvider,
-  createTheme,
-  Button,
-  Input,
-  Select,
-  Modal,
-  // Card,
+    MantineProvider,
+    createTheme,
+    Button,
+    Input,
+    Select,
+    Modal,
+    Anchor,
+    // Card,
 } from "@mantine/core";
+import { ModalsProvider } from '@mantine/modals';
 import { generateColors } from "@mantine/colors-generator";
 
 import Homepage from "./homepage.tsx";
@@ -26,6 +28,8 @@ import Dashboard from "./Event Manager and Presenter/dashboard.tsx";
 import PrivateRoutes from "./PrivateRoutes.tsx";
 import CreateEvent from "./Event Manager and Presenter/createEvent.tsx";
 import Event from "./Event Manager and Presenter/event.tsx";
+
+import Test from "./test.tsx";
 
 import GuestEventDashboard from "./Guest/guestEventDashboard.tsx";
 import GuestLogin from "./Guest/guestLogin.tsx";
@@ -38,65 +42,72 @@ import EditEvent from "./Event Manager and Presenter/editEvent.tsx";
 // import { DateTimePicker } from "@mantine/dates";
 
 const theme = createTheme({
-  fontFamily: "Poppins, sans-serif",
-  fontSizes: {
-    xsmall: "10px",
-    small: "12px",
-    base: "14px",
-    topic: "16px",
-  },
-  colors: {
-    whitecolor: generateColors("#fffdfd"),
-    redcolor: generateColors("#EB5353"),
-    pinkcolor: generateColors("#F9D1D1"),
-    deepredcolor: generateColors("#210909"),
-    graycolor: generateColors("#6A6161"),
-    darkcolor: generateColors("#1E1E1E"),
-    greencolor: generateColors("#36AE7C"),
-    yellowcolor: generateColors("#F9D923"),
-    bluecolor: generateColors("#187498"),
-  },
-
-  components: {
-    Button: Button.extend({
-      defaultProps: {
-        color: "redcolor.4",
-        variant: "filled",
-        radius: "xs",
-        size: "sm",
-        fw: "200",
-      },
-    }),
-    Text: {
-      defaultProps: {
-        color: "dark.9",
-        size: "base",
-      },
+    fontFamily: "Poppins, sans-serif",
+    fontSizes: {
+        xsmall: "10px",
+        small: "12px",
+        base: "14px",
+        topic: "16px",
+        header: "18px",
     },
-    Input: Input.extend({
-      defaultProps: {
-        size: "md",
-      },
-      classNames: {
-        input: styles.inputcomponent,
-      },
-    }),
-    InputWrapper: Input.Wrapper.extend({
-      classNames: {
-        label: styles.labelcomponent,
-      },
-    }),
-    Select: Select.extend({
-      classNames: {
-        input: styles.select,
-      },
-    }),
-    Modal: Modal.extend({
-      classNames: {
-        title: styles.title,
-      },
-    }),
-  },
+    colors: {
+        whitecolor: generateColors("#fffdfd"),
+        redcolor: generateColors("#EB5353"),
+        pinkcolor: generateColors("#F9D1D1"),
+        deepredcolor: generateColors("#210909"),
+        graycolor: generateColors("#6A6161"),
+        darkcolor: generateColors("#1E1E1E"),
+        greencolor: generateColors("#36AE7C"),
+        yellowcolor: generateColors("#F9D923"),
+        bluecolor: generateColors("#187498"),
+    },
+
+    components: {
+        Button: Button.extend({
+            defaultProps: {
+                color: "redcolor.4",
+                variant: "filled",
+                radius: "xs",
+                size: "sm",
+                fw: "200",
+            },
+        }),
+        Text: {
+            defaultProps: {
+                color: "dark.9",
+                size: "base",
+            },
+        },
+        Input: Input.extend({
+            defaultProps: {
+                size: "md",
+            },
+            classNames: {
+                input: styles.inputcomponent,
+            },
+        }),
+        InputWrapper: Input.Wrapper.extend({
+            classNames: {
+                label: styles.labelcomponent,
+            },
+        }),
+        Select: Select.extend({
+            classNames: {
+                input: styles.select,
+            },
+        }),
+        Modal: Modal.extend({
+            classNames: {
+                title: styles.title,
+            },
+        }),
+        Anchor: Anchor.extend({
+            defaultProps: {
+                c: "dark.9",
+                underline: "never"
+            }
+        })
+    },
 });
 
 export default function App() {
