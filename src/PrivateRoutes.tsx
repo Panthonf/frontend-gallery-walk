@@ -1,5 +1,6 @@
 import { Outlet, Navigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { LoadingIndicator } from "./components/loading";
 
 interface AuthResponse {
   authenticated: boolean;
@@ -22,11 +23,14 @@ const PrivateRoutes = () => {
           console.log("Authentication status:", data.authenticated);
           setToken(data.authenticated);
         } else {
-          console.error("Failed to fetch authentication status:", response.status);
+          console.error(
+            "Failed to fetch authentication status:",
+            response.status
+          );
           setToken(false);
         }
       } catch (error) {
-        console.error("Error checking authentication:", error);
+        // console.error("Error checking authentication:", error);
         setToken(false);
       } finally {
         setLoading(false);
@@ -37,7 +41,11 @@ const PrivateRoutes = () => {
   }, []);
 
   if (loading) {
-    return <div>Loading...</div>; // Display a loading indicator
+    return (
+      <div>
+        <LoadingIndicator />
+      </div>
+    ); // Display a loading indicator
   }
 
   if (token === null) {
