@@ -226,7 +226,7 @@ export default function Projects() {
         //     label: "Project from event presenter",
         // },
         {
-            title: "Guests",
+            title: "Comment by Guests",
             icon: "guests",
             value: "1234",
             label: "Number of guests",
@@ -302,7 +302,7 @@ export default function Projects() {
         return (
             <>
                 <Flex align="center" gap="md" mb="xs">
-                    <Text c="bluecolor.4" fw={600} size="topic" >
+                    <Text c="bluecolor.4" fw={600} size="header" >
                         {project?.title}{" "}
                     </Text>
 

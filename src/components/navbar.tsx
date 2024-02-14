@@ -38,12 +38,6 @@ export default function Navbar() {
                             </UnstyledButton>
                         </a>
 
-                        <a href="/create-event">
-                            <UnstyledButton>
-                                <Text>Create Event</Text>
-                            </UnstyledButton>
-                        </a>
-
                     </Grid.Col>
 
                     <Grid.Col span={4} ta="end">
@@ -68,39 +62,7 @@ export default function Navbar() {
                                 </UnstyledButton>
                             </Menu.Target>
                             <Menu.Dropdown>
-                                <Menu.Item
-                                    leftSection={
-                                        <IconHeart
-                                            style={{ width: rem(16), height: rem(16) }}
-
-                                            stroke={1.5}
-                                        />
-                                    }
-                                >
-                                    Liked posts
-                                </Menu.Item>
-                                <Menu.Item
-                                    leftSection={
-                                        <IconStar
-                                            style={{ width: rem(16), height: rem(16) }}
-
-                                            stroke={1.5}
-                                        />
-                                    }
-                                >
-                                    Saved posts
-                                </Menu.Item>
-                                <Menu.Item
-                                    leftSection={
-                                        <IconMessage
-                                            style={{ width: rem(16), height: rem(16) }}
-
-                                            stroke={1.5}
-                                        />
-                                    }
-                                >
-                                    Your comments
-                                </Menu.Item>
+                                
 
                                 <Menu.Label>Settings</Menu.Label>
                                 <Menu.Item
@@ -128,13 +90,7 @@ export default function Navbar() {
                                 <Menu.Divider />
 
                                 <Menu.Label>Danger zone</Menu.Label>
-                                <Menu.Item
-                                    leftSection={
-                                        <IconPlayerPause style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
-                                    }
-                                >
-                                    Pause subscription
-                                </Menu.Item>
+                                
                                 <Menu.Item
                                     color="red"
                                     leftSection={<IconTrash style={{ width: rem(16), height: rem(16) }} stroke={1.5} />}
