@@ -14,6 +14,8 @@ import {
   Center,
   ActionIcon,
   Pagination,
+  // Image,
+  // Avatar,
 } from "@mantine/core";
 import axios from "axios";
 import moment from "moment";
@@ -42,6 +44,9 @@ export default function GuestProject() {
   ] = useDisclosure(false);
   const [visible, toggle] = useDisclosure(false);
   const [guestData, setGuestData] = useState<GuestType>({
+    profile_pic: "",
+    last_name_en: "",
+    first_name_en: "",
     virtual_money: 0,
     id: 0,
   });
@@ -96,14 +101,14 @@ export default function GuestProject() {
       );
 
       if (response.data.success === true) {
-        console.log("comments", response.data);
+        // console.log("comments", response.data);
         setCommentData(response.data.data);
         setTotalComments(response.data.totalComments);
       } else {
-        console.log("comments", response.data);
+        // console.log("comments", response.data);
       }
     } catch (err) {
-      console.log("err ggg", err);
+      // console.log("err ggg", err);
     }
   }
   useEffect(() => {
@@ -119,14 +124,17 @@ export default function GuestProject() {
         )
         .then((res) => {
           if (res.data.success === true) {
-            console.log(res.data.data);
+            // console.log("ddd", res.data.data);
             setProjectData(res.data.data);
             setIsLoading(false);
             setIsCommentsLoading(false);
+            document.title = res.data.data.title;
+          } else {
+            navigate(-1);
           }
         })
-        .catch((err) => {
-          console.log("err", err);
+        .catch(() => {
+          // console.log("err", err);
         });
       return response;
     }
@@ -143,14 +151,14 @@ export default function GuestProject() {
           }
         );
         if (response.data.success === true) {
-          console.log("comments", response.data);
+          // console.log("comments", response.data);
           setCommentData(response.data.data);
           setTotalComments(response.data.totalComments);
         } else {
-          console.log("comments", response.data);
+          // console.log("comments", response.data);
         }
       } catch (err) {
-        console.log("err ggg", err);
+        // console.log("err ggg", err);
       }
     }
 
@@ -166,14 +174,14 @@ export default function GuestProject() {
       })
       .then((res) => {
         if (res.data.success === true) {
-          console.log("guest data", res.data.data);
+          // console.log("guest data", res.data.data);
           setGuestData(res.data.data);
           setIsLoading(false);
           setIsCommentsLoading(false);
         }
       })
-      .catch((err) => {
-        console.log("err", err);
+      .catch(() => {
+        // console.log("err", err);
       });
   }
 
@@ -195,7 +203,7 @@ export default function GuestProject() {
       )
       .then((res) => {
         if (res.data.success === true) {
-          console.log("give virtual money", res.data.data);
+          // console.log("give virtual money", res.data.data);
           Swal.fire({
             icon: "success",
             title: "Success",
@@ -206,7 +214,7 @@ export default function GuestProject() {
           setIsLoading(false);
           fetchGuestData();
         } else {
-          console.log("give virtual money", res.data);
+          // console.log("give virtual money", res.data);
           setIsLoading(false);
           Swal.fire({
             icon: "error",
@@ -217,9 +225,9 @@ export default function GuestProject() {
           toggle.close();
         }
       })
-      .catch((err) => {
-        console.log("give virtual money err", err);
-        console.log("virtual money", form.values.amount);
+      .catch(() => {
+        // console.log("give virtual money err", err);
+        // console.log("virtual money", form.values.amount);
       });
   }
 
@@ -238,7 +246,7 @@ export default function GuestProject() {
       )
       .then((res) => {
         if (res.data.success === true) {
-          console.log("add comment", res.data);
+          // console.log("add comment", res.data);
           fetchProjectComments();
           // Swal.fire({
           //   icon: "success",
@@ -259,8 +267,8 @@ export default function GuestProject() {
           setIsLoading(false);
         }
       })
-      .catch((err) => {
-        console.log("add comment err", err);
+      .catch(() => {
+        // console.log("add comment err", err);
         Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -278,6 +286,9 @@ export default function GuestProject() {
     created_at: string;
   };
   type GuestType = {
+    profile_pic: string;
+    last_name_en: string;
+    first_name_en: string;
     virtual_money: number;
     id: number;
   };
@@ -302,32 +313,50 @@ export default function GuestProject() {
             m="lg"
           >
             <Card radius="md" shadow="lg" maw={600}>
-              {/* <Text fs="normal" fz="lg">
-              Event id: {eventId}
-            </Text>
-            <Text fs="normal" fz="lg">
-              Project id: {projectId}
-            </Text> */}
+              {/* <Flex mb="lg" justify="space-between" align="center">
+                <Text size="md" c="dimmed">
+                  {guestData.first_name_en} {guestData.last_name_en}
+                </Text>
+                {guestData.profile_pic ? (
+                  <Image
+                    src={guestData.profile_pic}
+                    alt="Profile Picture"
+                    width={40}
+                    height={40}
+                    radius="xl"
+                  />
+                ) : (
+                  <Avatar size={50} radius="xl" />
+                )}
+              </Flex>
+              <Divider mb="lg" /> */}
               <Title c="red.6">{projectData?.title}</Title>
-              {/* <Divider mb="lg" /> */}
               <Text mt="md" size="small" c="dimmed">
                 Description
               </Text>
               {/* <Flex justify="center" align="center" gap="xl"> */}
-              <Text lineClamp={4} mt="2">
-                <div
-                  dangerouslySetInnerHTML={{
-                    __html: projectData?.description?.toString() || "",
-                  }}
-                ></div>
-              </Text>
-              <ActionIcon
-                variant="subtle"
-                onClick={openDescription}
-                color="red.4"
-              >
-                <IconArrowsDiagonal size={14} stroke={1.5} />
-              </ActionIcon>
+              <Divider mb="sm" />
+              {/* <Card shadow="xs" mt="xs" pb="xs"> */}
+                <Text lineClamp={4}>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: projectData?.description?.toString() || "",
+                    }}
+                  ></div>
+                </Text>
+                {(projectData?.description?.length ?? 0) > 200 ? (
+                  <Flex justify="flex-end">
+                    <ActionIcon
+                      variant="subtle"
+                      onClick={openDescription}
+                      color="red.4"
+                    >
+                      <IconArrowsDiagonal size={14} stroke={1.5} />
+                    </ActionIcon>
+                  </Flex>
+                ) : null}
+              {/* </Card> */}
+
               <Modal
                 opened={descriptionOpened}
                 onClose={closeDescription}
@@ -341,7 +370,7 @@ export default function GuestProject() {
               </Modal>
               {/* </Flex> */}
               <Flex justify="space-between" mt="md" align="center" gap="xl">
-                <Text size="small" mb="xs" c="dimmed">
+                <Text size="small" c="dimmed">
                   {moment(projectData?.created_at).format(
                     "D MMMM YYYY HH:mm A"
                   )}
@@ -377,7 +406,7 @@ export default function GuestProject() {
                   leftSection={<IconCoin />}
                   onClick={open}
                   // variant="default"
-                  color="green.6"
+                  color="red.5"
                 >
                   Give Virtual Money
                 </Button>
@@ -403,12 +432,12 @@ export default function GuestProject() {
                     placeholder="Comment"
                     mr="sm"
                     {...commentForm.getInputProps("comment")}
-                    w="100%"
+                    w="fit-content"
                   />
                   {/* {commentForm.values.comment.length} */}
                   <Button
                     // variant="default"
-                    w="120"
+                    w="fit-content"
                     color="red.5"
                     size="s"
                     type="submit"
@@ -427,7 +456,11 @@ export default function GuestProject() {
                   ) : (
                     <>
                       {commentData.map((comment: object) => (
-                        <Text mx="md" mt="md">
+                        <Text
+                          mx="md"
+                          mt="md"
+                          key={(comment as { id: string }).id}
+                        >
                           {/* <Divider mt="4" /> */}
                           <Flex justify="space-between" align="center">
                             <Text mt="xs" size="xs" c="gray">
