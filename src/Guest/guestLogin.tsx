@@ -3,7 +3,8 @@ import {
     Center,
     Container,
     Button,
-    Divider,
+    // Divider,
+    Title,
 } from "@mantine/core";
 
 import "@mantine/core/styles.css";
@@ -13,7 +14,7 @@ import styles from "../styles.module.css";
 
 import {
     IconBrandGoogleFilled,
-    IconBrandFacebookFilled,
+    // IconBrandFacebookFilled,
 } from "@tabler/icons-react";
 
 export default function Login() {
@@ -30,16 +31,12 @@ export default function Login() {
                 height: "100vh",
             }}>
                 <Container size="xs" p="3rem" className={styles.logincontainer}>
-                    <Text size="topic" c="redcolor.4" fw={500}>
+                    <Title order={1} c="redcolor.4" fw={500}>
                         Guest
-                    </Text>
+                    </Title>
 
-                    <Text mt="lg">
-                        Lorem ipsum dolor sit amet consectetur adipisicing
-                        elit. Quasi at amet perspiciatis in, quas nobis, sit
-                        id blanditiis recusandae saepe atque laudantium
-                        ratione asperiores culpa numquam provident,
-                        obcaecati repellat? Autem!
+                    <Text mt="sm">
+                        Let's get started by logging in to your account
                     </Text>
                     <Center>
                         <Button
@@ -58,7 +55,7 @@ export default function Login() {
                             </Text>
                         </Button>
                     </Center>
-                    <Divider
+                    {/* <Divider
                         my="lg"
                         label="or"
                         c="graycolor.2"
@@ -80,7 +77,7 @@ export default function Login() {
                                 Login with Facebook account
                             </Text>
                         </Button>
-                    </Center>
+                    </Center> */}
                 </Container>
 
             </Center>
