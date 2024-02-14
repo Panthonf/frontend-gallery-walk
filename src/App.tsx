@@ -110,12 +110,13 @@ export default function App() {
           <Route path="/register" element={<Register />} />
 
           {/* Event Manager and Presenter Routes */}
-          <Route
-            element={<Dashboard />}
-            path="/dashboard"
-            caseSensitive={true}
-          />
+
           <Route element={<PrivateRoutes />}>
+            <Route
+              element={<Dashboard />}
+              path="/dashboard"
+              caseSensitive={true}
+            />
             <Route path="/create-event" element={<CreateEvent />} />
             <Route path="/event/:eventId" element={<Event />} />
             <Route path="/event/edit/:eventId" element={<EditEvent />} />
