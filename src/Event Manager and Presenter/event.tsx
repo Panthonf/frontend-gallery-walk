@@ -172,11 +172,11 @@ export default function Event() {
           withCredentials: true,
         })
         .then((res) => {
-          console.log("jjj",res.data.data);
+          console.log("jjj", res.data.data);
           setTotalProjects(res.data.totalProjects);
+
           setEvent(res.data.data);
           setIsPublished(res.data.data.published);
-
         })
         .catch((err) => {
           console.log(err);
@@ -201,6 +201,9 @@ export default function Event() {
           })
           .catch((err) => {
             console.log(err);
+            if (err.response.data.success == false) {
+              window.location.href = "/dashboard";
+            }
           });
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -265,7 +268,6 @@ export default function Event() {
     document.title = `${event?.event_name} | Virtual Event Manager`;
   }, [eventId, event?.event_name, query, page, pageSize]);
 
-  
   const handlePublishToggle = async () => {
     await axios
       .put(
@@ -280,7 +282,6 @@ export default function Event() {
       })
       .catch((err) => {
         console.log(err);
-
       });
   };
 
@@ -440,13 +441,55 @@ export default function Event() {
       fetchData();
     }
   };
+  const handleDeleteEvent = async () => {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "Do you want to delete this event?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await axios
+            .delete(
+              `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+              {
+                withCredentials: true,
+              }
+            )
+            .then(() => {
+              Swal.fire({
+                title: "Success",
+                text: "Delete event success",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              }).then(() => {
+                window.location.href = "/dashboard";
+              });
+            })
+            .catch((err) => {
+              console.log(err);
+              Swal.fire({
+                title: "Error",
+                text: "Delete event error",
+                icon: "error",
+                confirmButtonText: "OK",
+              });
+            });
+        } catch (error) {
+          console.error("Error fetching events:", error);
+        }
+      }
+    });
+  };
 
   const ModalEvent = () => {
     const [opened, { open, close }] = useDisclosure(false);
-
     return (
       <>
-    {moment("2024-02-12 05:24:16.158").format("MMMM D, YYYY HH:mm a")}
         {editDescription ? (
           <>
             <EditDescriptionEvent
@@ -1254,7 +1297,7 @@ export default function Event() {
                       </>
                     ) : (
                       <>
-                        {event?.location ? (event?.location) : "No location"}
+                        {event?.location ? event?.location : "No location"}
                         {canEdit && (
                           <Button
                             rightSection={<IconEdit></IconEdit>}
@@ -1370,6 +1413,9 @@ export default function Event() {
                         <Menu.Item
                           leftSection={<IconTrash size={14} />}
                           color="red"
+                          onClick={() => {
+                            handleDeleteEvent();
+                          }}
                         >
                           Delete event
                         </Menu.Item>
