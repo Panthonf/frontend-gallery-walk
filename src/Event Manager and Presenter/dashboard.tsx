@@ -64,34 +64,6 @@ export default function Dashboard() {
   document.title = `Dashboard | Event Manager`;
 
   useEffect(() => {
-    const setSession = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BASE_ENDPOINTMENT}set-session`,
-          {
-            withCredentials: true,
-          }
-        );
-        console.log("Session set:", response.data);
-      } catch (error) {
-        console.error("Error setting session:", error);
-      }
-    }
-    setSession();
-    const isAuthenticated = async () => {
-      try {
-        const response = await axios.get(
-          `${import.meta.env.VITE_BASE_ENDPOINTMENT}get-session`,
-          {
-            withCredentials: true,
-          }
-        );
-        console.log("Get Session:", response.data);
-      } catch (error) {
-        console.error("Error checking authentication:", error);
-      }
-    }
-    isAuthenticated();
     const fetchData = async () => {
       try {
         const response = await axios.get(
@@ -211,7 +183,7 @@ export default function Dashboard() {
 
   const clipboard = useClipboard({ timeout: 500 });
 
-  // thuumbnail container
+  //thumbnail container
   const defaultThumbnailUrl = `https://placehold.co/400?text=`;
 
   const card = events.map((event: EventType) => {
