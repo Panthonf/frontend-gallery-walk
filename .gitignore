@@ -30,4 +30,4 @@ dist-ssr
 # docker-compose.yml
 
 # env
-.env
+# .env
