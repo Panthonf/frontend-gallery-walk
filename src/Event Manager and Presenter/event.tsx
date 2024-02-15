@@ -95,6 +95,10 @@ type ProjectType = {
   description: string;
 };
 
+type EventFeedbackType = {
+  total_virtual_money: number;
+};
+
 const BASE_ENDPOINT = import.meta.env.VITE_BASE_ENDPOINTMENT;
 
 export default function Event() {
@@ -126,6 +130,10 @@ export default function Event() {
 
   const [canEdit, setCanEdit] = useState(false);
   const [isPublished, setIsPublished] = useState(false);
+
+  const [eventFeedback, setEventFeedback] = useState<EventFeedbackType | null>(
+    null
+  );
 
   const editor = useEditor({
     extensions: [
@@ -254,9 +262,31 @@ export default function Event() {
         });
     };
 
+    const fetchEventFeedback = async () => {
+      try {
+        await axios
+          .get(
+            `${
+              import.meta.env.VITE_BASE_ENDPOINTMENT
+            }events/event-feedback/${eventId}`,
+            {
+              withCredentials: true,
+            }
+          )
+          .then((res) => {
+            console.log("event feedback", res.data.data);
+            console.log("event feedback dd",  res.data.data.total_virtual_money);
+            setEventFeedback(res.data.data);
+          });
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    };
+
     if (eventId) {
       generateQRCode();
       fetchProjectsData();
+      fetchEventFeedback();
     }
 
     document.title = `${event?.event_name} | Virtual Event Manager`;
@@ -293,16 +323,16 @@ export default function Event() {
       value: totalProjects,
       label: "Project from event presenter",
     },
-    {
-      title: "Comment by Guests",
-      icon: "guests",
-      value: "1234",
-      label: "Number of guests",
-    },
+    // {
+    //   title: "Comment by Guests",
+    //   icon: "guests",
+    //   value: "1234",
+    //   label: "Number of guests",
+    // },
     {
       title: "All virtual money",
       icon: "money",
-      value: "745",
+      value: eventFeedback?.total_virtual_money,
       label: "Number of virtual money",
     },
   ];
@@ -465,6 +495,8 @@ export default function Event() {
                 <IconArrowsDiagonal size={14} stroke={1.5} />
               </ActionIcon>
             </Flex>
+
+            
 
             <Modal
               opened={opened}
@@ -1233,9 +1265,7 @@ export default function Event() {
                           {moment(event?.end_date).format("LL [at] HH:mm")}
                         </Text>
                         {form2.errors.endDate && (
-                          <Text c="red">
-                            {form2.errors.endDate}
-                          </Text>
+                          <Text c="red">{form2.errors.endDate}</Text>
                         )}
                       </>
                     )}
