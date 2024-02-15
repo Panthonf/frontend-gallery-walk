@@ -112,6 +112,24 @@ export default function GuestProject() {
     }
   }
   useEffect(() => {
+    const isLoggedIn = async () => {
+      try {
+        const response = await axios.get(
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}guests/isLoggedIn`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log("response", response.data)
+        console.log("response", response.data.authenticated)
+        if(response.data.authenticated === false){
+          window.location.href =  `${import.meta.env.VITE_FRONTEND_ENDPOINT}/guest/login`
+        }
+      } catch (error) {
+        console.error("Error fetching events:", error);
+      }
+    }
+    isLoggedIn();
     async function fetchProjectData() {
       const response = await axios
         .get(
@@ -124,7 +142,6 @@ export default function GuestProject() {
         )
         .then((res) => {
           if (res.data.success === true) {
-            // console.log("ddd", res.data.data);
             setProjectData(res.data.data);
             setIsLoading(false);
             setIsCommentsLoading(false);
@@ -193,7 +210,7 @@ export default function GuestProject() {
           import.meta.env.VITE_BASE_ENDPOINTMENT
         }guests/give-virtual-money?projectId=${projectId}&guestId=${
           guestData?.id
-        }`,
+        }&eventId=${projectData?.event_id}`,
         {
           amount: form.values.amount,
         },
@@ -284,6 +301,7 @@ export default function GuestProject() {
     title: string;
     description: string;
     created_at: string;
+    event_id: string;
   };
   type GuestType = {
     profile_pic: string;
