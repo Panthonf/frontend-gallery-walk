@@ -18,7 +18,6 @@ import {
     Anchor,
     // Card,
 } from "@mantine/core";
-import { ModalsProvider } from '@mantine/modals';
 import { generateColors } from "@mantine/colors-generator";
 
 import Homepage from "./homepage.tsx";
@@ -28,8 +27,6 @@ import Dashboard from "./Event Manager and Presenter/dashboard.tsx";
 import PrivateRoutes from "./PrivateRoutes.tsx";
 import CreateEvent from "./Event Manager and Presenter/createEvent.tsx";
 import Event from "./Event Manager and Presenter/event.tsx";
-
-import Test from "./test.tsx";
 
 import GuestEventDashboard from "./Guest/guestEventDashboard.tsx";
 import GuestLogin from "./Guest/guestLogin.tsx";
