@@ -20,6 +20,8 @@ import {
   Center,
   // Container,
   // rem,
+  Image,
+  Anchor,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -43,6 +45,7 @@ import {
   IconCoins,
   IconEdit,
   IconLayoutGridAdd,
+  IconQrcode,
   IconUserQuestion,
 } from "@tabler/icons-react";
 import Navbar from "../components/navbar";
@@ -52,6 +55,7 @@ import { useDisclosure } from "@mantine/hooks";
 
 import { generateRandomName } from "../components/generate_name";
 // import { colors } from "unique-names-generator";
+import QRCode from "qrcode";
 
 type ProjectType = {
   id: string;
@@ -88,7 +92,9 @@ export default function Projects() {
   const [event, setEvent] = useState<EventType>();
   const [virtualMoney, setVirtualMoney] = useState<number>(0);
   const [comment, setComment] = useState<CommentType | null>();
+  const [qrCodeDataUrl, setQRCodeDataUrl] = useState("");
 
+  document.title = project?.title || "Project";
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -195,6 +201,18 @@ export default function Projects() {
       }
     };
 
+    const generateQRCode = async () => {
+      try {
+        const url = `${import.meta.env.VITE_FRONTEND_ENDPOINT}/guest/event/${
+          project?.event_id
+        }/project/${projectId}`;
+        const dataUrl = await QRCode.toDataURL(url);
+        setQRCodeDataUrl(dataUrl);
+      } catch (error) {
+        console.error("Error generating QR code:", error);
+      }
+    };
+    generateQRCode();
     fetchProjectComment();
   }, [project?.event_id, projectId]);
 
@@ -240,12 +258,12 @@ export default function Projects() {
     //     value: "10",
     //     label: "Project from event presenter",
     // },
-    {
-      title: "Guests",
-      icon: "guests",
-      value: "1234",
-      label: "Number of guests",
-    },
+    // {
+    //   title: "Guests",
+    //   icon: "guests",
+    //   value: "1234",
+    //   label: "Number of guests",
+    // },
     {
       title: "Virtual money",
       icon: "money",
@@ -319,7 +337,7 @@ export default function Projects() {
 
     return (
       <>
-        <Flex align="center" gap="md" mb="xs">
+        <Flex align="center" gap="md">
           <Text c="bluecolor.4" fw={600} size="topic">
             {project?.title}{" "}
           </Text>
@@ -359,6 +377,52 @@ export default function Projects() {
               </Button>
             </Flex>
           </form>
+        </Modal>
+      </>
+    );
+  };
+
+  const QrCodeModal = () => {
+    const [opened, { open, close }] = useDisclosure(false);
+    return (
+      <>
+        <ActionIcon
+          onClick={open}
+          variant="default"
+          size="lg"
+          aria-label="Gallery"
+        >
+          <IconQrcode size={16} />
+        </ActionIcon>
+        <Modal
+          opened={opened}
+          onClose={close}
+          title="QR Code for Project"
+          centered
+          radius="xs"
+          size="90%"
+          padding="lg"
+          className={styles.scrollBar}
+        >
+          <Center>
+            <div>
+              <Text c="graycolor.3" mt="md">
+                Share this QR code to your guests
+              </Text>
+              <Image src={qrCodeDataUrl} alt="QR Code" />
+
+              <Center>
+                <Anchor
+                  href={qrCodeDataUrl}
+                  download={`${project?.title}_qr_code.png`}
+                  target="_blank"
+                  rel="noreferrer"
+                >
+                  Download QR Code
+                </Anchor>
+              </Center>
+            </div>
+          </Center>
         </Modal>
       </>
     );
@@ -586,6 +650,7 @@ export default function Projects() {
                     </div>
                   </Flex>
                 </div>
+                <QrCodeModal />
               </Flex>
             </Box>
             <Card
@@ -621,7 +686,7 @@ export default function Projects() {
                   </Grid>
                 </Grid.Col>
                 <Grid.Col span="auto">
-                  <SimpleGrid cols={{ base: 1, sm: 2 }}>{stats}</SimpleGrid>
+                  <SimpleGrid cols={{ base: 1, sm: 1 }}>{stats}</SimpleGrid>
                 </Grid.Col>
                 <GridCol span={1.5}>
                   <Stack h={125} align="flex-end" justify="space-between">
