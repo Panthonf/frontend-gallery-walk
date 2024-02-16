@@ -2,12 +2,8 @@ import { useState } from 'react';
 import {  Divider, Grid, Group, Menu, Text, UnstyledButton, rem } from '@mantine/core';
 import {
     IconChevronDown,
-    IconHeart,
     IconLogout,
-    IconMessage,
-    IconPlayerPause,
     IconSettings,
-    IconStar,
     IconSwitchHorizontal,
     IconTrash,
 
@@ -22,8 +18,11 @@ export default function Navbar() {
     return (
         <body>
             <div style={{
-                padding: "1rem"
+                position: "fixed",
+                width: "100%",
+                padding: "1.5rem"
             }}>
+                
                 <Grid justify="space-between">
                     <Grid.Col span={1}>
                         <Text>
@@ -101,9 +100,9 @@ export default function Navbar() {
                         </Menu>
                     </Grid.Col>
                 </Grid>
-            </div>
 
-            <Divider size="xs" />
+                <Divider size="xs" mt="1rem" />
+            </div>
 
         </body>
     );
