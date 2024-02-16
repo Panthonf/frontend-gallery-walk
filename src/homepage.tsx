@@ -11,31 +11,35 @@ import {
     Tabs,
     Center,
     Affix,
+    Image
 } from "@mantine/core";
-import "@mantine/core/styles.css";
 
 // import styles css
 import styles from "./styles.module.css";
 
 // import icon form tabler react
 import { IconArrowRight } from "@tabler/icons-react";
-
-// import components
-// import Navbar from "./components/homepage_navbar";
+import Navbar from "./components/navbar";
 
 export default function Homepage() {
     return (
         <body>
-            {/* navbar */}
-            {/* <Navbar /> */}
+
+            <Navbar />
 
             {/* tab container */}
             <Center
                 style={{
                     height: "100vh",
                 }}>
+
                 {/* tab header container */}
-                <Container size="xl">
+                <Container size="xl" style={{ position: "relative" }}>
+
+                    <div style={{ position: "fixed", top: "10rem" }}>
+                        <Title size="5rem" mt="md" my="auto" c="redcolor.4">Gallery Walk</Title>
+                    </div>
+
                     <Tabs
                         color="redcolor.4"
                         defaultValue="home"
@@ -56,15 +60,26 @@ export default function Homepage() {
                         </Tabs.List>
 
                         {/* home container tab */}
-                        <Tabs.Panel value="home" px="5rem">
+                        <Tabs.Panel value="home" px="5rem" style={{ position: "relative" }}>
+
+                            <div style={{ position: "absolute", top: "-3rem", right: "24.75rem" }}>
+                                <Image
+                                    h={130}
+                                    src="/src/images/icon-1.PNG"
+                                />
+                            </div>
+
                             <Grid gutter="xl">
                                 <Grid.Col span="auto">
-                                    <Text>
-                                        Lorem ipsum dolor sit amet consectetur.
-                                        Accumsan nulla ac vitae aliquet proin.
-                                        Non senectus mi vitae eu.
+                                    <Text w="55%">
+                                        Lorem ipsum dolor sit amet
+                                        consectetur adipisicing elit. Unde
+                                        distinctio explicabo, quia illum
+                                        totam perferendis.
                                     </Text>
+
                                     <Title size="4rem" mt="md" my="auto">
+
                                         <Text span c="redcolor.4" inherit>
                                             Create
                                         </Text>{" "}
@@ -126,6 +141,7 @@ export default function Homepage() {
                                         </Flex>
                                     </Center>
                                 </Grid.Col>
+
                             </Grid>
                         </Tabs.Panel>
 
@@ -133,6 +149,8 @@ export default function Homepage() {
                         <Tabs.Panel value="service">
                             <Flex>
                                 <Grid grow px="5rem" my="auto" gutter="3rem">
+
+                                    {/* event manager container */}
                                     <Grid.Col span={4}>
                                         <Text size="xsmall" c="graycolor.2">
                                             Role Group
@@ -150,6 +168,8 @@ export default function Homepage() {
                                             natus, nobis dolor?
                                         </Text>
                                     </Grid.Col>
+
+                                    {/* event presenter container */}
                                     <Grid.Col span={4}>
                                         <Text size="xsmall" c="graycolor.2">
                                             Role Group
@@ -167,6 +187,8 @@ export default function Homepage() {
                                             natus, nobis dolor?
                                         </Text>
                                     </Grid.Col>
+
+                                    {/* guest container */}
                                     <Grid.Col span={4}>
                                         <Text size="xsmall" c="graycolor.2">
                                             Role Group
@@ -184,6 +206,8 @@ export default function Homepage() {
                                             natus, nobis dolor?
                                         </Text>
                                     </Grid.Col>
+
+                                    {/* service container */}
                                     <Grid.Col span={4}>
                                         <Text mb="md" c="redcolor.4" fw={500}>
                                             Service
@@ -198,19 +222,27 @@ export default function Homepage() {
                                             natus, nobis dolor?
                                         </Text>
                                     </Grid.Col>
+
+                                    {/* virtual money conatienr */}
                                     <Grid.Col span={4}>
                                         <Text mb="md" c="redcolor.4" fw={500}>
                                             Virtual Money
                                         </Text>
-                                        <Text>
-                                            Lorem ipsum dolor sit amet
-                                            consectetur adipisicing elit. Unde
-                                            distinctio explicabo, quia illum
-                                            totam perferendis. Consequatur eaque
-                                            aperiam totam reiciendis vero, a
-                                            facere tenetur rem libero saepe
-                                            natus, nobis dolor?
-                                        </Text>
+                                        <Flex align="center" gap="md">
+                                            <Text>
+                                                Lorem ipsum dolor sit amet
+                                                consectetur adipisicing elit. Unde
+                                                distinctio explicabo, quia illum
+                                                totam perferendis. Consequatur eaque
+                                                aperiam totam reiciendis vero, a
+                                                facere tenetur rem libero saepe
+                                                natus, nobis dolor?
+                                            </Text>
+                                            <Image
+                                                w={100}
+                                                src="/src/images/icon-2.png"
+                                            />
+                                        </Flex>
                                     </Grid.Col>
                                 </Grid>
 
@@ -246,8 +278,17 @@ export default function Homepage() {
                     </Tabs>
                 </Container>
             </Center>
+
+            <Affix position={{ bottom: 0, right: 0 }}>
+                <Image
+                    h={300}
+                    opacity="30%"
+                    src="/src/images/icon-3.png"
+                />
+            </Affix>
+
             {/* red footer */}
-            <Affix className={styles.footer}></Affix>
+            <Affix className={` ${styles.footer} ${styles.event}`}></Affix>
         </body>
     );
 }
