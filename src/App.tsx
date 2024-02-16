@@ -29,8 +29,6 @@ import PrivateRoutes from "./PrivateRoutes.tsx";
 import CreateEvent from "./Event Manager and Presenter/createEvent.tsx";
 import Event from "./Event Manager and Presenter/event.tsx";
 
-import Test from "./test.tsx";
-
 import GuestEventDashboard from "./Guest/guestEventDashboard.tsx";
 import GuestLogin from "./Guest/guestLogin.tsx";
 import { NotFoundTitle } from "./components/notFoundTitle.tsx";
@@ -146,8 +144,7 @@ export default function App() {
                         {/* 404 */}
                         <Route path="*" element={<NotFoundTitle />} />
                         <Route path="/404" element={<NotFoundTitle />} />
-                        {/* Testing UI */}
-                        <Route path="/test" element={<Test />} />
+                       
                     </Routes>
                 </ModalsProvider>
             </MantineProvider>
