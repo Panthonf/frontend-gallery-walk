@@ -109,45 +109,46 @@ const theme = createTheme({
 });
 
 export default function App() {
-    return (
-        <Router basename="/">
-            <MantineProvider theme={theme}>
-                <ModalsProvider>
-                    <Routes>
-                        {/* Public Routes */}
-                        <Route path="/" element={<Homepage />} />
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/register" element={<Register />} />
-                        {/* Event Manager and Presenter Routes */}
-                        <Route element={<PrivateRoutes />}>
-                            <Route
-                                element={<Dashboard />}
-                                path="/dashboard"
-                                caseSensitive={true}
-                            />
-                            <Route path="/create-event" element={<CreateEvent />} />
-                            <Route path="/event/:eventId" element={<Event />} />
-                            <Route path="/event/edit/:eventId" element={<EditEvent />} />
-                            <Route path="/project/:projectId" element={<Projects />} />
-                        </Route>
-                        {/* Guest Routes */}
-                        <Route
-                            path="/guest/event/:eventId"
-                            element={<GuestEventDashboard />}
-                        />
-                        {/* <Route path="/guest/event" element={<GuestEventDashboard />} /> */}
-                        <Route path="/guest/login" element={<GuestLogin />}></Route>
-                        <Route
-                            path="/guest/event/:eventId/project/:projectId"
-                            element={<GuestProject />}
-                        ></Route>
-                        {/* 404 */}
-                        <Route path="*" element={<NotFoundTitle />} />
-                        <Route path="/404" element={<NotFoundTitle />} />
-                       
-                    </Routes>
-                </ModalsProvider>
-            </MantineProvider>
-        </Router>
-    );
+  return (
+    <Router basename="/">
+      <MantineProvider theme={theme}>
+        <Routes>
+          {/* Public Routes */}
+          <Route path="/" element={<Homepage />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Event Manager and Presenter Routes */}
+
+          <Route element={<PrivateRoutes />}>
+            <Route
+              element={<Dashboard />}
+              path="/dashboard"
+              caseSensitive={true}
+            />
+            <Route path="/create-event" element={<CreateEvent />} />
+            <Route path="/event/:eventId" element={<Event />} />
+            <Route path="/event/edit/:eventId" element={<EditEvent />} />
+            <Route path="/project/:projectId" element={<Projects />} />
+          </Route>
+
+          {/* Guest Routes */}
+          <Route
+            path="/guest/event/:eventId"
+            element={<GuestEventDashboard />}
+          />
+          {/* <Route path="/guest/event" element={<GuestEventDashboard />} /> */}
+          <Route path="/guest/login" element={<GuestLogin />}></Route>
+          <Route
+            path="/guest/event/:eventId/project/:projectId"
+            element={<GuestProject />}
+          ></Route>
+
+          {/* 404 */}
+          <Route path="*" element={<NotFoundTitle />} />
+          <Route path="/404" element={<NotFoundTitle />} />
+        </Routes>
+      </MantineProvider>
+    </Router>
+  );
 }

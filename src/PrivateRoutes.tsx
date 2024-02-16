@@ -1,6 +1,6 @@
 import { Outlet, Navigate } from "react-router-dom";
-import axios, { AxiosResponse } from "axios";
 import { useEffect, useState } from "react";
+import { LoadingIndicator } from "./components/loading";
 
 interface AuthResponse {
   authenticated: boolean;
@@ -8,24 +8,51 @@ interface AuthResponse {
 }
 
 const PrivateRoutes = () => {
+  const [loading, setLoading] = useState<boolean>(true);
   const [token, setToken] = useState<boolean | null>(null);
 
   useEffect(() => {
-    axios
-      .get<AuthResponse>(import.meta.env.VITE_CHECK_LOGIN, {
-        withCredentials: true,
-      })
-      .then((res: AxiosResponse<AuthResponse>) => {
-        // console.log("ddd", res.data.authenticated);
-        setToken(res.data.authenticated);
-      })
-      .catch((err) => {
+    const checkAuthentication = async () => {
+      try {
+        const response = await fetch(import.meta.env.VITE_CHECK_LOGIN, {
+          method: "GET",
+          credentials: "include", // Include cookies in the request
+        });
+        if (response.ok) {
+          const data: AuthResponse = await response.json();
+          console.log("Authentication status:", data.authenticated);
+          setToken(data.authenticated);
+        } else {
+          console.error(
+            "Failed to fetch authentication status:",
+            response.status
+          );
+          setToken(false);
+        }
+      } catch (error) {
+        // console.error("Error checking authentication:", error);
         setToken(false);
-        console.log("eee", err);
-      });
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuthentication();
   }, []);
 
-  return token === null ? null : token ? <Outlet /> : <Navigate to="/login" />;
+  if (loading) {
+    return (
+      <div>
+        <LoadingIndicator />
+      </div>
+    ); // Display a loading indicator
+  }
+
+  if (token === null) {
+    return null; // If token is still null, wait for the authentication status
+  }
+
+  return token ? <Outlet /> : <Navigate to="/login" />;
 };
 
 export default PrivateRoutes;

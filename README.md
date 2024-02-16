@@ -29,5 +29,30 @@ export default {
 - Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
 - Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
 
+# Deploy
 
-dev-pan test
+```
+# Clone the repository
+git clone 
+
+# Use the official image as a parent image
+cd /path/to/your/app
+
+# Build the image
+docker build -t my-app .
+
+# Run the container
+docker run -d -p 3000:3000 my-app
+
+# Test the container
+curl -i localhost:3000
+
+# Stop the container
+docker stop <container-id>
+
+# Remove the container
+docker rm <container-id>
+
+# Remove the image
+docker rmi my-app
+```

@@ -18,6 +18,7 @@ import {
     Group,
     UnstyledButton,
     Modal,
+    Title,
 } from "@mantine/core";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styles from "../styles.module.css"
@@ -48,6 +49,7 @@ type GuestType = {
 };
 export default function GuestEventDashboard() {
     const { eventId } = useParams();
+    console.log("event id", eventId);
     const guestId = useLocation().search.split("=")[1];
     const navigate = useNavigate();
     const [eventData, setEventData] = useState<EventType | null>(null);
@@ -158,6 +160,7 @@ export default function GuestEventDashboard() {
             }
         };
 
+        if(!guestId) navigate("/guest/login");
         if (guestId)
             if (eventId) {
                 checkGuestSession();
@@ -185,9 +188,9 @@ export default function GuestEventDashboard() {
                     <Card p="xl" className={styles.cardContainer} style={{ top: "-7rem" }}>
 
                         <div style={{ marginBottom: "1rem" }}>
-                            <Text size="topic" c="redcolor.4" fw={500}>
+                            <Title order={3} c="redcolor.4" fw={500}>
                                 {eventData?.event_name}
-                            </Text>
+                            </Title>
                             <Text mt="5" c="graycolor.2">
                                 {`${moment(eventData?.start_date).format(
                                     "MMMM Do YY HH:mm A"

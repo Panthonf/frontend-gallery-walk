@@ -1,6 +1,4 @@
 import {
-  Anchor,
-  Badge,
   Button,
   Card,
   Flex,
@@ -11,15 +9,25 @@ import {
   NumberInput,
   LoadingOverlay,
   TextInput,
-  ScrollArea,
   Divider,
+  Loader,
+  Center,
+  ActionIcon,
+  Pagination,
+  // Image,
+  // Avatar,
 } from "@mantine/core";
 import axios from "axios";
 import moment from "moment";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { LoadingIndicator } from "../components/loading";
-import { IconCoin, IconSend } from "@tabler/icons-react";
+import {
+  IconArrowLeft,
+  IconArrowsDiagonal,
+  IconCoin,
+  IconSend,
+} from "@tabler/icons-react";
 import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import Swal from "sweetalert2";
@@ -28,15 +36,25 @@ export default function GuestProject() {
   const { projectId } = useParams();
   const [projectData, setProjectData] = useState<projectType>();
   const [isLoading, setIsLoading] = useState(true);
+  const [isCommentsLoading, setIsCommentsLoading] = useState(true);
   const [opened, { open, close }] = useDisclosure(false);
+  const [
+    descriptionOpened,
+    { open: openDescription, close: closeDescription },
+  ] = useDisclosure(false);
   const [visible, toggle] = useDisclosure(false);
   const [guestData, setGuestData] = useState<GuestType>({
+    profile_pic: "",
+    last_name_en: "",
+    first_name_en: "",
     virtual_money: 0,
     id: 0,
   });
 
   const [commentData, setCommentData] = useState<object[]>([]);
-  const viewport = useRef<HTMLDivElement>(null);
+  const [pageSize] = useState(5);
+  const [page, setPage] = useState(1);
+  const [totalComments, setTotalComments] = useState(0);
 
   const navigate = useNavigate();
 
@@ -50,8 +68,8 @@ export default function GuestProject() {
         value <= 0
           ? "Amount must be greater than 0"
           : value > guestData?.virtual_money
-            ? "Amount must be less than your virtual money"
-            : null,
+          ? "Amount must be less than your virtual money"
+          : null,
     },
   });
 
@@ -70,11 +88,35 @@ export default function GuestProject() {
     },
   });
 
+  async function fetchProjectComments() {
+    try {
+      const response = await axios.get(
+        `${
+          import.meta.env.VITE_BASE_ENDPOINTMENT
+        }guests/get-project-comments?projectId=${projectId}`,
+        {
+          withCredentials: true,
+          params: { page, pageSize },
+        }
+      );
+
+      if (response.data.success === true) {
+        // console.log("comments", response.data);
+        setCommentData(response.data.data);
+        setTotalComments(response.data.totalComments);
+      } else {
+        // console.log("comments", response.data);
+      }
+    } catch (err) {
+      // console.log("err ggg", err);
+    }
+  }
   useEffect(() => {
     async function fetchProjectData() {
       const response = await axios
         .get(
-          `${import.meta.env.VITE_BASE_ENDPOINTMENT
+          `${
+            import.meta.env.VITE_BASE_ENDPOINTMENT
           }projects/get-data/${projectId}`,
           {
             withCredentials: true,
@@ -82,13 +124,17 @@ export default function GuestProject() {
         )
         .then((res) => {
           if (res.data.success === true) {
-            console.log(res.data.data);
+            // console.log("ddd", res.data.data);
             setProjectData(res.data.data);
             setIsLoading(false);
+            setIsCommentsLoading(false);
+            document.title = res.data.data.title;
+          } else {
+            navigate(-1);
           }
         })
-        .catch((err) => {
-          console.log("err", err);
+        .catch(() => {
+          // console.log("err", err);
         });
       return response;
     }
@@ -96,28 +142,30 @@ export default function GuestProject() {
     async function fetchProjectComments() {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BASE_ENDPOINTMENT
+          `${
+            import.meta.env.VITE_BASE_ENDPOINTMENT
           }guests/get-project-comments?projectId=${projectId}`,
           {
             withCredentials: true,
+            params: { page, pageSize },
           }
         );
-
         if (response.data.success === true) {
-          console.log("comments", response.data);
+          // console.log("comments", response.data);
           setCommentData(response.data.data);
+          setTotalComments(response.data.totalComments);
         } else {
-          console.log("comments", response.data);
+          // console.log("comments", response.data);
         }
       } catch (err) {
-        console.log("err ggg", err);
+        // console.log("err ggg", err);
       }
     }
 
     fetchProjectData();
     fetchGuestData();
     fetchProjectComments();
-  }, [navigate, projectId]);
+  }, [navigate, page, pageSize, projectId]);
 
   async function fetchGuestData() {
     await axios
@@ -126,14 +174,14 @@ export default function GuestProject() {
       })
       .then((res) => {
         if (res.data.success === true) {
-          console.log("guest data", res.data.data);
+          // console.log("guest data", res.data.data);
           setGuestData(res.data.data);
           setIsLoading(false);
+          setIsCommentsLoading(false);
         }
       })
-      .catch((err) => {
-        console.log("err", err);
-        // navigate("-1")
+      .catch(() => {
+        // console.log("err", err);
       });
   }
 
@@ -141,8 +189,10 @@ export default function GuestProject() {
     toggle.open();
     await axios
       .post(
-        `${import.meta.env.VITE_BASE_ENDPOINTMENT
-        }guests/give-virtual-money?projectId=${projectId}&guestId=${guestData?.id
+        `${
+          import.meta.env.VITE_BASE_ENDPOINTMENT
+        }guests/give-virtual-money?projectId=${projectId}&guestId=${
+          guestData?.id
         }`,
         {
           amount: form.values.amount,
@@ -153,7 +203,7 @@ export default function GuestProject() {
       )
       .then((res) => {
         if (res.data.success === true) {
-          console.log("give virtual money", res.data.data);
+          // console.log("give virtual money", res.data.data);
           Swal.fire({
             icon: "success",
             title: "Success",
@@ -164,7 +214,7 @@ export default function GuestProject() {
           setIsLoading(false);
           fetchGuestData();
         } else {
-          console.log("give virtual money", res.data);
+          // console.log("give virtual money", res.data);
           setIsLoading(false);
           Swal.fire({
             icon: "error",
@@ -175,13 +225,14 @@ export default function GuestProject() {
           toggle.close();
         }
       })
-      .catch((err) => {
-        console.log("give virtual money err", err);
-        console.log("virtual money", form.values.amount);
+      .catch(() => {
+        // console.log("give virtual money err", err);
+        // console.log("virtual money", form.values.amount);
       });
   }
 
   async function addComment() {
+    setIsCommentsLoading(true);
     await axios
       .post(
         `${import.meta.env.VITE_BASE_ENDPOINTMENT}guests/add-comment`,
@@ -195,16 +246,16 @@ export default function GuestProject() {
       )
       .then((res) => {
         if (res.data.success === true) {
-          console.log("add comment", res.data);
-          Swal.fire({
-            icon: "success",
-            title: "Success",
-            text: `Comment added`,
-            timer: 1000,
-            showConfirmButton: false,
-          });
-          setIsLoading(false);
-          window.location.reload();
+          // console.log("add comment", res.data);
+          fetchProjectComments();
+          // Swal.fire({
+          //   icon: "success",
+          //   title: "Success",
+          //   text: `Comment added`,
+          //   timer: 1000,
+          //   showConfirmButton: false,
+          // });
+          setIsCommentsLoading(false);
         } else {
           Swal.fire({
             icon: "error",
@@ -216,8 +267,8 @@ export default function GuestProject() {
           setIsLoading(false);
         }
       })
-      .catch((err) => {
-        console.log("add comment err", err);
+      .catch(() => {
+        // console.log("add comment err", err);
         Swal.fire({
           icon: "error",
           title: "Oops...",
@@ -235,17 +286,22 @@ export default function GuestProject() {
     created_at: string;
   };
   type GuestType = {
+    profile_pic: string;
+    last_name_en: string;
+    first_name_en: string;
     virtual_money: number;
     id: number;
   };
 
-  if (isLoading) {
-    return <LoadingIndicator />;
-  }
+  // if (isLoading) {
+  //   return <LoadingIndicator />;
+  // }
 
   return (
-    <div>
-      {projectData ? (
+    <>
+      {isLoading ? (
+        <LoadingIndicator />
+      ) : (
         <div>
           <Flex
             mih={50}
@@ -257,24 +313,68 @@ export default function GuestProject() {
             m="lg"
           >
             <Card radius="md" shadow="lg" maw={600}>
-              {/* <Text fs="normal" fz="lg">
-              Event id: {eventId}
-            </Text>
-            <Text fs="normal" fz="lg">
-              Project id: {projectId}
-            </Text> */}
-              <Title>{projectData?.title}</Title>
-              <Divider mb="lg" />
-              <Text>
-                <div dangerouslySetInnerHTML={{
-                  __html: projectData.description.toString() || "",
-                }}></div>
+              {/* <Flex mb="lg" justify="space-between" align="center">
+                <Text size="md" c="dimmed">
+                  {guestData.first_name_en} {guestData.last_name_en}
+                </Text>
+                {guestData.profile_pic ? (
+                  <Image
+                    src={guestData.profile_pic}
+                    alt="Profile Picture"
+                    width={40}
+                    height={40}
+                    radius="xl"
+                  />
+                ) : (
+                  <Avatar size={50} radius="xl" />
+                )}
+              </Flex>
+              <Divider mb="lg" /> */}
+              <Title c="red.6">{projectData?.title}</Title>
+              <Text mt="md" size="small" c="dimmed">
+                Description
               </Text>
-              <Flex justify="space-between" mt="md" align="center">
-                <Badge>
-                  {moment(projectData?.created_at).format("DD/MM/yyyy HH:mm:ss a")}
-                </Badge>
+              {/* <Flex justify="center" align="center" gap="xl"> */}
+              <Divider mb="sm" />
+              {/* <Card shadow="xs" mt="xs" pb="xs"> */}
+                <Text lineClamp={4}>
+                  <div
+                    dangerouslySetInnerHTML={{
+                      __html: projectData?.description?.toString() || "",
+                    }}
+                  ></div>
+                </Text>
+                {(projectData?.description?.length ?? 0) > 200 ? (
+                  <Flex justify="flex-end">
+                    <ActionIcon
+                      variant="subtle"
+                      onClick={openDescription}
+                      color="red.4"
+                    >
+                      <IconArrowsDiagonal size={14} stroke={1.5} />
+                    </ActionIcon>
+                  </Flex>
+                ) : null}
+              {/* </Card> */}
 
+              <Modal
+                opened={descriptionOpened}
+                onClose={closeDescription}
+                title="Description"
+              >
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: projectData?.description.toString() || "",
+                  }}
+                ></div>
+              </Modal>
+              {/* </Flex> */}
+              <Flex justify="space-between" mt="md" align="center" gap="xl">
+                <Text size="small" c="dimmed">
+                  {moment(projectData?.created_at).format(
+                    "D MMMM YYYY HH:mm A"
+                  )}
+                </Text>
                 <Modal
                   opened={opened}
                   onClose={close}
@@ -287,7 +387,6 @@ export default function GuestProject() {
                     loaderProps={{ color: "pink", type: "bars" }}
                   />
                   <Text>You have {guestData?.virtual_money}</Text>
-
                   <form onSubmit={form.onSubmit(() => giveVirtualMoney())}>
                     <NumberInput
                       mt="md"
@@ -295,83 +394,138 @@ export default function GuestProject() {
                       placeholder="Enter amount"
                       {...form.getInputProps("amount")}
                     />
-
                     <Group justify="flex-end" mt="md">
                       <Button type="submit">Submit</Button>
                     </Group>
                   </form>
                 </Modal>
                 <Button
-                  radius="lg"
+                  radius="md"
                   variant="filled"
-                  color="red"
                   size="xs"
                   leftSection={<IconCoin />}
                   onClick={open}
+                  // variant="default"
+                  color="red.5"
                 >
                   Give Virtual Money
                 </Button>
               </Flex>
-            </Card>{" "}
-            {/* <Anchor underline="always" onClick={() => navigate(-1)}>
-              Back
-            </Anchor> */}
-            <Card radius="md" shadow="lg" miw={200} maw={600}>
-              <Title order={4}>Comments</Title>
 
-              {commentData.length > 0 ? (
-                <ScrollArea h={200} viewportRef={viewport}>
-                  {commentData.map((comment: object) => (
-                    <Card mt="sm" key={(comment as { id: string }).id}>
-                      <Text>{(comment as { comment: string }).comment}</Text>
-                      <Text size="md" c="gray" mt="sm">
-                        {/* {moment(
-                          (comment as { created_at: string }).created_at
-                        ).format("MMMM Do YY HH:mm a")} */}
+              <Divider my="md" />
 
-                        {moment((comment as { created_at: string }).created_at)
-                          .startOf("hour")
-                          .fromNow()}
-                      </Text>
-                    </Card>
-                  ))}
-                </ScrollArea>
-              ) : (
-                <Text>No comments</Text>
-              )}
+              <Title mx="md" c="red.5" order={4}>
+                Comments
+              </Title>
               <form
                 onSubmit={commentForm.onSubmit(() => {
-                  console.log("comment", commentForm.values.comment),
-                    addComment();
+                  addComment(), commentForm.reset();
                 })}
               >
-                <Divider mt="md" mb="md" />
-                <Flex justify="center" align="center" style={{ marginTop: 16 }}>
+                <Flex
+                  mx="md"
+                  justify="left"
+                  align="center"
+                  style={{ marginTop: 16 }}
+                >
                   <TextInput
                     placeholder="Comment"
                     mr="sm"
                     {...commentForm.getInputProps("comment")}
+                    w="fit-content"
                   />
+                  {/* {commentForm.values.comment.length} */}
                   <Button
-                    variant="default"
-                    color="blue"
-                    size="xs"
-                    rightSection={<IconSend></IconSend>}
+                    // variant="default"
+                    w="fit-content"
+                    color="red.5"
+                    size="s"
                     type="submit"
+                    rightSection={<IconSend></IconSend>}
                   >
                     Send
                   </Button>
                 </Flex>
               </form>
-            </Card>
-            <Anchor mb="md" underline="always" onClick={() => navigate(-1)}>
+              {commentData.length > 0 ? (
+                <>
+                  {isCommentsLoading ? (
+                    <Center>
+                      <Loader mt="lg" color="blue" />
+                    </Center>
+                  ) : (
+                    <>
+                      {commentData.map((comment: object) => (
+                        <Text
+                          mx="md"
+                          mt="md"
+                          key={(comment as { id: string }).id}
+                        >
+                          {/* <Divider mt="4" /> */}
+                          <Flex justify="space-between" align="center">
+                            <Text mt="xs" size="xs" c="gray">
+                              {moment(
+                                (comment as { created_at: string }).created_at
+                              ).format("D MMMM YYYY HH:mm A")}{" "}
+                            </Text>
+                            <Text mt="xs" size="xs" c="gray">
+                              {moment(
+                                (comment as { created_at: string }).created_at
+                              ).fromNow()}
+                            </Text>
+                          </Flex>
+                          <Text
+                            style={{
+                              overflowWrap: "break-word",
+                            }}
+
+                            // mb="sm"
+                          >
+                            {(comment as { comment: string }).comment}
+                          </Text>
+                          <Divider mt="4" />
+                        </Text>
+                      ))}
+                      <Center mt="xs">
+                        <Pagination
+                          color="red.5"
+                          size="sm"
+                          mt="md"
+                          total={Math.ceil(totalComments / pageSize)}
+                          boundaries={2}
+                          value={page}
+                          onChange={(newPage) => setPage(newPage)}
+                        />
+                      </Center>
+                    </>
+                  )}
+                </>
+              ) : (
+                // </ScrollArea>
+                <Text mx="md" mt="md">
+                  No comments
+                </Text>
+              )}
+            </Card>{" "}
+            {/* <Anchor underline="always" onClick={() => navigate(-1)}>
               Back
-            </Anchor>
+            </Anchor> */}
+            {/* <Anchor mb="md" underline="always" onClick={() => navigate(-1)}>
+              Back
+            </Anchor>  */}
+            <Button
+              // radius="lg"
+              variant="filled"
+              color="red"
+              size="s"
+              leftSection={<IconArrowLeft />}
+              onClick={() => navigate(-1)}
+            >
+              Back
+            </Button>
           </Flex>
         </div>
-      ) : (
-        ""
       )}
-    </div>
+    </>
   );
 }
