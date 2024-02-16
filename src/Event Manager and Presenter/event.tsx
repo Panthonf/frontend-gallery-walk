@@ -50,7 +50,6 @@ import {
     IconPresentationAnalytics,
     IconInfoSquare,
     IconChartBar,
-    IconUsersGroup,
     IconClock,
 } from "@tabler/icons-react";
 import { isNotEmpty, useForm } from "@mantine/form";
