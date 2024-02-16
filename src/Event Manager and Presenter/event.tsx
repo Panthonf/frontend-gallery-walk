@@ -829,6 +829,7 @@ export default function Event() {
             event_name: form2?.values.eventName,
             start_date: moment(form2?.values.startDate).toISOString(),
             end_date: moment(form2?.values.endDate).toISOString(),
+            location: form2?.values.location,
           },
           {
             withCredentials: true,
@@ -838,6 +839,7 @@ export default function Event() {
           setEditStartDateEvent(false);
           setEditEventName(false);
           setEditEndDateEvent(false);
+          setEditLocation(false);
           setEvent(res.data.data);
         })
         .catch((err) => {

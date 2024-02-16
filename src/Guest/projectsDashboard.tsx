@@ -44,8 +44,8 @@ export default function ProjectsDashboard(props: {
         );
         setTotalProjects(response.data.totalProjects);
         setProjectsData(response.data.data);
-      } catch (error) {
-        console.error("Error fetching events:", error);
+      } catch (err) {
+        // console.error("Error fetching events:", error);
       }
     };
 
@@ -59,7 +59,7 @@ export default function ProjectsDashboard(props: {
       <Grid w="100%" p="xl">
         <Grid.Col span={12}>
           <Text c="redcolor.4" fw={500} size="topic" mt="md">
-             Projects {projectsData.length > 0 ? `(${totalProjects})` : ""}
+            Projects {projectsData.length > 0 ? `(${totalProjects})` : ""}
           </Text>
         </Grid.Col>
 

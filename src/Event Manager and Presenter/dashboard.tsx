@@ -69,6 +69,7 @@ export default function Dashboard() {
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching events:", error);
+        setIsLoading(false);
       }
     };
 
@@ -365,7 +366,20 @@ export default function Dashboard() {
                       <Loader mt="lg" size={40} color="redcolor.4" />
                     </Center>
                   )}
-                  {events.length > 0 ? (
+                  {!(isLoading || events.length > 0) && ( // Check both loading and events
+                    <Center>
+                      <Flex align="center" direction="column">
+                        <Text mt="lg" size="xl" c="red.4">
+                          No events found
+                        </Text>
+                        <Text mt="5" size="sm" c="graycolor.5">
+                          Create a new event to get started
+                        </Text>
+                        </Flex>
+                    </Center>
+                  )}
+
+                  {events.length > 0 && (
                     <div>
                       <Text size="base" fw={500} c="dark.9" mt="1rem" mb="2rem">
                         Next Events
@@ -394,12 +408,6 @@ export default function Dashboard() {
                         </Group>
                       </Pagination.Root>
                     </div>
-                  ) : (
-                    !isLoading && (
-                      <Text size="base" c="dark.9" mt="1rem" mb="2rem">
-                        No events found
-                      </Text>
-                    )
                   )}
 
                   {/* <Pagination
