@@ -59,7 +59,7 @@ export default function ProjectsDashboard(props: {
       <Grid w="100%" p="xl">
         <Grid.Col span={12}>
           <Text c="redcolor.4" fw={500} size="topic" mt="md">
-            {totalProjects} Projects
+             Projects {projectsData.length > 0 ? `(${totalProjects})` : ""}
           </Text>
         </Grid.Col>
 
@@ -140,6 +140,7 @@ export default function ProjectsDashboard(props: {
               boundaries={2}
               value={page}
               onChange={(newPage) => setPage(newPage)}
+              color="redcolor.4"
             />
           </Center>
         </Grid.Col>

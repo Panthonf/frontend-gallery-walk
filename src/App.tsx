@@ -18,7 +18,6 @@ import {
     Anchor,
     // Card,
 } from "@mantine/core";
-// import { ModalsProvider } from '@mantine/modals';
 import { generateColors } from "@mantine/colors-generator";
 
 import Homepage from "./homepage.tsx";

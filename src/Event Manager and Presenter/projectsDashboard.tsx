@@ -327,7 +327,7 @@ export default function ProjectsDashboard() {
               )}
               <Flex justify="center">
                 <Pagination.Root
-                  color="redcolor.4"
+                  color="bluecolor.6"
                   size="sm"
                   total={Math.ceil(total / pageSize)}
                   boundaries={2}

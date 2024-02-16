@@ -19,6 +19,7 @@ import {
     UnstyledButton,
     Modal,
     Title,
+    Badge,
 } from "@mantine/core";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import styles from "../styles.module.css"
@@ -195,6 +196,10 @@ export default function GuestEventDashboard() {
                                 {`${moment(eventData?.start_date).format(
                                     "MMMM Do YY HH:mm A"
                                 )} - ${moment(eventData?.end_date).format("MMMM Do YY HH:mm A")}`}
+
+                                {" "}
+                                <Badge color="redcolor.4" ml="sm">{moment(eventData?.end_date).fromNow()}</Badge>
+                                
                             </Text>
                         </div>
 
