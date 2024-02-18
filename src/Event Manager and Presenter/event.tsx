@@ -18,6 +18,7 @@ import {
   Tooltip,
   Button,
   TextInput,
+  Table,
   rem,
   Center,
   Pagination,
@@ -67,6 +68,9 @@ import Swal from "sweetalert2";
 import Navbar from "../components/navbar";
 import EditDescriptionEvent from "./editDescriptionEvent";
 import { DateInput, TimeInput } from "@mantine/dates";
+import Chart from "chart.js/auto";
+import { CategoryScale } from "chart.js";
+import { Bar } from "react-chartjs-2";
 
 interface EventType {
   id: number;
@@ -244,7 +248,31 @@ export default function Event() {
         })
         .then((res) => {
           setProjects(res.data.data);
+
+          //renderChart();
           console.log("project data dd", res.data);
+
+          const _Data = {
+            labels: res.data.data.map((data) => data.title),
+            datasets: [
+              {
+                label: "Virtual Money ",
+                data: res.data.data.map((data) => data.virtual_money),
+                backgroundColor: [
+                  "rgba(75,192,192,1)",
+                  "#ecf0f1",
+                  "#50AF95",
+                  "#f3ba2f",
+                  "#2a71d0",
+                ],
+                borderColor: "black",
+                borderWidth: 2,
+              },
+            ],
+          };
+        
+          setChartData(_Data);
+        
         })
         .catch((err) => {
           console.log("projects err", err);
@@ -263,9 +291,12 @@ export default function Event() {
 
   const handlePublishToggle = async () => {
     await axios
-      .put(`${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}/publish`, {
-        withCredentials: true,
-      })
+      .put(
+        `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}/publish`,
+        {
+          withCredentials: true,
+        }
+      )
       .then((res) => {
         console.log("dd", res.data);
       })
@@ -339,7 +370,9 @@ export default function Event() {
     const fetchThumbnails = async () => {
       try {
         const response = await axios.get(
-          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/thumbnail/${eventId}`,
+          `${
+            import.meta.env.VITE_BASE_ENDPOINTMENT
+          }events/thumbnail/${eventId}`,
           {
             withCredentials: true,
           }
@@ -822,6 +855,61 @@ export default function Event() {
     }
   };
 
+  Chart.register(CategoryScale);
+
+  const Data = [
+    {
+      id: 1,
+      title: "",
+      description: "",
+      user_id: 1,
+      event_id: 1,
+      created_at: "2024-02-06T14:17:57.318Z",
+      updated_at: null,
+      virtual_money: 0,
+    },
+  ];
+
+  const _Data = {
+    labels: Data.map((data) => data.title),
+    datasets: [
+      {
+        label: "Virtual Money ",
+        data: Data.map((data) => data.virtual_money),
+        backgroundColor: [
+          "rgba(75,192,192,1)",
+          "#ecf0f1",
+          "#50AF95",
+          "#f3ba2f",
+          "#2a71d0",
+        ],
+        borderColor: "black",
+        borderWidth: 2,
+      },
+    ],
+  };
+
+  const [chartData, setChartData] = useState(_Data);
+  const chartContent = (
+    <div className="chart-container">
+      <h2 style={{ textAlign: "center" }}>Bar Chart</h2>
+      <Bar
+        data={chartData}
+        options={{
+          plugins: {
+            title: {
+              display: true,
+              text: "Users Gained between 2016-2020",
+            },
+            legend: {
+              display: false,
+            },
+          },
+        }}
+      />
+    </div>
+  );
+
   const UpdateThumbnail = () => {
     const [file, setFile] = useState<File | null>(null);
     const [opened, { open, close }] = useDisclosure(false);
@@ -903,7 +991,9 @@ export default function Event() {
                         formData.append("file", file as Blob);
                         axios
                           .post(
-                            `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/upload/thumbnail/${eventId}`,
+                            `${
+                              import.meta.env.VITE_BASE_ENDPOINTMENT
+                            }events/upload/thumbnail/${eventId}`,
                             formData,
                             {
                               withCredentials: true,
@@ -1332,11 +1422,7 @@ export default function Event() {
             >
               Projects ({totalProjects})
             </Tabs.Tab>
-            <Tabs.Tab
-              value="settings"
-              leftSection={<IconChartBar size={14} />}
-              disabled
-            >
+            <Tabs.Tab value="settings" leftSection={<IconChartBar size={14} />}>
               Result
             </Tabs.Tab>
           </Tabs.List>
@@ -1829,7 +1915,11 @@ export default function Event() {
             </Box>
           </Tabs.Panel>
 
-          <Tabs.Panel value="settings">Settings tab content</Tabs.Panel>
+          <Tabs.Panel value="settings">
+            Settings tab content 123
+            {JSON.stringify(projects)}
+            {chartContent}
+          </Tabs.Panel>
         </Tabs>
 
         <div className={styles.footer}></div>
