@@ -270,9 +270,8 @@ export default function Event() {
               },
             ],
           };
-        
+
           setChartData(_Data);
-        
         })
         .catch((err) => {
           console.log("projects err", err);
@@ -909,6 +908,82 @@ export default function Event() {
       />
     </div>
   );
+
+  const elements = [
+    {
+      id: 6,
+      title: "pqr",
+      description: "<p>pqr</p>",
+      user_id: 1,
+      event_id: 1,
+      created_at: "2024-02-18T09:42:50.289Z",
+      updated_at: null,
+      virtual_money: 448,
+    },
+    {
+      id: 5,
+      title: "mno",
+      description: "<p>mno</p>",
+      user_id: 1,
+      event_id: 1,
+      created_at: "2024-02-18T08:40:44.519Z",
+      updated_at: null,
+      virtual_money: 456,
+    },
+    {
+      id: 4,
+      title: "jkl",
+      description: "<p>jkl</p>",
+      user_id: 1,
+      event_id: 1,
+      created_at: "2024-02-18T08:40:31.541Z",
+      updated_at: null,
+      virtual_money: 320,
+    },
+    {
+      id: 3,
+      title: "ghi",
+      description: "<p>ghi</p>",
+      user_id: 1,
+      event_id: 1,
+      created_at: "2024-02-18T08:40:20.842Z",
+      updated_at: null,
+      virtual_money: 500,
+    },
+    {
+      id: 2,
+      title: "def",
+      description: "<p>def</p>",
+      user_id: 1,
+      event_id: 1,
+      created_at: "2024-02-06T14:18:09.961Z",
+      updated_at: null,
+      virtual_money: 255,
+    },
+  ];
+
+  function Demo() {
+    const rows = elements.map((elements) => (
+      <Table.Tr key={elements.id}>
+        <Table.Td>{elements.id}</Table.Td>
+        <Table.Td>{elements.title}</Table.Td>
+        <Table.Td>{elements.virtual_money}</Table.Td>
+      </Table.Tr>
+    ));
+
+    return (
+      <Table stickyHeader stickyHeaderOffset={60}>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Project ID</Table.Th>
+            <Table.Th>Title</Table.Th>
+            <Table.Th>Virtual Money</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>{rows}</Table.Tbody>
+      </Table>
+    );
+  }
 
   const UpdateThumbnail = () => {
     const [file, setFile] = useState<File | null>(null);
@@ -1919,6 +1994,7 @@ export default function Event() {
             Settings tab content 123
             {JSON.stringify(projects)}
             {chartContent}
+            <Demo></Demo>
           </Tabs.Panel>
         </Tabs>
 
