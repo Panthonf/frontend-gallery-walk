@@ -179,7 +179,7 @@ export default function Event() {
           withCredentials: true,
         })
         .then((res) => {
-          // console.log(res.data.data);
+          console.log("event data", res.data.data);
           setTotalProjects(res.data.totalProjects);
           setEvent(res.data.data);
         })
@@ -191,6 +191,23 @@ export default function Event() {
     }
   };
 
+  const form2 = useForm({
+    initialValues: {
+      startDate: "",
+      eventName: "",
+      endDate: "",
+      location: "",
+    },
+
+    validate: {
+      endDate: (value) => {
+        if (moment(value).isBefore(form2?.values.startDate)) {
+          return "End date must be after start date";
+        }
+      },
+    },
+  });
+
   useEffect(() => {
     const fetchData = async () => {
       try {
@@ -199,10 +216,30 @@ export default function Event() {
             withCredentials: true,
           })
           .then((res) => {
-            // console.log(res.data.data);
+            console.log("event data", res.data.data);
             setTotalProjects(res.data.totalProjects);
             setEvent(res.data.data);
             setIsPublished(res.data.data.published);
+            form2.setFieldValue("eventName", res.data.data.event_name || "");
+            form2.setFieldValue(
+              "startDate",
+              moment(res.data.data.start_date).format("MMMM D, YYYY HH:mm") ||
+                ""
+            );
+            form2.setFieldValue(
+              "endDate",
+              moment(res.data.data.end_date).format("MMMM D, YYYY HH:mm") || ""
+            );
+            form3.setFieldValue(
+              "submissionStart",
+              moment(res.data.data.submit_start).format("MMMM D, YYYY HH:mm") ||
+                ""
+            );
+            form3.setFieldValue(
+              "submissionEnd",
+              moment(res.data.data.submit_end).format("MMMM D, YYYY HH:mm") ||
+                ""
+            );
           })
           .catch((err) => {
             console.log(err);
@@ -238,8 +275,8 @@ export default function Event() {
     const generateQRCode = async () => {
       try {
         const url = `${
-          import.meta.env.VITE_FRONTEND_ENDPOINT
-        }/guest/event/${eventId}`;
+          import.meta.env.VITE_BASE_ENDPOINTMENT
+        }presenters/${eventId}`;
         const dataUrl = await QRCode.toDataURL(url);
         setQRCodeDataUrl(dataUrl);
       } catch (error) {
@@ -274,8 +311,6 @@ export default function Event() {
             }
           )
           .then((res) => {
-            console.log("event feedback", res.data.data);
-            console.log("event feedback dd",  res.data.data.total_virtual_money);
             setEventFeedback(res.data.data);
           });
       } catch (error) {
@@ -290,6 +325,7 @@ export default function Event() {
     }
 
     document.title = `${event?.event_name} | Virtual Event Manager`;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId, event?.event_name, query, page, pageSize]);
 
   const handlePublishToggle = async () => {
@@ -332,7 +368,7 @@ export default function Event() {
     {
       title: "All virtual money",
       icon: "money",
-      value: eventFeedback?.total_virtual_money,
+      value: eventFeedback?.total_virtual_money || 0,
       label: "Number of virtual money",
     },
   ];
@@ -496,8 +532,6 @@ export default function Event() {
               </ActionIcon>
             </Flex>
 
-            
-
             <Modal
               opened={opened}
               onClose={close}
@@ -632,26 +666,9 @@ export default function Event() {
     );
   };
 
-  const form2 = useForm({
-    initialValues: {
-      startDate: moment(event?.start_date).format("MMMM D, YYYY HH:mm"),
-      eventName: event?.event_name,
-      endDate: moment(event?.end_date).format("MMMM D, YYYY HH:mm"),
-      location: event?.location,
-    },
-
-    validate: {
-      endDate: (value) => {
-        if (moment(value).isBefore(form2?.values.startDate)) {
-          return "End date must be after start date";
-        }
-      },
-    },
-  });
-
   const form3 = useForm({
     initialValues: {
-      submissionStart: moment(event?.submit_start).format("MMMM D, YYYY HH:mm"),
+      submissionStart: "",
       submissionEnd: moment(event?.submit_end).format("MMMM D, YYYY HH:mm"),
     },
 
@@ -666,8 +683,8 @@ export default function Event() {
 
   const virtualMoneyForm = useForm({
     initialValues: {
-      virtualMoney: event?.virtual_money,
-      unitMoney: event?.unit_money,
+      virtualMoney: 0,
+      unitMoney: "",
     },
   });
 
@@ -698,7 +715,7 @@ export default function Event() {
       }
     } else {
       // Set the initial values for the input fields
-      form2?.setFieldValue("eventName", event?.event_name);
+      form2?.setFieldValue("eventName", event?.event_name ?? "");
     }
     setEditEventName(!editEventName);
   };
@@ -763,8 +780,8 @@ export default function Event() {
         virtualMoneyForm?.setFieldValue("unitMoney", event?.unit_money);
       }
     } else {
-      virtualMoneyForm?.setFieldValue("virtualMoney", event?.virtual_money);
-      virtualMoneyForm?.setFieldValue("unitMoney", event?.unit_money);
+      virtualMoneyForm?.setFieldValue("virtualMoney", event?.virtual_money ?? 0);
+      virtualMoneyForm?.setFieldValue("unitMoney", event?.unit_money ?? "");
     }
     setEditVirtualMoney(!editVirtualMoney);
   };
@@ -775,7 +792,7 @@ export default function Event() {
         form2?.setFieldValue("location", event?.location);
       }
     } else {
-      form2.setFieldValue("location", event?.location);
+      form2?.setFieldValue("location", event?.location ?? "");
     }
     setEditLocation(!editLocation);
   };
@@ -820,63 +837,21 @@ export default function Event() {
     </ActionIcon>
   );
 
-  const updateEventData = async () => {
-    try {
-      await axios
-        .put(
-          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
-          {
-            event_name: form2?.values.eventName,
-            start_date: moment(form2?.values.startDate).toISOString(),
-            end_date: moment(form2?.values.endDate).toISOString(),
-            location: form2?.values.location,
-          },
-          {
-            withCredentials: true,
-          }
-        )
-        .then((res) => {
-          setEditStartDateEvent(false);
-          setEditEventName(false);
-          setEditEndDateEvent(false);
-          setEditLocation(false);
-          setEvent(res.data.data);
-        })
-        .catch((err) => {
-          console.log("update start date err", err);
-        });
-    } catch (error) {
-      console.error("Error fetching events:", error);
-    }
-  };
-
   const updateEvent = async () => {
     try {
       await axios
         .put(
           `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
           {
-            event_name: form2?.values.eventName,
-            start_date: moment(form2?.values.startDate).toISOString(),
-            end_date: moment(form2?.values.endDate).toISOString(),
-            submit_start: moment(form3?.values.submissionStart).toISOString(),
-            submit_end: moment(form3?.values.submissionEnd).toISOString(),
             virtual_money: virtualMoneyForm?.values.virtualMoney,
             unit_money: virtualMoneyForm?.values.unitMoney,
-            location: form2?.values.location,
           },
           {
             withCredentials: true,
           }
         )
         .then((res) => {
-          setEditStartDateEvent(false);
-          setEditEventName(false);
-          setEditEndDateEvent(false);
-          setEditSubmissionStart(false);
-          setEditSubmissionEnd(false);
           setEditVirtualMoney(false);
-          setEditLocation(false);
           setEvent(res.data.data);
         })
         .catch((err) => {
@@ -998,6 +973,154 @@ export default function Event() {
     );
   };
 
+  const updateEventName = async () => {
+    try {
+      await axios
+        .put(
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+          {
+            event_name: form2?.values.eventName,
+          },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          setEditEventName(false);
+          setEvent(res.data.data);
+        })
+        .catch((err) => {
+          console.log("update start date err", err);
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  const updateEventStart = async () => {
+    try {
+      await axios
+        .put(
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+          {
+            start_date: moment(form2?.values.startDate).toISOString(),
+          },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          setEditStartDateEvent(false);
+          setEvent(res.data.data);
+        })
+        .catch((err) => {
+          console.log("update start date err", err);
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  const updateEventEnd = async () => {
+    try {
+      console.log(`update end date`, {
+        start_date: moment(form2?.values.startDate).toISOString(),
+        end_date: moment(form2?.values.endDate).toISOString(),
+      });
+      await axios
+        .put(
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+          {
+            end_date: moment(form2?.values.endDate).toISOString(),
+          },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          setEditEndDateEvent(false);
+          setEvent(res.data.data);
+        })
+        .catch((err) => {
+          console.log("update start date err", err);
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  const updateEventLocation = async () => {
+    try {
+      await axios
+        .put(
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+          {
+            location: form2?.values.location,
+          },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          setEditLocation(false);
+          setEvent(res.data.data);
+        })
+        .catch((err) => {
+          console.log("update start date err", err);
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  const updateEventProjectStartSubmission = async () => {
+    try {
+      await axios
+        .put(
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+          {
+            submit_start: moment(form3?.values.submissionStart).toISOString(),
+          },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          setEditSubmissionStart(false);
+          setEvent(res.data.data);
+        })
+        .catch((err) => {
+          console.log("update start date err", err);
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  const updateEventProjectEndSubmission = async () => {
+    try {
+      await axios
+        .put(
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+          {
+            submit_end: moment(form3?.values.submissionEnd).toISOString(),
+          },
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          setEditSubmissionEnd(false);
+          setEvent(res.data.data);
+        })
+        .catch((err) => {
+          console.log("update start date err", err);
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
   const handleDeleteEvent = async () => {
     Swal.fire({
       title: "Are you sure?",
@@ -1061,14 +1184,14 @@ export default function Event() {
         <Box w="80%" mx="auto">
           <Flex justify="space-between" align="flex-start" my="xl">
             <div>
+              {/* 
+                Event Name
+               */}
               <form
                 onSubmit={form2.onSubmit(() => {
-                  updateEventData();
+                  updateEventName();
                 })}
               >
-                {/* 
-                Event Name
-             */}
                 <Text c="redcolor.4" fw={600} size="topic" mb="xs">
                   {editEventName ? (
                     <TextInput
@@ -1121,7 +1244,14 @@ export default function Event() {
                     </Button>
                   )}
                 </Text>
-                <Flex mb="md" gap="2rem">
+              </form>
+
+              {/* 
+                Event Description
+               */}
+
+              <Flex mb="md" gap="2rem">
+                <form onSubmit={form2.onSubmit(updateEventStart)}>
                   <div>
                     <Flex align="center">
                       <Text size="xsmall" c="graycolor.3">
@@ -1202,10 +1332,12 @@ export default function Event() {
                       </Button>
                     )}
                   </div>
+                </form>
 
-                  {/* 
+                {/* 
                     End Date
                      */}
+                <form onSubmit={form2.onSubmit(updateEventEnd)}>
                   <div>
                     <Flex align="center">
                       <Text size="xsmall" c="graycolor.3">
@@ -1289,6 +1421,9 @@ export default function Event() {
                       </Button>
                     )}
                   </div>
+                </form>
+
+                <form onSubmit={form2.onSubmit(updateEventLocation)}>
                   <div>
                     <Flex align="center">
                       <Text size="xsmall" c="graycolor.3">
@@ -1339,8 +1474,8 @@ export default function Event() {
                       <>{event?.location ? event?.location : "No location"}</>
                     )}
                   </div>
-                </Flex>
-              </form>
+                </form>
+              </Flex>
             </div>
 
             <Flex align="center" justify="flex-end" gap="md">
@@ -1485,8 +1620,12 @@ export default function Event() {
                       <Text c="redcolor.4">Event Presenter</Text>
                     </Grid.Col>
                     <Grid.Col span={8}>
-                      <form onSubmit={form3.onSubmit(() => updateEvent())}>
-                        <div>
+                      <div>
+                        <form
+                          onSubmit={form3.onSubmit(() =>
+                            updateEventProjectStartSubmission()
+                          )}
+                        >
                           <Flex align="center">
                             <Text size="xsmall" c="graycolor.3">
                               Start submit project
@@ -1581,7 +1720,13 @@ export default function Event() {
                               Save
                             </Button>
                           )}
+                        </form>
 
+                        <form
+                          onSubmit={form3.onSubmit(() =>
+                            updateEventProjectEndSubmission()
+                          )}
+                        >
                           <Flex align="center">
                             <Text size="xsmall" c="graycolor.3">
                               End submit project
@@ -1679,8 +1824,8 @@ export default function Event() {
                               </Button>
                             )}
                           </Text>
-                        </div>
-                      </form>
+                        </form>
+                      </div>
                     </Grid.Col>
 
                     <Grid.Col span={4}>
@@ -1713,10 +1858,10 @@ export default function Event() {
                               <TextInput
                                 label="Virtual Money"
                                 placeholder="Virtual Money"
-                                value={virtualMoneyForm?.values.virtualMoney}
+                                value={virtualMoneyForm?.values.virtualMoney || 0}
                                 required
                                 onChange={(e) => {
-                                  //  console.log("e", e.target.value);
+                                  console.log("e", e.target.value);
                                   virtualMoneyForm?.setFieldValue(
                                     "virtualMoney",
                                     parseInt(e.target.value)
@@ -1983,7 +2128,6 @@ export default function Event() {
       </div>
 
       {/* <div className={styles.footer}></div> */}
-
       {/* red footer */}
       {/* <Affix className={styles.footer}></Affix> */}
     </body>
