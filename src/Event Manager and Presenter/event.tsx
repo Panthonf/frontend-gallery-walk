@@ -252,6 +252,45 @@ export default function Event() {
           //renderChart();
           console.log("project data dd", res.data);
 
+          // const _Data = {
+          //   labels: res.data.data.map((data) => data.title),
+          //   datasets: [
+          //     {
+          //       label: "Virtual Money ",
+          //       data: res.data.data.map((data) => data.virtual_money),
+          //       backgroundColor: [
+          //         "rgba(75,192,192,1)",
+          //         "#ecf0f1",
+          //         "#50AF95",
+          //         "#f3ba2f",
+          //         "#2a71d0",
+          //       ],
+          //       borderColor: "black",
+          //       borderWidth: 2,
+          //     },
+          //   ],
+          // };
+
+          //setChartData(_Data);
+        })
+        .catch((err) => {
+          console.log("projects err", err);
+        });
+    };
+
+    const fetchProjectsDataAll = async () => {
+      const page =1;
+      const pageSize=1000;
+      await axios
+        .get(`${BASE_ENDPOINT}presenters/get-project/${eventId}`, {
+          withCredentials: true,
+          params: { query, page, pageSize },
+        })
+        .then((res) => {
+          //setProjects(res.data.data);
+          //renderChart();
+          console.log("project data dd", res.data);
+
           const _Data = {
             labels: res.data.data.map((data) => data.title),
             datasets: [
@@ -281,6 +320,7 @@ export default function Event() {
     if (eventId) {
       generateQRCode();
       fetchProjectsData();
+      fetchProjectsDataAll();
     }
 
     document.title = `${event?.event_name} | Virtual Event Manager`;
@@ -964,7 +1004,7 @@ export default function Event() {
 
   function Demo() {
     const rows = elements.map((elements) => (
-      <Table.Tr key={elements.id}>
+      <Table.Tr>
         <Table.Td>{elements.id}</Table.Td>
         <Table.Td>{elements.title}</Table.Td>
         <Table.Td>{elements.virtual_money}</Table.Td>
@@ -972,7 +1012,12 @@ export default function Event() {
     ));
 
     return (
-      <Table stickyHeader stickyHeaderOffset={60}>
+      <Table
+        stickyHeader
+        stickyHeaderOffset={60}
+        highlightOnHover
+        horizontalSpacing="xl"
+      >
         <Table.Thead>
           <Table.Tr>
             <Table.Th>Project ID</Table.Th>
