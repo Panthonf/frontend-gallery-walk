@@ -69,6 +69,7 @@ export default function Dashboard() {
         setIsLoading(false);
       } catch (error) {
         console.error("Error fetching events:", error);
+        setIsLoading(false);
       }
     };
 
@@ -88,8 +89,10 @@ export default function Dashboard() {
         console.log("event fff", response.data);
         setEvents(response.data.data);
         setTotalEvents(response.data.totalEvents);
+        setIsLoading(false);
       } catch (error) {
         console.error("Error fetching events:", error);
+        setIsLoading(false);
       }
     };
     fetchData();
