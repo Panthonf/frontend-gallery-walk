@@ -66,12 +66,14 @@ export default function ProjectsDashboard() {
           params: { query, page, pageSize },
         })
         .then((res) => {
+          
+          console.log("projects", res.data);
           setProjects(res.data.data);
           setTotal(res.data.totalProjects);
           setIsLoading(false);
         })
-        .catch(() => {
-          // console.log(err);
+        .catch((err) => {
+          console.log(err);
         });
     };
     fetchProjects();
@@ -146,7 +148,7 @@ export default function ProjectsDashboard() {
         <Grid.Col span={12}>
           <Text size="base" fw={500} c="dark.9" mt="1rem" mb="2rem">
             Projects {total > 0 && `(${total})`}
-          </Text>
+          </Text> 
 
           {isLoading ? (
             <Center my="md">{isLoading && <Loader />}</Center>

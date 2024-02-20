@@ -40,7 +40,7 @@ import {
   IconClock,
   IconPhotoUp,
   IconPhotoX,
-  IconMapPin,
+  // IconMapPin,
 } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import Swal from "sweetalert2";
@@ -576,7 +576,7 @@ export default function CreateEvent() {
 
                       <Grid.Col span={12}>
                         <TextInput
-                          rightSection={<IconMapPin size={14} />}
+                          // rightSection={<IconMapPin size={14} />}
                           label="Location"
                           placeholder="Location"
                           {...form.getInputProps("location")}

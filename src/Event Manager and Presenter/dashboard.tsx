@@ -328,32 +328,30 @@ export default function Dashboard() {
                 </Grid.Col>
 
                 <Grid.Col span={12}>
-                    {activeTab === "Event manager" && (
+                    {isLoading && (
+                        <Center>
+                            <Loader mt="lg" size={40} color="redcolor.4" />
+                        </Center>
+                    )}
+                    {!(isLoading || events.length > 0) && ( // Check both loading and events
+                        <Center>
+                            <Flex align="center" direction="column">
+                                <Text mt="lg" size="xl" c="red.4">
+                                    No events found
+                                </Text>
+                                <Text mt="5" size="sm" c="graycolor.5">
+                                    Create a new event to get started
+                                </Text>
+                            </Flex>
+                        </Center>
+                    )}
+
+                    {events.length > 0 && (
                         <div>
-                            <Grid justify="space-between">
-                                <Grid.Col span={6}>
-                                    <TextInput
-                                        value={query}
-                                        onChange={(event) => setQuery(event.target.value)}
-                                        placeholder="Search events"
-                                        rightSection={<IconSearch size={14} />}
-                                    />
-                                </Grid.Col>
-                                <Grid.Col span={6}>
-                                    <Flex gap="lg" justify="end">
-                                        <a href="/create-event">
-                                            <Button
-                                                color="redcolor.4"
-                                                size="sm"
-                                                justify="center"
-                                                variant="filled"
-                                                rightSection={<IconSquarePlus size={14} />}
-                                            >
-                                                <Text c="pinkcolor.1">Create Event!</Text>
-                                            </Button>
-                                        </a>
-                                    </Flex>
-                                </Grid.Col>
+                            <Text size="base" fw={500} c="dark.9" mt="1rem" mb="2rem">
+                                Next Events
+                            </Text>
+                            <Grid>
 
                                 <Grid.Col span={12}>
                                     {isLoading && (

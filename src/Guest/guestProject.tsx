@@ -57,6 +57,7 @@ export default function GuestProject() {
   const [totalComments, setTotalComments] = useState(0);
 
   const navigate = useNavigate();
+  const { eventId } = useParams();
 
   const form = useForm({
     initialValues: {
@@ -120,15 +121,15 @@ export default function GuestProject() {
             withCredentials: true,
           }
         );
-        console.log("response", response.data)
-        console.log("response", response.data.authenticated)
-        if(response.data.authenticated === false){
-          window.location.href =  `${import.meta.env.VITE_FRONTEND_ENDPOINT}/guest/login`
+        if (response.data.authenticated === false) {
+          window.location.href = `${
+            import.meta.env.VITE_FRONTEND_ENDPOINT
+          }/guest/login`;
         }
       } catch (error) {
         console.error("Error fetching events:", error);
       }
-    }
+    };
     isLoggedIn();
     async function fetchProjectData() {
       const response = await axios
@@ -210,7 +211,7 @@ export default function GuestProject() {
           import.meta.env.VITE_BASE_ENDPOINTMENT
         }guests/give-virtual-money?projectId=${projectId}&guestId=${
           guestData?.id
-        }&eventId=${projectData?.event_id}`,
+        }&eventId=${eventId}`,
         {
           amount: form.values.amount,
         },
@@ -220,18 +221,19 @@ export default function GuestProject() {
       )
       .then((res) => {
         if (res.data.success === true) {
-          // console.log("give virtual money", res.data.data);
           Swal.fire({
             icon: "success",
             title: "Success",
             text: `Virtual money given ${form.values.amount}`,
+            timer: 1000,
+            showConfirmButton: false,
           });
           close();
           toggle.close();
           setIsLoading(false);
           fetchGuestData();
+          form.reset();
         } else {
-          // console.log("give virtual money", res.data);
           setIsLoading(false);
           Swal.fire({
             icon: "error",
@@ -242,10 +244,7 @@ export default function GuestProject() {
           toggle.close();
         }
       })
-      .catch(() => {
-        // console.log("give virtual money err", err);
-        // console.log("virtual money", form.values.amount);
-      });
+      .catch(() => {});
   }
 
   async function addComment() {
@@ -355,24 +354,24 @@ export default function GuestProject() {
               {/* <Flex justify="center" align="center" gap="xl"> */}
               <Divider mb="sm" />
               {/* <Card shadow="xs" mt="xs" pb="xs"> */}
-                <Text lineClamp={4}>
-                  <div
-                    dangerouslySetInnerHTML={{
-                      __html: projectData?.description?.toString() || "",
-                    }}
-                  ></div>
-                </Text>
-                {(projectData?.description?.length ?? 0) > 200 ? (
-                  <Flex justify="flex-end">
-                    <ActionIcon
-                      variant="subtle"
-                      onClick={openDescription}
-                      color="red.4"
-                    >
-                      <IconArrowsDiagonal size={14} stroke={1.5} />
-                    </ActionIcon>
-                  </Flex>
-                ) : null}
+              <Text lineClamp={4}>
+                <div
+                  dangerouslySetInnerHTML={{
+                    __html: projectData?.description?.toString() || "",
+                  }}
+                ></div>
+              </Text>
+              {(projectData?.description?.length ?? 0) > 200 ? (
+                <Flex justify="flex-end">
+                  <ActionIcon
+                    variant="subtle"
+                    onClick={openDescription}
+                    color="red.4"
+                  >
+                    <IconArrowsDiagonal size={14} stroke={1.5} />
+                  </ActionIcon>
+                </Flex>
+              ) : null}
               {/* </Card> */}
 
               <Modal
