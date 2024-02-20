@@ -888,20 +888,12 @@ export default function Event() {
   };
 
   const chartOptions = {
-    indexAxis: "x",
-    elements: {
-      bar: {
-        borderWidth: 2,
-      },
-    },
+    indexAxis: 'x' as const,
     responsive: true,
-    plugins: {
-      legend: {
-        display: false,
-      },
-      title: {
-        display: true,
-        text: "Top 3 Scores",
+    maintainAspectRatio: true,
+    scales: {
+      x: {
+        beginAtZero: true,
       },
     },
   };
