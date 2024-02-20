@@ -18,6 +18,7 @@ import {
   Tooltip,
   Button,
   TextInput,
+  Table,
   rem,
   Center,
   Pagination,
@@ -66,6 +67,9 @@ import Swal from "sweetalert2";
 import Navbar from "../components/navbar";
 import EditDescriptionEvent from "./editDescriptionEvent";
 import { DateInput, TimeInput } from "@mantine/dates";
+import Chart from "chart.js/auto";
+import { CategoryScale } from "chart.js";
+import { Bar } from "react-chartjs-2";
 
 interface EventType {
   id: number;
@@ -292,7 +296,6 @@ export default function Event() {
         })
         .then((res) => {
           setProjects(res.data.data);
-          // console.log("project data dd", res.data);
         })
         .catch((err) => {
           console.log("projects err", err);
@@ -780,7 +783,10 @@ export default function Event() {
         virtualMoneyForm?.setFieldValue("unitMoney", event?.unit_money);
       }
     } else {
-      virtualMoneyForm?.setFieldValue("virtualMoney", event?.virtual_money ?? 0);
+      virtualMoneyForm?.setFieldValue(
+        "virtualMoney",
+        event?.virtual_money ?? 0
+      );
       virtualMoneyForm?.setFieldValue("unitMoney", event?.unit_money ?? "");
     }
     setEditVirtualMoney(!editVirtualMoney);
@@ -861,6 +867,127 @@ export default function Event() {
       console.error("Error fetching events:", error);
     }
   };
+
+  Chart.register(CategoryScale);
+
+  // const [chartData] = useState(_Data);
+
+  const dataChart = [102, 80, 59];
+
+  const chartData = {
+    labels: ["1st Place", "2nd Place", "3rd Place"],
+    datasets: [
+      {
+        label: "Scores",
+        backgroundColor: ["#ffd700", "#c0c0c0", "#cd7f32"],
+        borderColor: "#fff",
+        borderWidth: 1,
+        data: [dataChart[1], dataChart[0], dataChart[2]],
+      },
+    ],
+  };
+
+  const chartOptions = {
+    indexAxis: "x",
+    elements: {
+      bar: {
+        borderWidth: 2,
+      },
+    },
+    responsive: true,
+    plugins: {
+      legend: {
+        display: false,
+      },
+      title: {
+        display: true,
+        text: "Top 3 Scores",
+      },
+    },
+  };
+
+  const chartContent = (
+    <div className="chart-container">
+      <h2 style={{ textAlign: "center" }}>Bar Chart</h2>
+      <Bar data={chartData} options={chartOptions} />
+    </div>
+  );
+
+  const elements = [
+    {
+      id: 6,
+      title: "pqr",
+      description: "<p>pqr</p>",
+      user_id: 1,
+      event_id: 1,
+      created_at: "2024-02-18T09:42:50.289Z",
+      updated_at: null,
+      virtual_money: 448,
+    },
+    {
+      id: 5,
+      title: "mno",
+      description: "<p>mno</p>",
+      user_id: 1,
+      event_id: 1,
+      created_at: "2024-02-18T08:40:44.519Z",
+      updated_at: null,
+      virtual_money: 456,
+    },
+    {
+      id: 4,
+      title: "jkl",
+      description: "<p>jkl</p>",
+      user_id: 1,
+      event_id: 1,
+      created_at: "2024-02-18T08:40:31.541Z",
+      updated_at: null,
+      virtual_money: 320,
+    },
+    {
+      id: 3,
+      title: "ghi",
+      description: "<p>ghi</p>",
+      user_id: 1,
+      event_id: 1,
+      created_at: "2024-02-18T08:40:20.842Z",
+      updated_at: null,
+      virtual_money: 500,
+    },
+    {
+      id: 2,
+      title: "def",
+      description: "<p>def</p>",
+      user_id: 1,
+      event_id: 1,
+      created_at: "2024-02-06T14:18:09.961Z",
+      updated_at: null,
+      virtual_money: 255,
+    },
+  ];
+
+  function Demo() {
+    const rows = elements.map((elements) => (
+      <Table.Tr key={elements.id}>
+        <Table.Td>{elements.id}</Table.Td>
+        <Table.Td>{elements.title}</Table.Td>
+        <Table.Td>{elements.virtual_money}</Table.Td>
+      </Table.Tr>
+    ));
+
+    return (
+      <Table stickyHeader stickyHeaderOffset={60}>
+        <Table.Thead>
+          <Table.Tr>
+            <Table.Th>Project ID</Table.Th>
+            <Table.Th>Title</Table.Th>
+            <Table.Th>Virtual Money</Table.Th>
+          </Table.Tr>
+        </Table.Thead>
+        <Table.Tbody>{rows}</Table.Tbody>
+      </Table>
+    );
+  }
 
   const UpdateThumbnail = () => {
     const [file, setFile] = useState<File | null>(null);
@@ -1602,11 +1729,7 @@ export default function Event() {
             >
               Projects ({totalProjects})
             </Tabs.Tab>
-            <Tabs.Tab
-              value="settings"
-              leftSection={<IconChartBar size={14} />}
-              disabled
-            >
+            <Tabs.Tab value="settings" leftSection={<IconChartBar size={14} />}>
               Result
             </Tabs.Tab>
           </Tabs.List>
@@ -1858,7 +1981,9 @@ export default function Event() {
                               <TextInput
                                 label="Virtual Money"
                                 placeholder="Virtual Money"
-                                value={virtualMoneyForm?.values.virtualMoney || 0}
+                                value={
+                                  virtualMoneyForm?.values.virtualMoney || 0
+                                }
                                 required
                                 onChange={(e) => {
                                   console.log("e", e.target.value);
@@ -2121,7 +2246,12 @@ export default function Event() {
             </Box>
           </Tabs.Panel>
 
-          <Tabs.Panel value="settings">Settings tab content</Tabs.Panel>
+          <Tabs.Panel value="settings">
+            Settings tab content 123
+            {JSON.stringify(projects)}
+            {chartContent}
+            <Demo></Demo>
+          </Tabs.Panel>
         </Tabs>
 
         <div className={styles.footer}></div>
