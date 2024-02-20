@@ -1,4 +1,4 @@
-import { Text, Center, Container, Button } from "@mantine/core";
+import { Text, Center, Container, Button, Affix, Image, Flex, Divider } from "@mantine/core";
 
 import "@mantine/core/styles.css";
 
@@ -6,69 +6,81 @@ import "@mantine/core/styles.css";
 import styles from "./styles.module.css";
 
 import {
-  IconBrandGoogleFilled,
+    IconArrowLeft,
+    IconBrandGoogleFilled,
 } from "@tabler/icons-react";
 
 export default function Login() {
-  // google login
-  const handleGoogleLogin = () => {
-    window.location.href = import.meta.env.VITE_BACKEND_ENDPOINT;
-  };
+    // google login
+    const handleGoogleLogin = () => {
+        window.location.href = import.meta.env.VITE_BACKEND_ENDPOINT;
+    };
 
-  return (
-    <body>
-      <Center
-        style={{
-          height: "100vh",
-        }}
-      >
-        <Container size="xs" p="3rem" className={styles.logincontainer}>
-          <Text size="topic" c="redcolor.4" fw={500}>
-            Let's get Started!
-          </Text>
-          <Text mt="lg">
-            Welcome back, members! Please log in to continue in Event
-            Management.
-          </Text>
-          <Center>
-            <Button
-              color="deepredcolor.9"
-              size="md"
-              w="100%"
-              justify="center"
-              variant="outline"
-              mt="xl"
-              leftSection={<IconBrandGoogleFilled size={14} />}
-              onClick={handleGoogleLogin}
+    return (
+        <body>
+
+            {/* back to homepage button */}
+            <Affix position={{ top: "0", left: "0" }} p="lg">
+                <a href="/">
+                    <Button variant="subtle" color="redcolor.4">
+                        <Flex align="center">
+                            <IconArrowLeft size={14} />
+                            <Text ml="md" c="redcolor.4">Gallery walk</Text>
+                        </Flex>
+                    </Button>
+                </a>
+            </Affix>
+
+            {/* image container */}
+            <Affix position={{ top: "150", left: "420" }} style={{ zIndex: "0" }}>
+                <Image
+                    h={250}
+                    opacity="50%"
+                    src="/src/images/icon-3.png"
+                    style={{ transform: "rotate(180deg)" }}
+                />
+            </Affix>
+
+            {/* login container */}
+            <Center
+                style={{
+                    height: "100vh",
+                }}
             >
-              <Text c="deepredcolor.9">Login with Google account</Text>
-            </Button>
-          </Center>
-          {/* <Divider
-                        my="lg"
-                        label="or"
-                        c="graycolor.2"
-                        labelPosition="center"
-                    /> */}
-          {/* <Center>
+                <Container size="xs" p="3rem" className={styles.logincontainer} style={{ zIndex: "1" }}>
+                    <Text size="topic" c="redcolor.4" fw={500}>
+                        Let's get Started!
+                    </Text>
+                    <Text mt="lg">
+                        Welcome back, members! Please log-in to continue in the Event Management system.
+                    </Text>
+
+                    <Divider size="xs" my="md" />
+
+                    <Text size="small">
+                        Our event management system is designed to help you manage your events efficiently, save time and resources, and track your event performance.
+                    </Text>
+
+                    {/* google account container */}
+                    <Center>
                         <Button
                             color="deepredcolor.9"
                             size="md"
                             w="100%"
                             justify="center"
                             variant="outline"
-                            leftSection={
-                                <IconBrandFacebookFilled size={14} />
-                            }
-                            // onClick={handleGoogleLogin}
-                            >
-                            <Text c="deepredcolor.9">
-                                Login with Facebook account
-                            </Text>
+                            mt="lg"
+                            leftSection={<IconBrandGoogleFilled size={14} />}
+                            onClick={handleGoogleLogin}
+                        >
+                            <Text c="deepredcolor.9">Login with Google account</Text>
                         </Button>
-                    </Center> */}
-        </Container>
-      </Center>
-    </body>
-  );
+                    </Center>
+                </Container>
+            </Center>
+
+            {/* footer */}
+            <Affix className={` ${styles.footer} ${styles.event}`}></Affix>
+        </body>
+    );
 }
