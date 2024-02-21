@@ -19,6 +19,7 @@ import {
   Button,
   TextInput,
   Table,
+  TableData,
   rem,
   Center,
   Pagination,
@@ -71,6 +72,7 @@ import { DateInput, TimeInput } from "@mantine/dates";
 import Chart from "chart.js/auto";
 import { CategoryScale } from "chart.js";
 import { Bar } from "react-chartjs-2";
+import { table } from "console";
 
 interface EventType {
   id: number;
@@ -279,8 +281,8 @@ export default function Event() {
     };
 
     const fetchProjectsDataAll = async () => {
-      const page =1;
-      const pageSize=1000;
+      const page = 1;
+      const pageSize = 1000;
       await axios
         .get(`${BASE_ENDPOINT}presenters/get-project/${eventId}`, {
           withCredentials: true,
@@ -309,8 +311,9 @@ export default function Event() {
               },
             ],
           };
-
           setChartData(_Data);
+          const _twoDimensionalArray = res.data.data.map(obj => [obj.id, obj.title, obj.virtual_money]);         
+            setTableData0(_twoDimensionalArray);
         })
         .catch((err) => {
           console.log("projects err", err);
@@ -949,86 +952,16 @@ export default function Event() {
     </div>
   );
 
-  const elements = [
-    {
-      id: 6,
-      title: "pqr",
-      description: "<p>pqr</p>",
-      user_id: 1,
-      event_id: 1,
-      created_at: "2024-02-18T09:42:50.289Z",
-      updated_at: null,
-      virtual_money: 448,
-    },
-    {
-      id: 5,
-      title: "mno",
-      description: "<p>mno</p>",
-      user_id: 1,
-      event_id: 1,
-      created_at: "2024-02-18T08:40:44.519Z",
-      updated_at: null,
-      virtual_money: 456,
-    },
-    {
-      id: 4,
-      title: "jkl",
-      description: "<p>jkl</p>",
-      user_id: 1,
-      event_id: 1,
-      created_at: "2024-02-18T08:40:31.541Z",
-      updated_at: null,
-      virtual_money: 320,
-    },
-    {
-      id: 3,
-      title: "ghi",
-      description: "<p>ghi</p>",
-      user_id: 1,
-      event_id: 1,
-      created_at: "2024-02-18T08:40:20.842Z",
-      updated_at: null,
-      virtual_money: 500,
-    },
-    {
-      id: 2,
-      title: "def",
-      description: "<p>def</p>",
-      user_id: 1,
-      event_id: 1,
-      created_at: "2024-02-06T14:18:09.961Z",
-      updated_at: null,
-      virtual_money: 255,
-    },
-  ];
+  const _tableData0 = [[6, "pqr", 448]];
 
-  function Demo() {
-    const rows = elements.map((elements) => (
-      <Table.Tr>
-        <Table.Td>{elements.id}</Table.Td>
-        <Table.Td>{elements.title}</Table.Td>
-        <Table.Td>{elements.virtual_money}</Table.Td>
-      </Table.Tr>
-    ));
+  const [tableData0, setTableData0] = useState(_tableData0);
+  const tableData: TableData = {
+    caption: "Some elements from periodic table",
+    head: ["ID", "Title", "Virtual money"],
+    body: tableData0,
+  };
 
-    return (
-      <Table
-        stickyHeader
-        stickyHeaderOffset={60}
-        highlightOnHover
-        horizontalSpacing="xl"
-      >
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Project ID</Table.Th>
-            <Table.Th>Title</Table.Th>
-            <Table.Th>Virtual Money</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>{rows}</Table.Tbody>
-      </Table>
-    );
-  }
+  const tableDataContent = <Table data={tableData} />;
 
   const UpdateThumbnail = () => {
     const [file, setFile] = useState<File | null>(null);
@@ -2039,7 +1972,7 @@ export default function Event() {
             Settings tab content 123
             {JSON.stringify(projects)}
             {chartContent}
-            <Demo></Demo>
+            {tableDataContent}
           </Tabs.Panel>
         </Tabs>
 
