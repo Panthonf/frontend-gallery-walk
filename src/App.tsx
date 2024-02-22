@@ -7,6 +7,7 @@ import "@mantine/core/styles.css";
 
 import styles from "./styles.module.css";
 import "@mantine/dates/styles.css";
+import '@mantine/charts/styles.css';
 
 import {
     MantineProvider,
