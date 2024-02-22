@@ -43,14 +43,11 @@ import ProjectsDashboard from "./projectsDashboard";
 export default function Dashboard() {
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(3);
+  const [pageSize] = useState(5);
   const [totalEvents, setTotalEvents] = useState(0);
   const [events, setEvents] = useState([]);
-
   const [isLoading, setIsLoading] = useState(true);
-
   const [activeTab, setActiveTab] = useState("Event manager");
-
   document.title = `Dashboard | Event Manager`;
 
   useEffect(() => {
@@ -294,7 +291,6 @@ export default function Dashboard() {
     <body>
       {/* navbar */}
       <Navbar />
-
       <Grid w="80%" p="xl" mx="auto">
         <Grid.Col span={12}>
           <Text
