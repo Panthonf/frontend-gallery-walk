@@ -2,7 +2,8 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart, CategoryScale } from "chart.js";
-import { Flex, Select, Text } from "@mantine/core";
+import { Flex, Text, RadioGroup, Radio, Group, Space } from "@mantine/core";
+
 import { TableSort } from "../components/tableSort";
 
 type EventResultType = {
@@ -40,7 +41,7 @@ export default function EventResult(props: { eventId: unknown }) {
   }, [props.eventId]);
 
   Chart.register(CategoryScale);
-  
+
   const [numberOfBars, setNumberOfBars] = useState<number>(3);
 
   const handleSelectChange = (value: number) => {
@@ -52,7 +53,9 @@ export default function EventResult(props: { eventId: unknown }) {
     datasets: [
       {
         label: "Virtual Money ",
-        data: eventResult?.map((data) => data.total_virtual_money).slice(0, numberOfBars),
+        data: eventResult
+          ?.map((data) => data.total_virtual_money)
+          .slice(0, numberOfBars),
         backgroundColor: [
           "rgba(75,192,192,1)",
           "#ecf0f1",
@@ -68,7 +71,7 @@ export default function EventResult(props: { eventId: unknown }) {
 
   const chartContent = (
     <div className="chart-container">
-      <h2 style={{ textAlign: "center" }}>Bar Chart</h2>
+      <h2 style={{ textAlign: "center" }}>Event Result</h2>
       <Bar
         data={_Data}
         options={{
@@ -85,14 +88,35 @@ export default function EventResult(props: { eventId: unknown }) {
     </div>
   );
 
-  
+  const [chartDataColumn, setChartDataColumn] = useState<number>(3);
 
   return (
     <div>
-      <Flex my="80" justify="center">
+      <Flex justify="center">
         {eventResult ? (
           <div>
-            <Flex justify="flex-end">
+            <RadioGroup
+              value={chartDataColumn.toString()}
+              onChange={(value) => setChartDataColumn(Number(value))}
+              label="Number of Bars"
+              required
+              withAsterisk
+            >
+              <Group mt="xs" color="red">
+                <Space h="lg" />
+                <Radio
+                  value="3"
+                  label="Top 3 teams"
+                  onClick={() => handleSelectChange(3)}
+                />
+                <Radio
+                  value="5"
+                  label="Top 5 teams"
+                  onClick={() => handleSelectChange(5)}
+                />
+              </Group>
+            </RadioGroup>
+            {/* <Flex justify="flex-end">
               <Select
                 label="Number of Bars"
                 placeholder="Select number of bars"
@@ -102,7 +126,7 @@ export default function EventResult(props: { eventId: unknown }) {
                 value={numberOfBars.toString()}
                 onChange={(value) => handleSelectChange(Number(value))}
               />
-            </Flex>
+            </Flex> */}
             {chartContent}
             <TableSort data={eventResult} />
           </div>
