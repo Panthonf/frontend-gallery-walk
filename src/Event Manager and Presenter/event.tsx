@@ -262,7 +262,6 @@ export default function Event() {
             }
           )
           .then((res) => {
-            // console.log("role", res.data.role);
             if (res.data.role === "manager") {
               setCanEdit(true);
             }
@@ -868,8 +867,6 @@ export default function Event() {
   };
 
   Chart.register(CategoryScale);
-
-  
 
   const UpdateThumbnail = () => {
     const [file, setFile] = useState<File | null>(null);
@@ -2129,7 +2126,31 @@ export default function Event() {
           </Tabs.Panel>
 
           <Tabs.Panel value="settings">
-            <EventResult eventId={eventId as string | undefined}/>
+            {canEdit ? (
+              <Card className={styles.cardContainer} mx="auto" mb="lg">
+                <EventResult eventId={eventId} />
+              </Card>
+            ) : (
+              <>
+                {moment(event?.end_date).isAfter(moment()) ? (
+                  <Card className={styles.cardContainer} mx="auto" mb="lg">
+                    <Flex justify="center" align="center" direction="column">
+                      <Text size="lg" c="redcolor.5" fw={600}>
+                        Result
+                      </Text>
+                      <Text size="md" c="redcolor.3">
+                        The result will be available after the event ends{" "}
+                        {moment(event?.end_date).fromNow()}
+                      </Text>
+                    </Flex>
+                  </Card>
+                ) : (
+                  <Card className={styles.cardContainer} mx="auto" mb="lg">
+                    <EventResult eventId={eventId} />
+                  </Card>
+                )}
+              </>
+            )}
           </Tabs.Panel>
         </Tabs>
 
