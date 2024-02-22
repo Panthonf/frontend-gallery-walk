@@ -48,11 +48,11 @@ export default function EventResult(props: { eventId: unknown }) {
   };
 
   const _Data = {
-    labels: eventResult?.map((data) => data.title),
+    labels: eventResult?.map((data) => data.title).slice(0, numberOfBars),
     datasets: [
       {
         label: "Virtual Money ",
-        data: eventResult?.map((data) => data.total_virtual_money),
+        data: eventResult?.map((data) => data.total_virtual_money).slice(0, numberOfBars),
         backgroundColor: [
           "rgba(75,192,192,1)",
           "#ecf0f1",
