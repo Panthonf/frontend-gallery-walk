@@ -27,6 +27,8 @@ import {
   Modal,
   Tabs,
   Affix,
+  Radio,
+  Space,
   Select,
 } from "@mantine/core";
 import { useClipboard, useDisclosure } from "@mantine/hooks";
@@ -102,6 +104,7 @@ type ProjectType = {
 };
 
 const BASE_ENDPOINT = import.meta.env.VITE_BASE_ENDPOINTMENT;
+let tableresult = [];
 
 export default function Event() {
   const refStartTime = useRef<HTMLInputElement>(null);
@@ -293,27 +296,19 @@ export default function Event() {
           //renderChart();
           console.log("project data dd", res.data);
 
-          const _Data = {
-            labels: res.data.data.map((data) => data.title),
-            datasets: [
-              {
-                label: "Virtual Money ",
-                data: res.data.data.map((data) => data.virtual_money),
-                backgroundColor: [
-                  "rgba(75,192,192,1)",
-                  "#ecf0f1",
-                  "#50AF95",
-                  "#f3ba2f",
-                  "#2a71d0",
-                ],
-                borderColor: "black",
-                borderWidth: 2,
-              },
-            ],
-          };
-          setChartData(_Data);
-          const _twoDimensionalArray = res.data.data.map(obj => [obj.id, obj.title, obj.virtual_money]);         
-            setTableData0(_twoDimensionalArray);
+          tableresult = JSON.parse(JSON.stringify(res.data.data));
+          renderChartData(res.data.data);
+
+          const _twoDimensionalArray = tableresult.map((obj) => [
+            obj.id,
+            obj.title,
+            obj.virtual_money,
+          ]);
+
+          // Sorting by the first element (id)
+          _twoDimensionalArray.sort((a, b) => b[2] - a[2]);
+
+          setTableData0(_twoDimensionalArray);
         })
         .catch((err) => {
           console.log("projects err", err);
@@ -941,7 +936,6 @@ export default function Event() {
           plugins: {
             title: {
               display: true,
-              text: "Users Gained between 2016-2020",
             },
             legend: {
               display: false,
@@ -962,6 +956,63 @@ export default function Event() {
   };
 
   const tableDataContent = <Table data={tableData} />;
+  const [chartDataColumn, setChartDataColumn] = useState("Top3");
+
+  function renderChartData(chartDataArrayParam) {
+    console.log("chartDataArrayParam=" + JSON.stringify(chartDataArrayParam));
+    let chartDataArray = JSON.parse(JSON.stringify(chartDataArrayParam));
+    chartDataArray.sort((a, b) => a.virtual_money - b.virtual_money);
+    const arrOutput = [];
+    let count = 0;
+    let maxCount = 4;
+    if (chartDataColumn == "Top3") {
+      maxCount = 2;
+    } else if (chartDataColumn == "Top5") {
+      maxCount = 4;
+    }
+    for (let i = chartDataArray.length - 1; i >= 0; i--, count++) {
+      if (count > maxCount) break;
+      if (count % 2 == 0) {
+        arrOutput.push(chartDataArray[i]);
+      } else {
+        arrOutput.unshift(chartDataArray[i]);
+      }
+    }
+    chartDataArray = arrOutput;
+
+    const _Data = {
+      labels: chartDataArray.map((data) => data.title),
+      datasets: [
+        {
+          label: "Virtual Money ",
+          data: chartDataArray.map((data) => data.virtual_money),
+          backgroundColor: [
+            "rgba(75,192,192,1)",
+            "#ecf0f1",
+            "#50AF95",
+            "#f3ba2f",
+            "#2a71d0",
+          ],
+          borderColor: "black",
+          borderWidth: 2,
+        },
+      ],
+    };
+    setChartData(_Data);
+  }
+
+  const handleClickChartDataColumn = (value) => {
+    console.log("Selected Value:" + value);
+    renderChartData(tableresult);
+    // Additional logic you want to perform on click
+  };
+
+  const [selectedValue, setSelectedValue] = useState("option1");
+
+  const handleChangeChartDataColumn = (value) => {
+    setSelectedValue(value);
+    setChartDataColumn(value);
+  };
 
   const UpdateThumbnail = () => {
     const [file, setFile] = useState<File | null>(null);
@@ -1969,9 +2020,39 @@ export default function Event() {
           </Tabs.Panel>
 
           <Tabs.Panel value="settings">
-            Settings tab content 123
-            {JSON.stringify(projects)}
+            <Space h="lg" />
+            <Radio.Group
+              // value={chartDataColumn}
+              value={selectedValue}
+              onChange={handleChangeChartDataColumn}
+              name="favoriteFramework"
+              label="Select your table"
+              withAsterisk
+            >
+              <Group mt="xs">
+                <Space h="lg" />
+                <Radio
+                  value="Top3"
+                  label="Top 3 teams with the highest scores"
+                  onClick={() => handleChangeChartDataColumn("Top3")}
+                />
+                <Radio
+                  value="Top5"
+                  label="Top 5 teams with the highest scores"
+                  onClick={() => handleChangeChartDataColumn("Top5")}
+                />
+                <Space h="lg" />
+              </Group>
+            </Radio.Group>
+            <Space h="lg" />
+            <button
+              onClick={handleClickChartDataColumn}
+            >
+              Get Selected Value
+            </button>
+            {/* {JSON.stringify(projects)} */}
             {chartContent}
+            <Space h="lg" />
             {tableDataContent}
           </Tabs.Panel>
         </Tabs>
