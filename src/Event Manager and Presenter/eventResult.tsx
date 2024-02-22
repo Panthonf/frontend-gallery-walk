@@ -1,12 +1,10 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
-import {
-  Flex,
-  // Select,
-  Text,
-} from "@mantine/core";
+import { Chart, CategoryScale } from "chart.js";
+import { Flex, Select, Text } from "@mantine/core";
 import { TableSort } from "../components/tableSort";
+
 type EventResultType = {
   id: number;
   title: string;
@@ -41,84 +39,60 @@ export default function EventResult(props: { eventId: unknown }) {
     fetchProjectResult();
   }, [props.eventId]);
 
-  //   const filteredEventResult = eventResult && eventResult.slice(0, numberOfBars);
-  //   const dataChart = filteredEventResult?.map(
-  //     (result) => result.total_virtual_money
-  //   );
+  Chart.register(CategoryScale);
+  
+  const [numberOfBars, setNumberOfBars] = useState<number>(3);
 
-  const chartData = {
-    labels: [
-      `2nd (${eventResult?.[1].title ?? 0})`,
-      `1st (${eventResult?.[0].title ?? 0})`,
-      `3rd (${eventResult?.[2].title ?? 0})`,
-    ],
+  const handleSelectChange = (value: number) => {
+    setNumberOfBars(value);
+  };
+
+  const _Data = {
+    labels: eventResult?.map((data) => data.title),
     datasets: [
       {
-        label: "Total Virtual Money",
-        backgroundColor: ["#FF6384", "#36A2EB", "#FFCE56"],
-        borderColor: "#fff",
-        borderWidth: 1,
-        data: [30, 50, 30],
+        label: "Virtual Money ",
+        data: eventResult?.map((data) => data.total_virtual_money),
+        backgroundColor: [
+          "rgba(75,192,192,1)",
+          "#ecf0f1",
+          "#50AF95",
+          "#f3ba2f",
+          "#2a71d0",
+        ],
+        borderColor: "black",
+        borderWidth: 2,
       },
     ],
-    legend: {
-      display: false,
-    },
   };
-
-  let delayed: boolean;
-
-  const chartOptions = {
-    indexAxis: "x" as const,
-    responsive: true,
-    maintainAspectRatio: true,
-    scales: {
-      x: {
-        beginAtZero: true,
-        // display: false,
-      },
-      y: {
-        beginAtZero: true,
-        display: false,
-      },
-    },
-
-    animation: {
-      onComplete: () => {
-        delayed = true;
-      },
-      delay: (context: {
-        type: string;
-        mode: string;
-        dataIndex: number;
-        datasetIndex: number;
-      }) => {
-        let delay = 0;
-        if (context.type === "data" && context.mode === "default" && !delayed) {
-          delay = context.dataIndex * 300 + context.datasetIndex * 100;
-        }
-        return delay;
-      },
-    },
-  };
-
-  //   const handleSelectChange = (value: number) => {
-  //     setNumberOfBars(value);
-  //   };
 
   const chartContent = (
     <div className="chart-container">
-      <h2 style={{ textAlign: "center" }}>Event Result</h2>
-      <Bar data={chartData} options={chartOptions} />
+      <h2 style={{ textAlign: "center" }}>Bar Chart</h2>
+      <Bar
+        data={_Data}
+        options={{
+          plugins: {
+            title: {
+              display: true,
+            },
+            legend: {
+              display: false,
+            },
+          },
+        }}
+      />
     </div>
   );
+
+  
 
   return (
     <div>
       <Flex my="80" justify="center">
         {eventResult ? (
           <div>
-            {/* <Flex justify="flex-end">
+            <Flex justify="flex-end">
               <Select
                 label="Number of Bars"
                 placeholder="Select number of bars"
@@ -128,7 +102,7 @@ export default function EventResult(props: { eventId: unknown }) {
                 value={numberOfBars.toString()}
                 onChange={(value) => handleSelectChange(Number(value))}
               />
-            </Flex> */}
+            </Flex>
             {chartContent}
             <TableSort data={eventResult} />
           </div>
