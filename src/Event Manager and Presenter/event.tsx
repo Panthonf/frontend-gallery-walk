@@ -28,6 +28,7 @@ import {
   Tabs,
   Affix,
   Radio,
+  RadioGroup,
   Space,
   Select,
 } from "@mantine/core";
@@ -56,6 +57,7 @@ import {
   IconChartBar,
   IconUsersGroup,
   IconClock,
+  IconCircleCheckFilled,
 } from "@tabler/icons-react";
 import { isNotEmpty, useForm } from "@mantine/form";
 
@@ -2021,35 +2023,39 @@ export default function Event() {
 
           <Tabs.Panel value="settings">
             <Space h="lg" />
-            <Radio.Group
+            <RadioGroup
               // value={chartDataColumn}
               value={selectedValue}
               onChange={handleChangeChartDataColumn}
-              name="favoriteFramework"
               label="Select your table"
+              required
               withAsterisk
             >
-              <Group mt="xs">
+              <Group mt="xs" color="red">
                 <Space h="lg" />
                 <Radio
                   value="Top3"
-                  label="Top 3 teams with the highest scores"
+                  label="Top 3 teams"
                   onClick={() => handleChangeChartDataColumn("Top3")}
                 />
                 <Radio
                   value="Top5"
-                  label="Top 5 teams with the highest scores"
+                  label="Top 5 teams"
                   onClick={() => handleChangeChartDataColumn("Top5")}
                 />
                 <Space h="lg" />
               </Group>
-            </Radio.Group>
+            </RadioGroup>
             <Space h="lg" />
-            <button
+            <Button
+              size="xs"
+              leftSection={<IconCircleCheckFilled size={14} />}
               onClick={handleClickChartDataColumn}
             >
-              Get Selected Value
-            </button>
+              <Text c="pinkcolor.1" size="small">
+                Get Selected Value
+              </Text>
+            </Button>
             {/* {JSON.stringify(projects)} */}
             {chartContent}
             <Space h="lg" />
