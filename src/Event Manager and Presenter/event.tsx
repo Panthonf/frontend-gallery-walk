@@ -26,7 +26,11 @@ import {
   Tabs,
   Affix,
   Select,
+  LoadingOverlay,
+  FileInput,
+  Badge,
 } from "@mantine/core";
+import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { useClipboard, useDisclosure } from "@mantine/hooks";
 
 import moment from "moment";
@@ -51,6 +55,8 @@ import {
   IconInfoSquare,
   IconChartBar,
   IconClock,
+  IconPhotoUp,
+  IconFile,
 } from "@tabler/icons-react";
 import { isNotEmpty, useForm } from "@mantine/form";
 
@@ -88,6 +94,8 @@ interface EventType {
 }
 
 type ProjectType = {
+  project_document: string;
+  project_image: string;
   created_at: string;
   virtual_money: number;
   map(
@@ -137,6 +145,9 @@ export default function Event() {
   const [eventFeedback, setEventFeedback] = useState<EventFeedbackType | null>(
     null
   );
+
+  const [visible, { toggle: toggleCreateProject }] = useDisclosure(false);
+  const [documents, setDocuments] = useState<File[]>([]);
 
   const editor = useEditor({
     extensions: [
@@ -293,6 +304,7 @@ export default function Event() {
           params: { query, page, pageSize },
         })
         .then((res) => {
+          console.log("projects hhh", res.data.data);
           setProjects(res.data.data);
         })
         .catch((err) => {
@@ -440,6 +452,69 @@ export default function Event() {
     },
   });
 
+  const [files, setFiles] = useState<FileWithPath[]>([]);
+
+  const onDrop = (acceptedFiles: FileWithPath[]) => {
+    if (files.length + acceptedFiles.length > 5) {
+      // If adding these files exceeds the limit, only take the first 5 files
+      setFiles(files.concat(acceptedFiles.slice(0, 5 - files.length)));
+    } else {
+      setFiles(files.concat(acceptedFiles));
+    }
+  };
+
+  const handleUploadProjectImage = async (projectId: number) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("file", file);
+    });
+    try {
+      await axios
+        .post(
+          `${BASE_ENDPOINT}presenters/add-project-image/${projectId}`,
+          formData,
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          console.log("upload project image", res.data);
+          toggleCreateProject();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  const handleUploadDocument = async (projectId: number) => {
+    const formData = new FormData();
+    documents.forEach((file) => {
+      formData.append("file", file);
+    });
+
+    try {
+      await axios
+        .post(
+          `${BASE_ENDPOINT}projects/upload-documents/${projectId}`,
+          formData,
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          console.log("upload document", res.data);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
   const onSubmit = async () => {
     Swal.fire({
       title: "Are you sure?",
@@ -462,7 +537,15 @@ export default function Event() {
                 withCredentials: true,
               }
             )
-            .then(() => {
+            .then((res) => {
+              console.log("create project", res.data.data);
+              if (files.length > 0) {
+                toggleCreateProject();
+                handleUploadProjectImage(res.data.data.id);
+              }
+              if (documents.length > 0) {
+                handleUploadDocument(res.data.data.id);
+              }
               Swal.fire({
                 title: "Success",
                 text: "Create project success",
@@ -471,7 +554,6 @@ export default function Event() {
                 showConfirmButton: false,
               }).then(() => {
                 window.location.reload();
-                // toggleAddProject();
               });
             })
             .catch((err) => {
@@ -662,6 +744,51 @@ export default function Event() {
               __html: project.description,
             }}
           />
+          <Flex justify="flex-start">
+            {Array.isArray(project.project_image) &&
+              project.project_image.map(
+                (image: { project_image_url: string }, index) => (
+                  <Image
+                    m="md"
+                    src={image.project_image_url}
+                    alt={`Thumbnail for ${image.project_image_url}`}
+                    key={index}
+                    h={200}
+                    w="auto"
+                  />
+                )
+              )}
+          </Flex>
+          {project.project_document.length > 0 && (
+            <Text c="graycolor.3" mt="md">
+              File Attachment
+            </Text>
+          )}
+          <Flex justify="flex-start">
+            {Array.isArray(project.project_document) &&
+              project.project_document.map(
+                (
+                  document: {
+                    document_name: string;
+                    document_url: string;
+                  },
+                  index
+                ) => (
+                  <>
+                    <Badge p="sm" mt="sm" key={index} color="blue" mx="sm">
+                      <Anchor
+                        href={document.document_url}
+                        target="_blank"
+                        rel="noreferrer"
+                        c="white"
+                      >
+                        {document.document_name}
+                      </Anchor>
+                    </Badge>
+                  </>
+                )
+              )}
+          </Flex>
         </Modal>
       </>
     );
@@ -1171,6 +1298,37 @@ export default function Event() {
       }
     });
   };
+
+  const previews = files.map((file, index) => {
+    const imageUrl = URL.createObjectURL(file);
+    return (
+      <div>
+        <AspectRatio ratio={1080 / 720} maw={300} mx="auto">
+          <Image
+            radius={8}
+            mt="sm"
+            mx={10}
+            key={index}
+            src={imageUrl}
+            alt={`Preview ${index + 1}`}
+            onLoad={() => URL.revokeObjectURL(imageUrl)}
+          />
+        </AspectRatio>
+
+        <Button
+          onClick={() => {
+            setFiles(files.filter((_, i) => i !== index));
+          }}
+          variant="light"
+          size="sm"
+          mt="md"
+          mx={10}
+        >
+          <IconTrash size={14} />
+        </Button>
+      </div>
+    );
+  });
 
   return (
     <body>
@@ -1964,6 +2122,10 @@ export default function Event() {
                   centered
                   size="80%"
                 >
+                  <LoadingOverlay
+                    visible={visible}
+                    loaderProps={{ children: "Uploading..." }}
+                  />
                   <form
                     onSubmit={form.onSubmit(() => {
                       onSubmit();
@@ -2025,6 +2187,98 @@ export default function Event() {
                         <>{form.errors.description}</>
                       )}
                     </Text>
+
+                    <div>
+                      <FileInput
+                        mt="md"
+                        accept="docx, pdf, pptx, xlsx"
+                        label="Upload files"
+                        placeholder="Upload files"
+                        onChange={(files) => {
+                          setDocuments([...documents, ...files]);
+                          console.log("files", documents);
+                        }}
+                        multiple
+                      >
+                        <Button
+                          mt="md"
+                          leftSection={<IconFile size={14} />}
+                          variant="default"
+                        >
+                          Upload File
+                        </Button>
+                      </FileInput>
+                      <div>
+                        {documents.length > 0 && (
+                          <>
+                            {" "}
+                            <Flex align="center" mt="md" justify="flex-start">
+                              {documents.map((file, index) => (
+                                <div>
+                                  <Text size="sm" ml="md" c="graycolor.2">
+                                    {file.name}
+                                  </Text>
+                                  <Button
+                                    ml="md"
+                                    variant="light"
+                                    size="xs"
+                                    mt="md"
+                                    onClick={() => {
+                                      setDocuments(
+                                        documents.filter((_, i) => i !== index)
+                                      );
+                                    }}
+                                  >
+                                    Clear
+                                  </Button>
+                                </div>
+                              ))}
+                            </Flex>
+                            <Center mt="md">
+                              <Text size="sm" c="graycolor.2">
+                                {documents.length} files selected
+                              </Text>
+                            </Center>
+                          </>
+                        )}
+                      </div>
+                      <Dropzone accept={IMAGE_MIME_TYPE} onDrop={onDrop}>
+                        <Button
+                          mt="md"
+                          leftSection={<IconPhotoUp size={14} />}
+                          variant="default"
+                        >
+                          Upload Image
+                        </Button>
+                      </Dropzone>
+
+                      <SimpleGrid
+                        cols={{ base: 1, sm: 4 }}
+                        mt={previews.length > 0 ? "xl" : 0}
+                      >
+                        {previews}
+                      </SimpleGrid>
+                      <Center>
+                        {previews.length > 0 && (
+                          <>
+                            <Text size="sm" mt="md" c="graycolor.2">
+                              {files.length} files selected
+                            </Text>
+                            <Button
+                              ml="md"
+                              variant="light"
+                              size="xs"
+                              mt="md"
+                              onClick={() => {
+                                setFiles([]);
+                              }}
+                            >
+                              Clear
+                            </Button>
+                          </>
+                        )}
+                      </Center>
+                    </div>
 
                     <Box ta="end">
                       <Button type="submit" size="sm" mt="md">
