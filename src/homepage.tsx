@@ -69,6 +69,7 @@ export default function Homepage() {
             <div
                 style={{
                     padding: "1rem",
+                    height: "3.5rem"
                 }}
             >
                 <Grid justify="flex-start" gutter="2rem">

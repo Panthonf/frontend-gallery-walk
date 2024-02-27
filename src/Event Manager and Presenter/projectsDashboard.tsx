@@ -4,7 +4,6 @@ import {
   TextInput,
   Text,
   Button,
-  // Anchor,
   Grid,
   Container,
   SimpleGrid,
@@ -12,10 +11,12 @@ import {
   Flex,
   Modal,
   Box,
-  Group,
   Anchor,
   Loader,
   Center,
+  Group,
+  HoverCard,
+  Pagination,
 } from "@mantine/core";
 import {
   IconArrowNarrowRight,
@@ -29,7 +30,7 @@ import parse from "html-react-parser";
 import styles from "../styles.module.css";
 import { useDisclosure } from "@mantine/hooks";
 import moment from "moment";
-import { Pagination } from "@mantine/core";
+// import { Pagination } from "@mantine/core";
 
 type ProjectType = {
   event_data: object;
@@ -53,7 +54,6 @@ export default function ProjectsDashboard() {
   const [projects, setProjects] = useState<ProjectType | null>();
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-
   const [pageSize] = useState(5);
   const [opened, { open, close }] = useDisclosure(false);
   const [isLoading, setIsLoading] = useState(true);
@@ -144,14 +144,30 @@ export default function ProjectsDashboard() {
         </Grid.Col>
 
         <Grid.Col span={12}>
-          <Text size="base" fw={500} c="dark.9" mt="1rem" mb="2rem">
-            Projects {total > 0 && `(${total})`}
-          </Text>
+          {isLoading && (
+            <Center>
+              <Loader mt="lg" size={40} color="bluecolor.4" />
+            </Center>
+          )}
+          {!(isLoading || (projects && projects.length > 0)) && ( // Check both loading and events
+            <Center h="60vh">
+              <Flex align="center" direction="column">
+                <Text size="topic" c="redcolor.4">
+                  No events found
+                </Text>
+                <Text mt="5" size="sm" c="graycolor.2">
+                  Create a new event to get started
+                </Text>
+              </Flex>
+            </Center>
+          )}
 
-          {isLoading ? (
-            <Center my="md">{isLoading && <Loader />}</Center>
-          ) : (
-            <>
+          {projects && projects.length > 0 && (
+            <Container fluid p="0">
+              <Text size="base" fw={500} c="dark.9" mt="1rem" mb="2rem">
+                Projects {total > 0 && `(${total})`}
+              </Text>
+
               {projects && projects.length > 0 ? (
                 projects.map((projects: ProjectType) => (
                   <Container fluid p="0">
@@ -178,13 +194,20 @@ export default function ProjectsDashboard() {
                                 <Text size="xsmall" mb="xs">
                                   Event name
                                 </Text>
-                                <Text truncate="end" maw="max-content">
+
+                                <Anchor
+                                  href={`/event/${projects.event_id}`}
+                                  style={{ color: "inherit" }}
+                                  fw={700}
+                                  size="xsmall"
+                                  underline="hover"
+                                >
                                   {(
                                     projects.event_data as {
                                       event_name: string;
                                     }
                                   )?.event_name ? (
-                                    <>
+                                    <Text>
                                       {
                                         (
                                           projects.event_data as {
@@ -192,22 +215,11 @@ export default function ProjectsDashboard() {
                                           }
                                         )?.event_name
                                       }
-                                      <Anchor
-                                        href={`/event/${projects.event_id}`}
-                                        style={{ color: "inherit" }}
-                                        fw={700}
-                                        ml="md"
-                                        size="xsmall"
-                                        underline="hover"
-                                      >
-                                        <IconArrowNarrowRight size={14} />
-                                        {/* {(projects.event_data as { event_name: string })?.event_name} */}
-                                      </Anchor>
-                                    </>
+                                    </Text>
                                   ) : (
                                     "Event was deleted"
                                   )}
-                                </Text>
+                                </Anchor>
                               </Grid.Col>
                               <Grid.Col span="auto">
                                 <Text size="xsmall" mb="xs">
@@ -240,22 +252,39 @@ export default function ProjectsDashboard() {
                                 <Text size="xsmall" mb="xs">
                                   Location
                                 </Text>
-                                <Text truncate="end" maw="max-content">
-                                  {(projects.event_data as { location: string })
-                                    ?.location
-                                    ? (
-                                        projects.event_data as {
-                                          location: string;
-                                        }
-                                      )?.location
-                                    : "-"}
-                                </Text>
+
+                                <Group
+                                  justify="flex-start"
+                                  style={{ cursor: "pointer" }}
+                                >
+                                  <HoverCard width={280} shadow="md">
+                                    <HoverCard.Target>
+                                      <Text truncate="end" maw="max-content">
+                                        {(
+                                          projects.event_data as {
+                                            location: string;
+                                          }
+                                        )?.location
+                                          ? (
+                                              projects.event_data as {
+                                                location: string;
+                                              }
+                                            )?.location
+                                          : "-"}
+                                      </Text>
+                                    </HoverCard.Target>
+                                  </HoverCard>
+                                </Group>
                               </Grid.Col>
                               <Grid.Col span="auto">
                                 <Text size="xsmall" mb="xs">
                                   Status
                                 </Text>
-                                <Text truncate="end" maw="max-content">
+                                <Text
+                                  truncate="end"
+                                  maw="max-content"
+                                  c="bluecolor.4"
+                                >
                                   {moment().isBetween(
                                     (
                                       projects.event_data as {
@@ -323,27 +352,27 @@ export default function ProjectsDashboard() {
                   </Container>
                 ))
               ) : (
-                <Text>No projects found</Text>
+                <></>
               )}
-              <Flex justify="center">
-                <Pagination.Root
-                  color="bluecolor.6"
-                  size="sm"
-                  total={Math.ceil(total / pageSize)}
-                  boundaries={2}
-                  value={page}
-                  onChange={(newPage) => setPage(newPage)}
-                >
-                  <Group gap={5} justify="center">
-                    <Pagination.First />
-                    <Pagination.Previous />
-                    <Pagination.Items />
-                    <Pagination.Next />
-                    <Pagination.Last />
-                  </Group>
-                </Pagination.Root>
-              </Flex>
-            </>
+
+              <Pagination.Root
+                color="bluecolor.6"
+                size="sm"
+                total={Math.ceil(total / pageSize)}
+                boundaries={2}
+                value={page}
+                onChange={(newPage) => setPage(newPage)}
+                mb="2rem"
+              >
+                <Group gap={5} justify="center">
+                  <Pagination.First />
+                  <Pagination.Previous />
+                  <Pagination.Items />
+                  <Pagination.Next />
+                  <Pagination.Last />
+                </Group>
+              </Pagination.Root>
+            </Container>
           )}
         </Grid.Col>
       </Grid>
