@@ -54,7 +54,7 @@ export default function ProjectsDashboard() {
     const [projects, setProjects] = useState<ProjectType | null>();
     const [query, setQuery] = useState("");
     const [page,
-        // setPage
+        setPage
     ] = useState(1);
     const [pageSize] = useState(5);
     const [opened, { open, close }] = useDisclosure(false);
