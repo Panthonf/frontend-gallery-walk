@@ -9,6 +9,8 @@ import {
     rem,
     Image,
     Avatar,
+    Flex,
+    Burger,
 } from "@mantine/core";
 import {
     IconChevronDown,
@@ -22,6 +24,7 @@ import {
     //   IconTrash,
 } from "@tabler/icons-react";
 import axios from "axios";
+import { useDisclosure } from "@mantine/hooks";
 
 type UserType = {
     first_name_en: string;
@@ -32,6 +35,7 @@ type UserType = {
 export default function Navbar() {
     const [, setUserMenuOpened] = useState(false);
     const [userData, setUserData] = useState<UserType | null>(null);
+    const [opened, { toggle }] = useDisclosure(false);
 
     useEffect(() => {
         if (!userData) {
@@ -72,11 +76,18 @@ export default function Navbar() {
             <div
                 style={{
                     padding: "1rem",
+                    height: "3.5rem"
                 }}
             >
-                <Grid justify="space-between">
-                    <Grid.Col span={1}>
-                        <Text>Gallery walk</Text>
+                <Grid justify="flex-start" gutter="2rem" align="center">
+                    <Grid.Col span="content">
+                        <Flex align="center" gap="md">
+                            <Image
+                                w={30}
+                                src="/src/images/icon-1.PNG"
+                            />
+                            <Text fw={500}>Gallery walk</Text>
+                        </Flex>
                     </Grid.Col>
 
                     <Grid.Col span="auto">
@@ -88,72 +99,68 @@ export default function Navbar() {
                     </Grid.Col>
 
                     <Grid.Col span={4} ta="end">
-                        <Menu
-                            width={260}
-                            position="bottom-end"
-                            transitionProps={{ transition: "pop-top-right" }}
-                            onClose={() => setUserMenuOpened(false)}
-                            onOpen={() => setUserMenuOpened(true)}
-                            withinPortal
-                        >
-                            <Menu.Target>
-                                <UnstyledButton>
-                                    <Group gap={7}>
-                                      
-                                        {userData?.profile_pic ? (
-                                            <Image
-                                                src={userData?.profile_pic}
-                                                alt="User avatar"
-                                                radius="xl"
-                                                width={32}
-                                                height={32}
-                                            />
-                                        ) : (
-                                            <Avatar radius="xl" />
-                                        )}
-                                        <Text ml="5">
-                                            {userData ? (
-                                                <>
-                                                    {userData.first_name_en} {userData.last_name_en}
-                                                </>
-                                            ) : (
-                                                "Loading..."
-                                            )}
-                                        </Text>
+                        <Group justify="flex-end">
+                            <Burger opened={opened} onClick={toggle} hiddenFrom="xs" size="sm" />
 
-                                        <IconChevronDown
-                                            style={{ width: rem(12), height: rem(12) }}
-                                            stroke={1.5}
-                                        />
-                                    </Group>
-                                </UnstyledButton>
-                            </Menu.Target>
-                            <Menu.Dropdown>
-                                
-                                <Menu.Item
-                                    leftSection={
-                                        <IconSettings
-                                            style={{ width: rem(16), height: rem(16) }}
-                                            stroke={1.5}
-                                        />
-                                    }
-                                >
-                                    Account settings
-                                </Menu.Item>
-                              
-                                <Menu.Item
-                                    leftSection={
-                                        <IconLogout
-                                            style={{ width: rem(16), height: rem(16) }}
-                                            stroke={1.5}
-                                        />
-                                    }
-                                    onClick={handleLogout}
-                                >
-                                    Logout
-                                </Menu.Item>
-                            </Menu.Dropdown>
-                        </Menu>
+                            <Menu
+                                width={260}
+                                position="bottom-end"
+                                transitionProps={{ transition: 'pop-top-right' }}
+                                onClose={() => setUserMenuOpened(false)}
+                                onOpen={() => setUserMenuOpened(true)}
+                                withinPortal
+                            >
+                                <Menu.Target>
+                                    <UnstyledButton>
+                                        <Group>
+                                            <Flex align="center" gap="md">
+                                                {userData?.profile_pic ? (
+                                                    <Image
+                                                        src={userData?.profile_pic}
+                                                        alt="User avatar"
+                                                        radius="xl"
+                                                        width={25}
+                                                        height={25}
+                                                    />
+                                                ) : (
+                                                    <Avatar radius="xl" />
+                                                )}
+                                                <Text ml="5">
+                                                    {userData ? (
+                                                        <>
+                                                            <Text>{userData.first_name_en} {userData.last_name_en}</Text>
+                                                        </>
+                                                    ) : (
+                                                        <Text>"Loading..."</Text>
+                                                    )}
+                                                </Text>
+                                            </Flex>
+                                            <IconChevronDown style={{ width: rem(12), height: rem(12) }} stroke={1.5} />
+                                        </Group>
+                                    </UnstyledButton>
+                                </Menu.Target>
+                                <Menu.Dropdown>
+
+                                    <Menu.Label>Settings</Menu.Label>
+                                    <Menu.Item
+                                        leftSection={
+                                            <IconSettings style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
+                                        }
+                                    >
+                                        Account settings
+                                    </Menu.Item>
+                                    <Menu.Item
+                                        leftSection={
+                                            <IconLogout style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
+                                        }
+                                        onClick={handleLogout}
+                                    >
+                                        Logout
+                                    </Menu.Item>
+
+                                </Menu.Dropdown>
+                            </Menu>
+                        </Group>
                     </Grid.Col>
                 </Grid>
             </div>
