@@ -44,6 +44,7 @@ export default function ProjectsDashboard(props: {
         );
         setTotalProjects(response.data.totalProjects);
         setProjectsData(response.data.data);
+        console.log("response.data", response.data.data);
       } catch (err) {
         // console.error("Error fetching events:", error);
       }
