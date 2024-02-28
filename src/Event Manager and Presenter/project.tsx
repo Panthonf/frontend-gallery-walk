@@ -1056,9 +1056,7 @@ export default function Projects() {
                   <Text c="graycolor.2" mt="xl">
                     Documents
                   </Text>
-
                   <FileInput
-                    mt="md"
                     accept="docx, pdf, pptx, xlsx"
                     // label="Upload files"
                     placeholder="Upload files"
@@ -1069,7 +1067,6 @@ export default function Projects() {
                     multiple
                   >
                     <Button
-                      mt="md"
                       leftSection={<IconFile size={14} />}
                       variant="default"
                     >
