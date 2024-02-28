@@ -321,6 +321,40 @@ export default function Projects() {
     },
   ];
 
+  const uploadProjectDocument = async (projectId: number) => {
+    const formData = new FormData();
+    documents.forEach((file) => {
+      formData.append("file", file);
+    });
+    try {
+      await axios
+        .post(
+          `${
+            import.meta.env.VITE_BASE_ENDPOINTMENT
+          }projects/upload-documents/${projectId}`,
+          formData,
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          console.log("upload project document", res.data);
+          Swal.fire({
+            title: "Success",
+            text: "Updated project description and images",
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+          }).then(() => {
+            setDocuments([]);
+            fetchProject();
+          });
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
   const stats = data.map((stat) => {
     const Icon = icons[stat.icon as keyof typeof icons];
 
@@ -562,6 +596,7 @@ export default function Projects() {
           }
         )
         .then((res) => {
+          setFiles([]);
           console.log("upload project image", res.data);
           Swal.fire({
             title: "Success",
@@ -709,32 +744,6 @@ export default function Projects() {
                     __html: DOMPurify.sanitize(project?.description),
                   }}
                 />
-                <Flex justify="flex-start" mt="md" gap="md">
-                  {project.project_image.map((image) => (
-                    <>
-                      <Image
-                        src={image.project_image_url}
-                        alt="Project image"
-                        key={image.id}
-                        h={200}
-                        w="auto"
-                      />
-                      <ActionIcon
-                        onClick={() => {
-                          deleteProjectImage(
-                            image.project_id,
-                            image.project_image
-                          );
-                        }}
-                        variant="subtle"
-                        size="xs"
-                        color="redcolor.4"
-                      >
-                        <IconTrash size={14} stroke={1.5} />
-                      </ActionIcon>
-                    </>
-                  ))}
-                </Flex>
               </Modal>
             </div>
           )}
@@ -936,186 +945,232 @@ export default function Projects() {
                 <Grid.Col span={12}>
                   <ModalEditDescription />
                 </Grid.Col>
-                <Text c="graycolor.2" mt="md">
-                  Images
-                </Text>
+                <div>
+                  <Text c="graycolor.2" mt="md">
+                    Images
+                  </Text>
 
-                <Dropzone accept={IMAGE_MIME_TYPE} onDrop={onDrop}>
-                  <Button
-                    mt="md"
-                    leftSection={<IconPhotoUp size={14} />}
-                    variant="default"
-                  >
-                    Upload Image
-                  </Button>
-                </Dropzone>
-
-                {project?.project_image.length !== 0 || files.length !== 0 ? (
-                  <>
-                    <SimpleGrid
-                      cols={{ base: 1, sm: 4 }}
-                      mt={files.length > 0 ? "xl" : 0}
+                  <Dropzone accept={IMAGE_MIME_TYPE} onDrop={onDrop}>
+                    <Button
+                      mt="md"
+                      leftSection={<IconPhotoUp size={14} />}
+                      variant="default"
                     >
-                      {files.map((file, index) => {
-                        const imageUrl = URL.createObjectURL(file);
-                        return (
+                      Upload Image
+                    </Button>
+                  </Dropzone>
+                  {project?.project_image.length === 5 && (
+                    <Text c="red.4" mt={3} size="sm">
+                      You have reached the maximum number of images. Please
+                      delete some images to upload new ones
+                    </Text>
+                  )}
+                  {project?.project_image.length !== 0 || files.length !== 0 ? (
+                    <>
+                      <SimpleGrid cols={3} mt="md">
+                        <div>
+                          {files.map((file, index) => {
+                            const imageUrl = URL.createObjectURL(file);
+                            return (
+                              <>
+                                {/* <AspectRatio ratio={1080 / 720} maw={300} mx="auto"> */}
+                                <Image
+                                  radius={8}
+                                  h={200}
+                                  mt="sm"
+                                  key={index}
+                                  src={imageUrl}
+                                  alt={`Preview ${index + 1}`}
+                                  onLoad={() => URL.revokeObjectURL(imageUrl)}
+                                />
+                                {/* </AspectRatio> */}
+                                <Button
+                                  onClick={() => {
+                                    setFiles(
+                                      files.filter((_, i) => i !== index)
+                                    );
+                                  }}
+                                  variant="light"
+                                  size="sm"
+                                  mt="md"
+                                >
+                                  <IconTrash size={14} />
+                                </Button>
+                              </>
+                            );
+                          })}
+                        </div>
+                      </SimpleGrid>
+                      {files.length > 0 && (
+                        <Center>
+                          <Button
+                            variant="filled"
+                            size="xs"
+                            mt="md"
+                            mb="lg"
+                            onClick={() =>
+                              handleUploadProjectImage(Number(projectId))
+                            }
+                          >
+                            Save
+                          </Button>
+                        </Center>
+                      )}
+
+                      <SimpleGrid cols={3} mt="md">
+                        {project?.project_image.map((image) => (
                           <div>
                             {/* <AspectRatio ratio={1080 / 720} maw={300} mx="auto"> */}
                             <Image
-                              radius={8}
+                              src={image.project_image_url}
+                              alt="Project image"
+                              key={image.id}
                               h={200}
                               w="auto"
-                              mt="sm"
-                              mx={10}
-                              key={index}
-                              src={imageUrl}
-                              alt={`Preview ${index + 1}`}
-                              onLoad={() => URL.revokeObjectURL(imageUrl)}
                             />
                             {/* </AspectRatio> */}
-
                             <Button
                               onClick={() => {
-                                setFiles(files.filter((_, i) => i !== index));
+                                deleteProjectImage(
+                                  image.project_id,
+                                  image.project_image
+                                ),
+                                  open;
                               }}
                               variant="light"
                               size="sm"
                               mt="md"
-                              mx={10}
                             >
                               <IconTrash size={14} />
                             </Button>
                           </div>
-                        );
-                      })}
-                    </SimpleGrid>
-
-                    <Flex justify="flex-start" mt="md" gap="md">
-                      {project?.project_image.map((image) => (
-                        <div>
-                          {/* <AspectRatio ratio={1080 / 720} maw={300} mx="auto"> */}
-                          <Image
-                            src={image.project_image_url}
-                            alt="Project image"
-                            key={image.id}
-                            h={200}
-                            w="auto"
-                          />
-                          {/* </AspectRatio> */}
-                          <Button
-                            onClick={() => {
-                              deleteProjectImage(
-                                image.project_id,
-                                image.project_image
-                              ),
-                                open;
-                            }}
-                            variant="light"
-                            size="sm"
-                            mt="md"
-                            mx={10}
-                          >
-                            <IconTrash size={14} />
-                          </Button>
-                        </div>
-                      ))}
-                    </Flex>
-                  </>
-                ) : (
-                  <Text c="graycolor.2" mt="md">
-                    No images yet!
-                  </Text>
-                )}
-                {project?.project_document.length !== 0 && (
-                  <>
-                    <Text c="graycolor.2" mt="xl">
-                      Documents
+                        ))}
+                      </SimpleGrid>
+                    </>
+                  ) : (
+                    <Text c="graycolor.2" mt="md">
+                      No images yet!
                     </Text>
+                  )}
 
-                    <FileInput
+                  <Text c="graycolor.2" mt="xl">
+                    Documents
+                  </Text>
+
+                  <FileInput
+                    mt="md"
+                    accept="docx, pdf, pptx, xlsx"
+                    // label="Upload files"
+                    placeholder="Upload files"
+                    onChange={(files) => {
+                      setDocuments([...documents, ...files]);
+                      console.log("files", documents);
+                    }}
+                    multiple
+                  >
+                    <Button
                       mt="md"
-                      accept="docx, pdf, pptx, xlsx"
-                      label="Upload files"
-                      placeholder="Upload files"
-                      onChange={(files) => {
-                        setDocuments([...documents, ...files]);
-                        console.log("files", documents);
-                      }}
-                      multiple
+                      leftSection={<IconFile size={14} />}
+                      variant="default"
                     >
+                      Upload File
+                    </Button>
+                  </FileInput>
+                  <div>
+                    {documents.length > 0 && (
+                      <>
+                        {" "}
+                        <Flex align="center" mt="md" justify="flex-start">
+                          {documents.map((file, index) => (
+                            <div>
+                              <Text size="sm" ml="md" c="graycolor.2">
+                                {file.name} ({file.size / 1000000} MB)
+                              </Text>
+                              <Button
+                                ml="md"
+                                variant="light"
+                                size="xs"
+                                mt="md"
+                                onClick={() => {
+                                  setDocuments(
+                                    documents.filter((_, i) => i !== index)
+                                  );
+                                }}
+                              >
+                                <IconTrash size={14} />
+                              </Button>
+                            </div>
+                          ))}
+                        </Flex>
+                        {documents.map((file, index) => {
+                          file.size / 1000000 > 10
+                            ? Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: "File size must be less than 10 MB",
+                              }).then((result) => {
+                                if (result.isConfirmed) {
+                                  setDocuments(
+                                    documents.filter((_, i) => i !== index)
+                                  );
+                                }
+                              })
+                            : null;
+                        })}
+                        <Center mt="md">
+                          <Text size="sm" c="graycolor.2">
+                            {documents.length} files selected
+                          </Text>
+                        </Center>
+                      </>
+                    )}
+                  </div>
+                  {documents.length > 0 && (
+                    <Center>
                       <Button
+                        variant="filled"
+                        size="xs"
                         mt="md"
-                        leftSection={<IconFile size={14} />}
-                        variant="default"
+                        mb="lg"
+                        onClick={() => {
+                          uploadProjectDocument(Number(projectId));
+                        }}
                       >
-                        Upload File
+                        Save
                       </Button>
-                    </FileInput>
-                    <div>
-                      {documents.length > 0 && (
-                        <>
-                          {" "}
-                          <Flex align="center" mt="md" justify="flex-start">
-                            {documents.map((file, index) => (
-                              <div>
-                                <Text size="sm" ml="md" c="graycolor.2">
-                                  {file.name}
-                                </Text>
-                                <Button
-                                  ml="md"
-                                  variant="light"
-                                  size="xs"
-                                  mt="md"
-                                  onClick={() => {
-                                    setDocuments(
-                                      documents.filter((_, i) => i !== index)
-                                    );
-                                  }}
-                                >
-                                  Clear
-                                </Button>
-                              </div>
-                            ))}
-                          </Flex>
-                          <Center mt="md">
-                            <Text size="sm" c="graycolor.2">
-                              {documents.length} files selected
-                            </Text>
-                          </Center>
-                        </>
-                      )}
-                    </div>
-                    <Flex align="center" gap="md" mt="lg">
-                      {project?.project_document.map((document) => (
-                        <>
-                          <Anchor
-                            href={document.document_url}
-                            ta="start"
-                            target="_blank"
-                            rel="noreferrer"
-                            underline="always"
-                            c={"bluecolor.4"}
-                          >
-                            {document.document_name}
-                          </Anchor>
-                          <ActionIcon
-                            onClick={() => {
-                              deleteProjectDocument(
-                                document.project_id,
-                                document.document_name
-                              );
-                            }}
-                            variant="subtle"
-                            size="xs"
-                            color="redcolor.4"
-                          >
-                            <IconTrash size={14} stroke={1.5} />
-                          </ActionIcon>
-                        </>
-                      ))}
-                    </Flex>
-                  </>
-                )}
+                    </Center>
+                  )}
+                  <SimpleGrid cols={3} mt="md">
+                    {project?.project_document.map((document) => (
+                      <Flex align="center" gap="md">
+                        <Anchor
+                          ml="md"
+                          href={document.document_url}
+                          ta="start"
+                          target="_blank"
+                          rel="noreferrer"
+                          underline="always"
+                          c={"bluecolor.4"}
+                        >
+                          {document.document_name}
+                        </Anchor>
+                        <ActionIcon
+                          onClick={() => {
+                            deleteProjectDocument(
+                              document.project_id,
+                              document.document_name
+                            );
+                          }}
+                          variant="subtle"
+                          size="xs"
+                          color="redcolor.4"
+                        >
+                          <IconTrash size={14} stroke={1.5} />
+                        </ActionIcon>
+                      </Flex>
+                    ))}
+                  </SimpleGrid>
+                </div>
               </Grid>
             </Card>
             <Card mx="auto" w="80%" mt="xl" p="0" bg="none">
