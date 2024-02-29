@@ -32,8 +32,8 @@ import { useDisclosure } from "@mantine/hooks";
 import { useForm } from "@mantine/form";
 import Swal from "sweetalert2";
 
-export default function GuestProject() {
-  const { projectId } = useParams();
+export default function GuestProject({ projectId }: { projectId: number }) {
+  // const { projectId } = useParams();
   const [projectData, setProjectData] = useState<projectType>();
   const [isLoading, setIsLoading] = useState(true);
   const [isCommentsLoading, setIsCommentsLoading] = useState(true);
@@ -530,7 +530,7 @@ export default function GuestProject() {
             {/* <Anchor mb="md" underline="always" onClick={() => navigate(-1)}>
               Back
             </Anchor>  */}
-            <Button
+            {/* <Button
               // radius="lg"
               variant="filled"
               color="red"
@@ -539,7 +539,7 @@ export default function GuestProject() {
               onClick={() => navigate(-1)}
             >
               Back
-            </Button>
+            </Button> */}
           </Flex>
         </div>
       )}
