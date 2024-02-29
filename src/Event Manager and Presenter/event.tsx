@@ -1781,7 +1781,7 @@ export default function Event() {
                             presenterClipboard.copy(
                               `${
                                 import.meta.env.VITE_FRONTEND_ENDPOINT
-                              }/presenters/${eventId}`
+                              }/presenter/${eventId}`
                             );
                             Swal.fire({
                               title: "Copied!",
