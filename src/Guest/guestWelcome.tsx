@@ -63,10 +63,12 @@ export default function GuestWelcome() {
               Event
             </Title>
           </Center>
-          <Text mt="lg">
-            You are a guest at this event. Please click the button below to
-            access the event.
-          </Text>
+          <Center>
+            <Text mt="lg" ta={"center"}>
+              You are a guest at this event. Please click the button below to
+              access the event.
+            </Text>
+          </Center>
           <Button
             radius="md"
             mt="lg"
