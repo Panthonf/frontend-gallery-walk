@@ -22,6 +22,7 @@ import {
   // rem,
   Image,
   Anchor,
+  FileInput,
 } from "@mantine/core";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -44,8 +45,11 @@ import {
   IconArrowsDiagonal,
   IconCoins,
   IconEdit,
+  IconFile,
   IconLayoutGridAdd,
+  IconPhotoUp,
   IconQrcode,
+  IconTrash,
   IconUserQuestion,
 } from "@tabler/icons-react";
 import Navbar from "../components/navbar";
@@ -56,8 +60,15 @@ import { useDisclosure } from "@mantine/hooks";
 import { generateRandomName } from "../components/generate_name";
 // import { colors } from "unique-names-generator";
 import QRCode from "qrcode";
+import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 
 type ProjectType = {
+  project_image: {
+    project_id: number;
+    project_image: string;
+    id: number;
+    project_image_url: string;
+  }[];
   id: string;
   title: string;
   description: string;
@@ -65,6 +76,12 @@ type ProjectType = {
   event_id: string;
   start_submit: string;
   end_submit: string;
+  project_document: {
+    project_id: number;
+    document_url: string | undefined;
+    document_name: string;
+    project_document: string;
+  }[];
 };
 
 type EventType = {
@@ -93,8 +110,40 @@ export default function Projects() {
   const [virtualMoney, setVirtualMoney] = useState<number>(0);
   const [comment, setComment] = useState<CommentType | null>();
   const [qrCodeDataUrl, setQRCodeDataUrl] = useState("");
+  const [documents, setDocuments] = useState<File[]>([]);
 
   document.title = project?.title || "Project";
+
+  const fetchProject = async () => {
+    try {
+      await axios
+        .get(
+          `${
+            import.meta.env.VITE_BASE_ENDPOINTMENT
+          }projects/get-data/${projectId}`,
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          setProject(res.data.data);
+          if (res.data.data == null) {
+            Swal.fire({
+              icon: "error",
+              title: "Oops...",
+              text: "Project not found!",
+            }).then((result) => {
+              if (result.isConfirmed) {
+                window.location.href = "/dashboard";
+              }
+            });
+          }
+        });
+    } catch (error) {
+      console.error("Error fetching project:", error);
+    }
+  };
+
   useEffect(() => {
     const fetchProject = async () => {
       try {
@@ -108,7 +157,7 @@ export default function Projects() {
             }
           )
           .then((res) => {
-            console.log("project data", res.data.data);
+            console.log("project data ff", res.data.data);
             setProject(res.data.data);
             if (res.data.data == null) {
               Swal.fire({
@@ -272,6 +321,40 @@ export default function Projects() {
     },
   ];
 
+  const uploadProjectDocument = async (projectId: number) => {
+    const formData = new FormData();
+    documents.forEach((file) => {
+      formData.append("file", file);
+    });
+    try {
+      await axios
+        .post(
+          `${
+            import.meta.env.VITE_BASE_ENDPOINTMENT
+          }projects/upload-documents/${projectId}`,
+          formData,
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          console.log("upload project document", res.data);
+          Swal.fire({
+            title: "Success",
+            text: "Updated project documents",
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+          }).then(() => {
+            setDocuments([]);
+            fetchProject();
+          });
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
   const stats = data.map((stat) => {
     const Icon = icons[stat.icon as keyof typeof icons];
 
@@ -327,8 +410,8 @@ export default function Projects() {
             }
           )
           .then((res) => {
-            console.log("update project", res.data);
-            setProject(res.data.data);
+            console.log("update project title", res.data.data);
+            fetchProject();
           });
       } catch (error) {
         console.error("Error fetching project:", error);
@@ -428,6 +511,144 @@ export default function Projects() {
     );
   };
 
+  const deleteProjectImage = async (
+    projectId: number,
+    projectImage: string
+  ) => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await axios
+            .delete(
+              `${
+                import.meta.env.VITE_BASE_ENDPOINTMENT
+              }projects/delete-project-image/${projectId}/${projectImage}`,
+              {
+                withCredentials: true,
+              }
+            )
+            .then(() => {
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your project image has been deleted.",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              }).then(() => {
+                fetchProject();
+              });
+            });
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching project:", error);
+    }
+  };
+
+  const [files, setFiles] = useState<FileWithPath[]>([]);
+
+  const onDrop = (acceptedFiles: FileWithPath[]) => {
+    const totalImages =
+      files.length +
+      acceptedFiles.length +
+      (project?.project_image.length ?? 0);
+    if (totalImages > 5) {
+      const remainingSpace =
+        5 - (project?.project_image.length ?? 0) - files.length;
+      setFiles(files.concat(acceptedFiles.slice(0, remainingSpace)));
+    } else {
+      setFiles(files.concat(acceptedFiles));
+    }
+  };
+
+  const handleUploadProjectImage = async (projectId: number) => {
+    const formData = new FormData();
+    files.forEach((file) => {
+      formData.append("file", file);
+    });
+    try {
+      await axios
+        .post(
+          `${
+            import.meta.env.VITE_BASE_ENDPOINTMENT
+          }presenters/add-project-image/${projectId}`,
+          formData,
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          setFiles([]);
+          console.log("upload project image", res.data);
+          Swal.fire({
+            title: "Success",
+            text: "Updated project images",
+            icon: "success",
+            timer: 2000,
+            showConfirmButton: false,
+          }).then(() => {
+            fetchProject();
+          });
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    } catch (error) {
+      console.error("Error fetching events:", error);
+    }
+  };
+
+  const deleteProjectDocument = async (
+    projectId: number,
+    projectDocument: string
+  ) => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await axios
+            .delete(
+              `${
+                import.meta.env.VITE_BASE_ENDPOINTMENT
+              }projects/delete-project-document/${projectId}/${projectDocument}`,
+              {
+                withCredentials: true,
+              }
+            )
+            .then((res) => {
+              console.log("delete project document", res.data);
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your project document has been deleted.",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              }).then(() => {
+                fetchProject();
+              });
+            });
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching project:", error);
+    }
+  };
+
   const ModalEditDescription = () => {
     const [opened, { open, close }] = useDisclosure(false);
     const [editedDescription, setEditedDescription] = useState(
@@ -455,9 +676,15 @@ export default function Projects() {
               withCredentials: true,
             }
           )
-          .then((res) => {
-            console.log("update project description", res.data);
-            setProject(res.data.data);
+          .then(() => {
+            fetchProject();
+            Swal.fire({
+              title: "Success",
+              text: "Updated project description",
+              icon: "success",
+              timer: 2000,
+              showConfirmButton: false,
+            });
           });
       } catch (error) {
         console.error("Error fetching project:", error);
@@ -538,7 +765,12 @@ export default function Projects() {
 
         <ModalProject />
 
-        <Modal opened={opened} onClose={close} title="Edit Project Description">
+        <Modal
+          size={"80%"}
+          opened={opened}
+          onClose={close}
+          title="Edit Project Description"
+        >
           <form
             onSubmit={(e) => {
               e.preventDefault();
@@ -606,9 +838,7 @@ export default function Projects() {
 
   return (
     <body>
-      {/* navbar */}
       <Navbar />
-
       <div style={{ paddingBottom: "5rem" }}>
         {project && project !== null ? (
           <div>
@@ -712,6 +942,229 @@ export default function Projects() {
                 <Grid.Col span={12}>
                   <ModalEditDescription />
                 </Grid.Col>
+                <div>
+                  <Text c="graycolor.2" mt="md">
+                    Images
+                  </Text>
+
+                  <Dropzone accept={IMAGE_MIME_TYPE} onDrop={onDrop}>
+                    <Button
+                      mt="md"
+                      leftSection={<IconPhotoUp size={14} />}
+                      variant="default"
+                    >
+                      Upload Image
+                    </Button>
+                  </Dropzone>
+                  {project?.project_image.length === 5 && (
+                    <Text c="red.4" mt={3} size="sm">
+                      You have reached the maximum number of images. Please
+                      delete some images to upload new ones
+                    </Text>
+                  )}
+                  {project?.project_image.length !== 0 || files.length !== 0 ? (
+                    <>
+                      <SimpleGrid cols={3} mt="md">
+                        <div>
+                          {files.map((file, index) => {
+                            const imageUrl = URL.createObjectURL(file);
+                            return (
+                              <>
+                                {/* <AspectRatio ratio={1080 / 720} maw={300} mx="auto"> */}
+                                <Image
+                                  radius={8}
+                                  h={200}
+                                  mt="sm"
+                                  key={index}
+                                  src={imageUrl}
+                                  alt={`Preview ${index + 1}`}
+                                  onLoad={() => URL.revokeObjectURL(imageUrl)}
+                                />
+                                {/* </AspectRatio> */}
+                                <Button
+                                  onClick={() => {
+                                    setFiles(
+                                      files.filter((_, i) => i !== index)
+                                    );
+                                  }}
+                                  variant="light"
+                                  size="sm"
+                                  mt="md"
+                                >
+                                  <IconTrash size={14} />
+                                </Button>
+                              </>
+                            );
+                          })}
+                        </div>
+                      </SimpleGrid>
+                      {files.length > 0 && (
+                        <Center>
+                          <Button
+                            variant="filled"
+                            size="xs"
+                            mt="md"
+                            mb="lg"
+                            onClick={() =>
+                              handleUploadProjectImage(Number(projectId))
+                            }
+                          >
+                            Save
+                          </Button>
+                        </Center>
+                      )}
+
+                      <SimpleGrid cols={3} mt="md">
+                        {project?.project_image.map((image) => (
+                          <div>
+                            {/* <AspectRatio ratio={1080 / 720} maw={300} mx="auto"> */}
+                            <Image
+                              src={image.project_image_url}
+                              alt="Project image"
+                              key={image.id}
+                              h={200}
+                              w="auto"
+                            />
+                            {/* </AspectRatio> */}
+                            <Button
+                              onClick={() => {
+                                deleteProjectImage(
+                                  image.project_id,
+                                  image.project_image
+                                ),
+                                  open;
+                              }}
+                              variant="light"
+                              size="sm"
+                              mt="md"
+                            >
+                              <IconTrash size={14} />
+                            </Button>
+                          </div>
+                        ))}
+                      </SimpleGrid>
+                    </>
+                  ) : (
+                    <Text c="graycolor.2" mt="md">
+                      No images yet!
+                    </Text>
+                  )}
+
+                  <Text c="graycolor.2" mt="xl">
+                    Documents
+                  </Text>
+                  <FileInput
+                    accept="docx, pdf, pptx, xlsx"
+                    // label="Upload files"
+                    placeholder="Upload files"
+                    onChange={(files) => {
+                      setDocuments([...documents, ...files]);
+                      console.log("files", documents);
+                    }}
+                    multiple
+                  >
+                    <Button
+                      leftSection={<IconFile size={14} />}
+                      variant="default"
+                    >
+                      Upload File
+                    </Button>
+                  </FileInput>
+                  <div>
+                    {documents.length > 0 && (
+                      <>
+                        {" "}
+                        <Flex align="center" mt="md" justify="flex-start">
+                          {documents.map((file, index) => (
+                            <div>
+                              <Text size="sm" ml="md" c="graycolor.2">
+                                {file.name} ({file.size / 1000000} MB)
+                              </Text>
+                              <Button
+                                ml="md"
+                                variant="light"
+                                size="xs"
+                                mt="md"
+                                onClick={() => {
+                                  setDocuments(
+                                    documents.filter((_, i) => i !== index)
+                                  );
+                                }}
+                              >
+                                <IconTrash size={14} />
+                              </Button>
+                            </div>
+                          ))}
+                        </Flex>
+                        {documents.map((file, index) => {
+                          file.size / 1000000 > 10
+                            ? Swal.fire({
+                                icon: "error",
+                                title: "Oops...",
+                                text: "File size must be less than 10 MB",
+                              }).then((result) => {
+                                if (result.isConfirmed) {
+                                  setDocuments(
+                                    documents.filter((_, i) => i !== index)
+                                  );
+                                }
+                              })
+                            : null;
+                        })}
+                        <Center mt="md">
+                          <Text size="sm" c="graycolor.2">
+                            {documents.length} files selected
+                          </Text>
+                        </Center>
+                      </>
+                    )}
+                  </div>
+                  {documents.length > 0 && (
+                    <Center>
+                      <Button
+                        variant="filled"
+                        size="xs"
+                        mt="md"
+                        mb="lg"
+                        onClick={() => {
+                          uploadProjectDocument(Number(projectId));
+                        }}
+                      >
+                        Save
+                      </Button>
+                    </Center>
+                  )}
+                  <SimpleGrid cols={3} mt="md">
+                    {project?.project_document.map((document) => (
+                      <Flex align="center" gap="md">
+                        <Anchor
+                          ml="md"
+                          href={document.document_url}
+                          ta="start"
+                          target="_blank"
+                          rel="noreferrer"
+                          underline="always"
+                          c={"bluecolor.4"}
+                        >
+                          {document.document_name}
+                        </Anchor>
+                        <ActionIcon
+                          onClick={() => {
+                            deleteProjectDocument(
+                              document.project_id,
+                              document.document_name
+                            );
+                          }}
+                          variant="subtle"
+                          size="xs"
+                          color="redcolor.4"
+                        >
+                          <IconTrash size={14} stroke={1.5} />
+                        </ActionIcon>
+                      </Flex>
+                    ))}
+                  </SimpleGrid>
+                </div>
               </Grid>
             </Card>
             <Card mx="auto" w="80%" mt="xl" p="0" bg="none">

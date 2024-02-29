@@ -2,33 +2,29 @@ import { useEffect, useState } from "react";
 
 import axios from "axios";
 import {
-    Anchor,
-    Card,
-    // Center,
-    Collapse,
     Flex,
-    // Progress,
     Text,
-    Image,
-    Divider,
     Grid,
-    AspectRatio,
     ActionIcon,
     Box,
-    Group,
-    UnstyledButton,
     Modal,
-    Title,
     Badge,
+    AspectRatio,
+    Image,
+    Group,
+    Paper,
+
 } from "@mantine/core";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
-import styles from "../styles.module.css"
+import styles from "../styles.module.css";
 import ProjectsDashboard from "./projectsDashboard";
 import moment from "moment";
 import { useDisclosure } from "@mantine/hooks";
 import { LoadingIndicator } from "../components/loading";
-import {  IconArrowsDiagonal, IconChevronDown, IconChevronUp } from "@tabler/icons-react";
-// import { relative } from "path";
+import {
+    IconArrowsDiagonal,
+    IconCoins,
+} from "@tabler/icons-react";
 
 type EventType = {
     id: number;
@@ -60,8 +56,8 @@ export default function GuestEventDashboard() {
     // const [opened, { toggle }] = useDisclosure(false);
     const [isLoading, setIsLoading] = useState(true);
     const [guestData, setGuestData] = useState<GuestType | null>(null);
-    const [opened, { open, close }] = useDisclosure(false);
-    const [isOpened, { toggle }] = useDisclosure(false);
+    // const [opened, { open, close }] = useDisclosure(false);
+    // const [isOpened, { toggle }] = useDisclosure(false);
 
     useEffect(() => {
         const fetchEventData = async () => {
@@ -138,7 +134,8 @@ export default function GuestEventDashboard() {
             try {
                 await axios
                     .get(
-                        `${import.meta.env.VITE_BASE_ENDPOINTMENT}guests/get-guest-data`,
+                        `${import.meta.env.VITE_BASE_ENDPOINTMENT
+                        }guests/get-guest-data?eventId=${eventId}`,
                         {
                             withCredentials: true,
                         }
@@ -161,7 +158,7 @@ export default function GuestEventDashboard() {
             }
         };
 
-        if(!guestId) navigate("/guest/login");
+        if (!guestId) navigate("/guest/login");
         if (guestId)
             if (eventId) {
                 checkGuestSession();
@@ -177,95 +174,115 @@ export default function GuestEventDashboard() {
         return <LoadingIndicator />;
     }
 
+    const ModalDescription = () => {
+        const [opened, { open, close }] = useDisclosure(false);
+
+        return (
+            <>
+                <Text c="graycolor.2" mb="xs">
+                    Description
+                </Text>
+
+                <Flex align="flex-end">
+                    <Text lineClamp={5}>
+                        <div
+                            dangerouslySetInnerHTML={{ __html: eventData?.description.toString() || "" }}
+                        />
+                    </Text>
+                    <ActionIcon variant="subtle" onClick={open} color="greencolor.4">
+                        <IconArrowsDiagonal size={14} stroke={1.5} />
+                    </ActionIcon>
+                </Flex>
+
+                <Modal
+                    opened={opened}
+                    onClose={close}
+                    title="Description"
+                    centered
+                    radius="xs"
+                    size="90%"
+                    padding="lg"
+                    className={styles.scrollBar}
+                >
+                    <Text>
+                        <div
+                            dangerouslySetInnerHTML={{ __html: eventData?.description.toString() || "" }}
+                        />
+                    </Text>
+                </Modal>
+            </>
+        );
+    };
+
     return (
-        <body style={{  }}>
-            <AspectRatio ratio={320 / 100} maw="100vw" >
+        <body>
+            <AspectRatio ratio={970 / 150} maw="100vw">
                 <Image src={thumbnailUrl} height={200} />
             </AspectRatio>
 
-            <Grid w="100%" style={{ height: "10rem" }} p="xl">
-
-                <Grid.Col span={12} h="max-content">
-                    <Card p="xl" className={styles.cardContainer} style={{ top: "-7rem" }}>
-
-                        <div style={{ marginBottom: "1rem" }}>
-                            <Title order={3} c="redcolor.4" fw={500}>
-                                {eventData?.event_name}
-                            </Title>
-                            <Text mt="5" c="graycolor.2">
-                                {`${moment(eventData?.start_date).format(
-                                    "MMMM Do YY HH:mm A"
-                                )} - ${moment(eventData?.end_date).format("MMMM Do YY HH:mm A")}`}
-
-                                {" "}
-                                <Badge color="redcolor.4" ml="sm">{moment(eventData?.end_date).fromNow()}</Badge>
-                                
-                            </Text>
-                        </div>
-
+            <Box w="80%" mx="auto" style={{ position: "relative" }}>
+                <Grid justify="flex-start" align="flex-start" mt="xl" mb="md">
+                    <Grid.Col span={12}>
                         <div>
-                            <Text fw={500} c="darkcolor.9">
-                                Your Virtual Money
+                            <Text size="header" c="greencolor.4" fw={600} mb="xs">
+                                {eventData?.event_name}
                             </Text>
-                            <Text size="base" c="redcolor.4">
-                                {guestData?.virtual_money.toLocaleString()} {eventData?.unit_money}
-                            </Text>
+                            <Flex gap="2rem">
+                                <div>
+                                    <Text size="xsmall" c="graycolor.2" mb="xs">
+                                        Start of event
+                                    </Text>
+                                    {moment(eventData?.start_date).format("LL [at] HH:mm A")}
+                                </div>
+                                <div>
+                                    <Text size="xsmall" c="graycolor.2" mb="xs">
+                                        End of event
+                                    </Text>
+                                    {moment(eventData?.start_date).format("LL [at] HH:mm A")}
+                                </div>
+                            </Flex>
+
+                            <Badge color="greencolor.4" style={{ position: "absolute", top: "0.25rem", right: "0" }}>
+                                {moment(eventData?.end_date).fromNow()}
+                            </Badge>
                         </div>
+                    </Grid.Col>
 
-                        <Divider size="xs" mt="md" color="graycolor.2" />
-                        <Box mt="1rem">
-
-                            <Group justify="flex-start" mb={5}>
-                                <UnstyledButton onClick={toggle}>
-                                    <Group align="center">
-                                        <Text>Description</Text>
-                                        {isOpened ? (
-                                            <IconChevronDown size={16} />
-                                        ) : (
-                                            <IconChevronUp size={16} />
-                                        )}
-                                    </Group>
-                                </UnstyledButton>
+                    <Grid.Col my="md">
+                        <Paper
+                            withBorder
+                            p="md"
+                            radius="md"
+                            bg="none"
+                            h="max-content"
+                        >
+                            <Group justify="space-between">
+                                <Text c="graycolor.2">All virtual money</Text>
+                                <IconCoins size={16} />
                             </Group>
 
-                            <Collapse in={isOpened}>
-                                <Flex align="flex-end">
-                                    <Text
-                                        lineClamp={5}
-                                        dangerouslySetInnerHTML={{
-                                            __html: eventData?.description.toString() || "",
-                                        }}
-                                    ></Text>
-                                    <ActionIcon variant="subtle" onClick={open} color="redcolor.4">
-                                        <IconArrowsDiagonal size={14} stroke={1.5} />
-                                    </ActionIcon>
-                                </Flex>
+                            <Group align="flex-end" gap="xs" mt={25}>
+                                <Text fw={500} c="greencolor.4">
+                                    {guestData?.virtual_money.toLocaleString()}{" "}
+                                    {eventData?.unit_money}
+                                </Text>
+                            </Group>
 
-                                <Modal opened={opened} onClose={close} title="Description" centered
-                                    radius="xs" size="95%" padding="lg" className={styles.scrollBar}
-                                >
-                                    <div dangerouslySetInnerHTML={{
-                                        __html: eventData?.description.toString() || "",
-                                    }}></div>
+                            <Text fz="xs" c="dimmed" mt={7}>
+                                Your Virtual Money
+                            </Text>
+                        </Paper>
+                    </Grid.Col>
 
-                                    <Flex mt="md" justify="flex-start">
-                                        {eventData?.video_link ? (
-                                            <Anchor href={eventData?.video_link} underline="always">
-                                                Video Link
-                                            </Anchor>
-                                        ) : (
-                                            ""
-                                        )}
-                                    </Flex>{" "}
-                                </Modal>
-                            </Collapse>
-                        </Box>
-                    </Card>
-                </Grid.Col>
+                    <Grid.Col span={12}>
+                        <ModalDescription />
+                    </Grid.Col>
 
-            </Grid>
-            
-                <ProjectsDashboard eventId={eventData?.id.toString()} />
-        </body >
+                    <Grid.Col span={12}>
+                        <ProjectsDashboard eventId={eventData?.id.toString()} />
+                    </Grid.Col>
+                </Grid>
+            </Box>
+        </body>
     );
 }
