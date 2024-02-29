@@ -143,7 +143,7 @@ export default function App() {
           <Route path="/guest/login" element={<GuestLogin />}></Route>
           <Route
             path="/guest/event/:eventId/project/:projectId"
-            element={<GuestProject />}
+            element={<GuestProject projectId={0} />}
           ></Route>
           <Route path="/guest/:eventId" element={<GuestWelcome />} />
           <Route path="/presenter/:eventId" element={<PresenterWelcome />} />

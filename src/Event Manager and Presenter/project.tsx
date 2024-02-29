@@ -341,7 +341,7 @@ export default function Projects() {
           console.log("upload project document", res.data);
           Swal.fire({
             title: "Success",
-            text: "Updated project description and images",
+            text: "Updated project documents",
             icon: "success",
             timer: 2000,
             showConfirmButton: false,
@@ -410,18 +410,8 @@ export default function Projects() {
             }
           )
           .then((res) => {
-            setProject(res.data.data);
             console.log("update project title", res.data.data);
-
-            Swal.fire({
-              title: "Success",
-              text: "Updated project title",
-              icon: "success",
-              timer: 2000,
-              showConfirmButton: false,
-            }).then(() => {
-              window.location.reload();
-            });
+            fetchProject();
           });
       } catch (error) {
         console.error("Error fetching project:", error);
@@ -600,7 +590,7 @@ export default function Projects() {
           console.log("upload project image", res.data);
           Swal.fire({
             title: "Success",
-            text: "Updated project description and images",
+            text: "Updated project images",
             icon: "success",
             timer: 2000,
             showConfirmButton: false,
@@ -687,7 +677,14 @@ export default function Projects() {
             }
           )
           .then(() => {
-            handleUploadProjectImage(Number(projectId));
+            fetchProject();
+            Swal.fire({
+              title: "Success",
+              text: "Updated project description",
+              icon: "success",
+              timer: 2000,
+              showConfirmButton: false,
+            });
           });
       } catch (error) {
         console.error("Error fetching project:", error);
