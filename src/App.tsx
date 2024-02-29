@@ -146,7 +146,7 @@ export default function App() {
             element={<GuestProject />}
           ></Route>
           <Route path="/guest/:eventId" element={<GuestWelcome />} />
-          <Route path="/presenters/:eventId" element={<PresenterWelcome />} />
+          <Route path="/presenter/:eventId" element={<PresenterWelcome />} />
 
           {/* 404 */}
           <Route path="*" element={<NotFoundTitle />} />
