@@ -54,7 +54,7 @@ type GuestType = {
 };
 export default function GuestEventDashboard() {
   const { eventId } = useParams();
-  console.log("event id", eventId);
+  // console.log("event id", eventId);
   const guestId = useLocation().search.split("=")[1];
   const navigate = useNavigate();
   const [eventData, setEventData] = useState<EventType | null>(null);
@@ -78,17 +78,16 @@ export default function GuestEventDashboard() {
             }
           )
           .then((res) => {
-            console.log("event data", res.data.data);
             document.title = `${res.data.data.event_name}`;
             setEventData(res.data.data);
             setIsLoading(false);
           })
-          .catch((err) => {
-            console.log("err", err.response.data.success);
+          .catch(() => {
+            // console.log("err", err.response.data.success);
             navigate("/404");
           });
       } catch (error) {
-        console.log("err", error);
+        // console.log("err", error);
         navigate("/404");
       }
     };
@@ -104,7 +103,7 @@ export default function GuestEventDashboard() {
             }
           )
           .then((res) => {
-            console.log("fetch thumbnail", res.data.data[0].thumbnail_url);
+            // console.log("fetch thumbnail", res.data.data[0].thumbnail_url);
             setThumbnailUrl(res.data.data[0].thumbnail_url);
           })
           .catch(() => {
@@ -127,12 +126,13 @@ export default function GuestEventDashboard() {
             }
           )
           .then((res) => {
+            // console.log("check guest session", res.data.success);
             if (res.data.success === false) {
               navigate("/guest/login");
             }
           })
-          .catch((err) => {
-            console.log("err", err);
+          .catch(() => {
+            // console.log("err", err);
             navigate("/guest/login");
           });
       } catch (err) {
@@ -152,19 +152,19 @@ export default function GuestEventDashboard() {
             }
           )
           .then((res) => {
-            console.log("guest data", res.data.data);
+            // console.log("guest data", res.data.data);
             if (res.data.data) {
               setGuestData(res.data.data);
             } else {
               navigate("/guest/login");
             }
           })
-          .catch((err) => {
-            console.log("err", err);
+          .catch(() => {
+            // console.log("err", err);
             navigate("/guest/login");
           });
       } catch (err) {
-        console.log("err", err);
+        // console.log("err", err);
         navigate("/guest/login");
       }
     };
