@@ -273,7 +273,7 @@ export default function Dashboard() {
                                     <HoverCard width={280} shadow="md">
                                         <HoverCard.Target>
                                             <Text truncate="end" maw="max-content" c="dark.9">
-                                                <Anchor href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location">
+                                                <Anchor href={"https://www.google.com/maps/search/" + encodeURIComponent(event.location)}>
                                                     {event.location || "-"}
                                                 </Anchor>
                                             </Text>
