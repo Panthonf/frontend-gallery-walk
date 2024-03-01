@@ -30,7 +30,6 @@ import parse from "html-react-parser";
 import styles from "../styles.module.css";
 import { useDisclosure } from "@mantine/hooks";
 import moment from "moment";
-// import { Pagination } from "@mantine/core";
 
 type ProjectType = {
     event_data: object;
@@ -123,7 +122,7 @@ export default function ProjectsDashboard() {
                         <Modal
                             opened={opened}
                             onClose={close}
-                            title="Add project by link to event"
+                            title="Join event"
                             centered
                         >
                             <Box ta="end">
@@ -141,7 +140,7 @@ export default function ProjectsDashboard() {
                                     type="button"
                                     onClick={handleJoinEvent}
                                 >
-                                    <Text c="pinkcolor.2">Join event</Text>
+                                    Join event
                                 </Button>
                             </Box>
                         </Modal>
@@ -190,7 +189,7 @@ export default function ProjectsDashboard() {
                                                         <Anchor href="/project/${projects.id}" underline="hover" c="bluecolor.4">
                                                             <Text size="topic" c="bluecolor.4" fw={600} truncate="end">{projects?.title}</Text>
                                                         </Anchor>
-                                                        
+
                                                         <Grid gutter="4rem" my="xs">
                                                             <Grid.Col span="auto">
                                                                 <Text size="xsmall" mb="xs">
@@ -257,16 +256,14 @@ export default function ProjectsDashboard() {
                                                                     <HoverCard width={280} shadow="md">
                                                                         <HoverCard.Target>
                                                                             <Text truncate="end" maw="max-content" c="dark.9">
-                                                                                <Anchor href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location">
-                                                                                    {(projects.event_data as { location: string })
-                                                                                        ?.location
-                                                                                        ? (
-                                                                                            projects.event_data as {
-                                                                                                location: string;
-                                                                                            }
-                                                                                        )?.location
-                                                                                        : "-"}
-                                                                                </Anchor>
+                                                                                {(projects.event_data as { location: string })
+                                                                                    ?.location
+                                                                                    ? (
+                                                                                        projects.event_data as {
+                                                                                            location: string;
+                                                                                        }
+                                                                                    )?.location
+                                                                                    : "-"}
                                                                             </Text>
                                                                         </HoverCard.Target>
                                                                         <HoverCard.Dropdown className={styles.hoverCard}>
@@ -381,8 +378,8 @@ export default function ProjectsDashboard() {
                     )}
 
                 </Grid.Col>
-            </Grid>
-        </div>
+            </Grid >
+        </div >
     );
 
 }
