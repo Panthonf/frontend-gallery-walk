@@ -23,6 +23,8 @@ import {
     Loader,
     Center,
     Affix,
+    Menu,
+    ActionIcon,
     //   UnstyledButton,
 } from "@mantine/core";
 import { Pagination } from "@mantine/core";
@@ -36,12 +38,15 @@ import {
     IconSquarePlus,
     IconSearch,
     IconArrowNarrowRight,
+    IconDotsVertical,
+    IconTrash,
     // IconTrashX,
     // IconEye,
 } from "@tabler/icons-react";
 
 import styles from "../styles.module.css";
 import ProjectsDashboard from "./projectsDashboard";
+import Swal from "sweetalert2";
 
 export default function Dashboard() {
     const [query, setQuery] = useState("");
@@ -174,6 +179,51 @@ export default function Dashboard() {
         video_link: string;
     };
 
+    const handleDeleteEvent = async (eventId: number) => {
+        Swal.fire({
+            title: "Are you sure?",
+            text: "Do you want to delete this event?",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonText: "Yes",
+            cancelButtonText: "No",
+        }).then(async (result) => {
+            if (result.isConfirmed) {
+                try {
+                    await axios
+                        .delete(
+                            `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+                            {
+                                withCredentials: true,
+                            }
+                        )
+                        .then(() => {
+                            Swal.fire({
+                                title: "Success",
+                                text: "Delete event success",
+                                icon: "success",
+                                timer: 2000,
+                                showConfirmButton: false,
+                            }).then(() => {
+                                window.location.href = "/dashboard";
+                            });
+                        })
+                        .catch((err) => {
+                            console.log(err);
+                            Swal.fire({
+                                title: "Error",
+                                text: "Delete event error",
+                                icon: "error",
+                                confirmButtonText: "OK",
+                            });
+                        });
+                } catch (error) {
+                    console.error("Error fetching events:", error);
+                }
+            }
+        });
+    };
+
     // thuumbnail container
     const defaultThumbnailUrl = `https://placehold.co/400?text=`;
 
@@ -199,9 +249,9 @@ export default function Dashboard() {
                         )}
                     </Grid.Col>
                     <Grid.Col span={18} pl="1rem">
-                        <Text size="topic" c="redcolor.4" fw={500} truncate="end">
-                            {event.event_name}
-                        </Text>
+                        <Anchor href="/event/${event.id}" underline="never">
+                            <Text size="topic" c="redcolor.4" fw={600} truncate="end">{event.event_name}</Text>
+                        </Anchor>
 
                         <Grid gutter="1rem" columns={12} my="xs">
                             <Grid.Col span="content">
@@ -267,16 +317,24 @@ export default function Dashboard() {
 
                     <Grid.Col span="content">
                         <Stack h={180} align="flex-end" justify="space-between">
-                            {/* <div>
-                                <ActionIcon variant="filled" color="redcolor.4">
-                                    <IconTrashX size={14} />
-                                </ActionIcon>
-
-                                <Flex align="center" mt="md">
-                                    <IconEye size={16} />
-                                    <Text ml="sm">0</Text>
-                                </Flex>
-                            </div> */}
+                            <Menu position="bottom-end" shadow="sm">
+                                <Menu.Target>
+                                    <ActionIcon variant="default" size="lg">
+                                        <IconDotsVertical size={16} />
+                                    </ActionIcon>
+                                </Menu.Target>
+                                <Menu.Dropdown>
+                                    <Menu.Item
+                                        leftSection={<IconTrash size={14} />}
+                                        color="red"
+                                        onClick={()=>{
+                                            handleDeleteEvent(event.id)
+                                        }}
+                                    >
+                                        Delete event
+                                    </Menu.Item>
+                                </Menu.Dropdown>
+                            </Menu>
 
                             <Anchor href={`/event/${event.id}`} underline="never" ta="end">
                                 <Button
@@ -302,7 +360,7 @@ export default function Dashboard() {
                 <Grid.Col span={12}>
                     <Text
                         c={activeTab === "Event manager" ? "redcolor.4" : "bluecolor.6"}
-                        fw={500}
+                        fw={600}
                         size="topic"
                     >
                         Dashboard
