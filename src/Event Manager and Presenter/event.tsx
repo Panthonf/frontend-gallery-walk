@@ -29,7 +29,6 @@ import {
   LoadingOverlay,
   FileInput,
   Badge,
-  Table,
 } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { useClipboard, useDisclosure } from "@mantine/hooks";
@@ -73,10 +72,7 @@ import Swal from "sweetalert2";
 import Navbar from "../components/navbar";
 import EditDescriptionEvent from "./editDescriptionEvent";
 import { DateInput, TimeInput } from "@mantine/dates";
-import Chart from "chart.js/auto";
-import { CategoryScale } from "chart.js";
-// import EventResult from "./eventResult";
-import { Bar } from "react-chartjs-2";
+import EventResult from "./eventResult";
 
 interface EventType {
   id: number;
@@ -994,117 +990,6 @@ export default function Event() {
       console.error("Error fetching events:", error);
     }
   };
-
-  Chart.register(CategoryScale);
-
-  const dataChart = [102, 80, 59];
-
-  const chartData = {
-    labels: ["1st Place", "2nd Place", "3rd Place"],
-    datasets: [
-      {
-        label: "Scores",
-        backgroundColor: ["#ffd700", "#c0c0c0", "#cd7f32"],
-        borderColor: "#fff",
-        borderWidth: 1,
-        data: [dataChart[1], dataChart[0], dataChart[2]],
-      },
-    ],
-  };
-
-  const chartOptions = {
-    indexAxis: "x" as const,
-    responsive: true,
-    maintainAspectRatio: true,
-    scales: {
-      x: {
-        beginAtZero: true,
-      },
-    },
-  };
-
-  const chartContent = (
-    <div className="chart-container">
-      <h2 style={{ textAlign: "center" }}>Bar Chart</h2>
-      <Bar data={chartData} options={chartOptions} />
-    </div>
-  );
-
-  const elements = [
-    {
-      id: 6,
-      title: "pqr",
-      description: "<p>pqr</p>",
-      user_id: 1,
-      event_id: 1,
-      created_at: "2024-02-18T09:42:50.289Z",
-      updated_at: null,
-      virtual_money: 448,
-    },
-    {
-      id: 5,
-      title: "mno",
-      description: "<p>mno</p>",
-      user_id: 1,
-      event_id: 1,
-      created_at: "2024-02-18T08:40:44.519Z",
-      updated_at: null,
-      virtual_money: 456,
-    },
-    {
-      id: 4,
-      title: "jkl",
-      description: "<p>jkl</p>",
-      user_id: 1,
-      event_id: 1,
-      created_at: "2024-02-18T08:40:31.541Z",
-      updated_at: null,
-      virtual_money: 320,
-    },
-    {
-      id: 3,
-      title: "ghi",
-      description: "<p>ghi</p>",
-      user_id: 1,
-      event_id: 1,
-      created_at: "2024-02-18T08:40:20.842Z",
-      updated_at: null,
-      virtual_money: 500,
-    },
-    {
-      id: 2,
-      title: "def",
-      description: "<p>def</p>",
-      user_id: 1,
-      event_id: 1,
-      created_at: "2024-02-06T14:18:09.961Z",
-      updated_at: null,
-      virtual_money: 255,
-    },
-  ];
-
-  function Demo() {
-    const rows = elements.map((elements) => (
-      <Table.Tr key={elements.id}>
-        <Table.Td>{elements.id}</Table.Td>
-        <Table.Td>{elements.title}</Table.Td>
-        <Table.Td>{elements.virtual_money}</Table.Td>
-      </Table.Tr>
-    ));
-
-    return (
-      <Table stickyHeader stickyHeaderOffset={60}>
-        <Table.Thead>
-          <Table.Tr>
-            <Table.Th>Project ID</Table.Th>
-            <Table.Th>Title</Table.Th>
-            <Table.Th>Virtual Money</Table.Th>
-          </Table.Tr>
-        </Table.Thead>
-        <Table.Tbody>{rows}</Table.Tbody>
-      </Table>
-    );
-  }
 
   const updateEventName = async () => {
     try {
@@ -2474,10 +2359,31 @@ export default function Event() {
             </Box>
           </Tabs.Panel>
           <Tabs.Panel value="settings">
-            Settings tab content 123
-            {JSON.stringify(projects)}
-            {chartContent}
-            <Demo></Demo>
+            {canEdit ? (
+              <Card className={styles.cardContainer} mx="auto" mb="lg">
+                <EventResult eventId={eventId} />
+              </Card>
+            ) : (
+              <>
+                {moment(event?.end_date).isAfter(moment()) ? (
+                  <Card className={styles.cardContainer} mx="auto" mb="lg">
+                    <Flex justify="center" align="center" direction="column">
+                      <Text size="lg" c="redcolor.5" fw={600}>
+                        Result
+                      </Text>
+                      <Text size="md" c="redcolor.3">
+                        The result will be available after the event ends{" "}
+                        {moment(event?.end_date).fromNow()}
+                      </Text>
+                    </Flex>
+                  </Card>
+                ) : (
+                  <Card className={styles.cardContainer} mx="auto" mb="lg">
+                    <EventResult eventId={eventId} />
+                  </Card>
+                )}
+              </>
+            )}
           </Tabs.Panel>
         </Tabs>
       </div>
