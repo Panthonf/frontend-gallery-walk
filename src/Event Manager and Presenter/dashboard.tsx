@@ -23,7 +23,6 @@ import {
     Loader,
     Center,
     Affix,
-    Menu,
     ActionIcon,
     //   UnstyledButton,
 } from "@mantine/core";
@@ -31,17 +30,11 @@ import { Pagination } from "@mantine/core";
 import Navbar from "../components/navbar";
 import moment from "moment";
 
-// import styles from "../components/styles.module.css";
-// import { IconSearch, IconArrowRight } from '@tabler/icons-react';
-
 import {
     IconSquarePlus,
     IconSearch,
     IconArrowNarrowRight,
-    IconDotsVertical,
     IconTrash,
-    // IconTrashX,
-    // IconEye,
 } from "@tabler/icons-react";
 
 import styles from "../styles.module.css";
@@ -249,7 +242,8 @@ export default function Dashboard() {
                         )}
                     </Grid.Col>
                     <Grid.Col span={18} pl="1rem">
-                        <Anchor href="/event/${event.id}" underline="never">
+                        
+                        <Anchor href="/event/${event.id}" underline="hover" c="redcolor.4">
                             <Text size="topic" c="redcolor.4" fw={600} truncate="end">{event.event_name}</Text>
                         </Anchor>
 
@@ -317,24 +311,15 @@ export default function Dashboard() {
 
                     <Grid.Col span="content">
                         <Stack h={180} align="flex-end" justify="space-between">
-                            <Menu position="bottom-end" shadow="sm">
-                                <Menu.Target>
-                                    <ActionIcon variant="default" size="lg">
-                                        <IconDotsVertical size={16} />
-                                    </ActionIcon>
-                                </Menu.Target>
-                                <Menu.Dropdown>
-                                    <Menu.Item
-                                        leftSection={<IconTrash size={14} />}
-                                        color="red"
-                                        onClick={()=>{
-                                            handleDeleteEvent(event.id)
-                                        }}
-                                    >
-                                        Delete event
-                                    </Menu.Item>
-                                </Menu.Dropdown>
-                            </Menu>
+                            <ActionIcon
+                                variant="subtle"
+                                color="redcolor.4"
+                                onClick={() => {
+                                    handleDeleteEvent(event.id)
+                                }}
+                            >
+                                <IconTrash size={14} />
+                            </ActionIcon>
 
                             <Anchor href={`/event/${event.id}`} underline="never" ta="end">
                                 <Button

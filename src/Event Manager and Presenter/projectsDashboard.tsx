@@ -186,14 +186,11 @@ export default function ProjectsDashboard() {
                                             >
                                                 <Grid p={0}>
                                                     <Grid.Col span={10.5} pl="1rem">
-                                                        <Text
-                                                            size="topic"
-                                                            c="bluecolor.6"
-                                                            fw={500}
-                                                            truncate="end"
-                                                        >
-                                                            {projects?.title}
-                                                        </Text>
+
+                                                        <Anchor href="/project/${projects.id}" underline="hover" c="bluecolor.4">
+                                                            <Text size="topic" c="bluecolor.4" fw={600} truncate="end">{projects?.title}</Text>
+                                                        </Anchor>
+                                                        
                                                         <Grid gutter="4rem" my="xs">
                                                             <Grid.Col span="auto">
                                                                 <Text size="xsmall" mb="xs">
@@ -259,7 +256,21 @@ export default function ProjectsDashboard() {
                                                                 <Group justify="flex-start" style={{ cursor: "pointer" }}>
                                                                     <HoverCard width={280} shadow="md">
                                                                         <HoverCard.Target>
-                                                                            <Text truncate="end" maw="max-content">
+                                                                            <Text truncate="end" maw="max-content" c="dark.9">
+                                                                                <Anchor href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location">
+                                                                                    {(projects.event_data as { location: string })
+                                                                                        ?.location
+                                                                                        ? (
+                                                                                            projects.event_data as {
+                                                                                                location: string;
+                                                                                            }
+                                                                                        )?.location
+                                                                                        : "-"}
+                                                                                </Anchor>
+                                                                            </Text>
+                                                                        </HoverCard.Target>
+                                                                        <HoverCard.Dropdown className={styles.hoverCard}>
+                                                                            <Text maw="max-content">
                                                                                 {(projects.event_data as { location: string })
                                                                                     ?.location
                                                                                     ? (
@@ -269,9 +280,10 @@ export default function ProjectsDashboard() {
                                                                                     )?.location
                                                                                     : "-"}
                                                                             </Text>
-                                                                        </HoverCard.Target>
+                                                                        </HoverCard.Dropdown>
                                                                     </HoverCard>
                                                                 </Group>
+
                                                             </Grid.Col>
                                                             <Grid.Col span="auto">
                                                                 <Text size="xsmall" mb="xs">
