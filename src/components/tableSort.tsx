@@ -18,7 +18,7 @@ import {
   IconChevronUp,
   IconSearch,
 } from "@tabler/icons-react";
-import classes from "./TableSort.module.css";
+import classes from "./tableSort.module.css";
 import moment from "moment";
 
 interface RowData {
@@ -59,20 +59,20 @@ function Th({ children, reversed, sorted, onSort }: ThProps) {
 }
 
 function filterData(data: RowData[], search: string) {
-    const query = search.toLowerCase().trim();
-    return data.filter((item) =>
-      keys(data[0]).some((key) => {
-        const value = item[key];
-        if (typeof value === "string") {
-          return value.toLowerCase().includes(query);
-        } else if (typeof value === "number") {
-          // Convert number to string before comparison
-          return String(value).toLowerCase().includes(query);
-        }
-        return false;
-      })
-    );
-  }
+  const query = search.toLowerCase().trim();
+  return data.filter((item) =>
+    keys(data[0]).some((key) => {
+      const value = item[key];
+      if (typeof value === "string") {
+        return value.toLowerCase().includes(query);
+      } else if (typeof value === "number") {
+        // Convert number to string before comparison
+        return String(value).toLowerCase().includes(query);
+      }
+      return false;
+    })
+  );
+}
 
 function sortData(
   data: RowData[],
@@ -148,7 +148,6 @@ export function TableSort(props: { data: RowData[] }) {
     setRowOpened(updatedRowOpened);
   };
 
-  
   const getPaginatedData = () => {
     const startIndex = (activePage - 1) * itemsPerPage;
     const endIndex = startIndex + itemsPerPage;
@@ -203,28 +202,36 @@ export function TableSort(props: { data: RowData[] }) {
               reversed={reverseSortDirection}
               onSort={() => setSorting("title")}
             >
-              <Text c="red" fw={1000}>Title</Text>
+              <Text c="red" fw={1000}>
+                Title
+              </Text>
             </Th>
             <Th
               sorted={sortBy === "description"}
               reversed={reverseSortDirection}
               onSort={() => setSorting("description")}
             >
-              <Text c="red" fw={1000}>Description</Text>
+              <Text c="red" fw={1000}>
+                Description
+              </Text>
             </Th>
             <Th
               sorted={sortBy === "total_virtual_money"}
               reversed={reverseSortDirection}
               onSort={() => setSorting("total_virtual_money")}
             >
-              <Text c="red" fw={1000}>Total Virtual Money</Text>
+              <Text c="red" fw={1000}>
+                Total Virtual Money
+              </Text>
             </Th>
             <Th
               sorted={sortBy === "created_at"}
               reversed={reverseSortDirection}
               onSort={() => setSorting("created_at")}
             >
-              <Text c="red" fw={1000}>Created At</Text>
+              <Text c="red" fw={1000}>
+                Created At
+              </Text>
             </Th>
           </Table.Tr>
         </Table.Tbody>
