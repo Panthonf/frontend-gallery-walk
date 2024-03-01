@@ -26,6 +26,7 @@ import styles from "./styles.module.css";
 
 // import icon form tabler react
 import { IconArrowRight, IconMail, IconMapPin, IconPhone, IconSunHigh } from "@tabler/icons-react";
+import React, { useEffect, useState } from "react";
 
 // interface
 interface FormValues {
@@ -33,6 +34,29 @@ interface FormValues {
     email: string;
     message: string;
 }
+
+// sentence for random
+const sentences = [
+    'Create Your Own Events',
+    'Specify event type: Workshop, competition, presentation, etc.',
+    'Choose a clear and catchy event name.',
+    'Write a comprehensive description of your event.',
+    'Specify date, time, and location.',
+    'Set a maximum number of participants.',
+    'Configure registration options.',
+    'Choose a presentation format: Online, on-site, etc.',
+    'Set up payment options (if applicable).',
+    'Upload images or videos to promote your event.',
+    'Share your event on social media.',
+    'Join Events That Interest You',
+    'Search by type, topic, or keyword.',
+    'Browse by date, time, or location.',
+    'View details of each event.',
+    'Check eligibility and requirements.',
+    'Register for the event.',
+    'Prepare for the event.',
+    'Attend and enjoy!'
+];
 
 export default function Homepage() {
 
@@ -62,6 +86,18 @@ export default function Homepage() {
             .catch(error => console.log(error));
     };
 
+    // random
+    const [currentSentence, setCurrentSentence] = useState<string>(sentences[0]);
+
+    useEffect(() => {
+        const intervalId = setInterval(() => {
+            const randomIndex = Math.floor(Math.random() * sentences.length);
+            setCurrentSentence(sentences[randomIndex]);
+        }, 5000); // Change sentence every 5 seconds
+
+        return () => clearInterval(intervalId); // Cleanup on component unmount
+    }, []);
+
     return (
         <body>
 
@@ -81,7 +117,12 @@ export default function Homepage() {
                                 w={30}
                                 src="/src/images/icon-1.PNG"
                             />
-                            <Text fw={500}>Gallery walk</Text>
+
+                            <a href="/">
+                                <UnstyledButton>
+                                    <Text fw={500}>Gallery walk</Text>
+                                </UnstyledButton>
+                            </a>
                         </Flex>
                     </Grid.Col>
 
@@ -145,10 +186,7 @@ export default function Homepage() {
                             <Grid gutter="xl">
                                 <Grid.Col span="auto">
                                     <Text w="55%">
-                                        Lorem ipsum dolor sit amet
-                                        consectetur adipisicing elit. Unde
-                                        distinctio explicabo, quia illum
-                                        totam perferendis.
+                                        {currentSentence}
                                     </Text>
 
                                     <Title size="3.5rem" mt="md" my="auto">
@@ -225,7 +263,7 @@ export default function Homepage() {
                                 <Grid grow px="5rem" my="auto" gutter="3rem">
 
                                     {/* event manager container */}
-                                    <Grid.Col span={4}>
+                                    <Grid.Col span={4} style={{ position: "relative" }}>
                                         <Text size="xsmall" c="graycolor.2">
                                             Role Group
                                         </Text>
@@ -233,18 +271,20 @@ export default function Homepage() {
                                             Event Manager
                                         </Text>
                                         <Text>
-                                            Lorem ipsum dolor sit amet
-                                            consectetur adipisicing elit. Unde
-                                            distinctio explicabo, quia illum
-                                            totam perferendis. Consequatur eaque
-                                            aperiam totam reiciendis vero, a
-                                            facere tenetur rem libero saepe
-                                            natus, nobis dolor?
+                                            An Event Manager facilitates hybrid project presentations, allowing event presenters to showcase their work online and offline. Guests can engage, provide feedback, and virtual money, fostering collaboration and innovation.
                                         </Text>
+
+                                        <div style={{ position: "absolute", top: "1rem", left: "8rem" }}>
+                                            <Image
+                                                h={50}
+                                                w={50}
+                                                src="/src/images/icon-event.png"
+                                            />
+                                        </div>
                                     </Grid.Col>
 
                                     {/* event presenter container */}
-                                    <Grid.Col span={4}>
+                                    <Grid.Col span={4} style={{ position: "relative" }}>
                                         <Text size="xsmall" c="graycolor.2">
                                             Role Group
                                         </Text>
@@ -252,18 +292,20 @@ export default function Homepage() {
                                             Event Presenter
                                         </Text>
                                         <Text>
-                                            Lorem ipsum dolor sit amet
-                                            consectetur adipisicing elit. Unde
-                                            distinctio explicabo, quia illum
-                                            totam perferendis. Consequatur eaque
-                                            aperiam totam reiciendis vero, a
-                                            facere tenetur rem libero saepe
-                                            natus, nobis dolor?
+                                            An Event Presenter is a project owner who shares their project through an event created by an Event Manager. The presenter can upload project information for the presentation and receive virtual money and feedback from guest.
                                         </Text>
+
+                                        <div style={{ position: "absolute", bottom: "-3rem", left: "0" }}>
+                                            <Image
+                                                h={80}
+                                                w={80}
+                                                src="/src/images/icon-presenter.png"
+                                            />
+                                        </div>
                                     </Grid.Col>
 
                                     {/* guest container */}
-                                    <Grid.Col span={4}>
+                                    <Grid.Col span={4} style={{ position: "relative" }}>
                                         <Text size="xsmall" c="graycolor.2">
                                             Role Group
                                         </Text>
@@ -271,14 +313,16 @@ export default function Homepage() {
                                             Guest
                                         </Text>
                                         <Text>
-                                            Lorem ipsum dolor sit amet
-                                            consectetur adipisicing elit. Unde
-                                            distinctio explicabo, quia illum
-                                            totam perferendis. Consequatur eaque
-                                            aperiam totam reiciendis vero, a
-                                            facere tenetur rem libero saepe
-                                            natus, nobis dolor?
+                                            A Guest is an event participant who joins an event created by an Event Manager. They can engage with the presented projects by providing virtual money and feedback.
                                         </Text>
+
+                                        <div style={{ position: "absolute", bottom: "1rem", right: "1rem" }}>
+                                            <Image
+                                                h={60}
+                                                w={60}
+                                                src="/src/images/icon-guest.png"
+                                            />
+                                        </div>
                                     </Grid.Col>
 
                                     {/* service container */}
@@ -287,13 +331,7 @@ export default function Homepage() {
                                             Service
                                         </Text>
                                         <Text>
-                                            Lorem ipsum dolor sit amet
-                                            consectetur adipisicing elit. Unde
-                                            distinctio explicabo, quia illum
-                                            totam perferendis. Consequatur eaque
-                                            aperiam totam reiciendis vero, a
-                                            facere tenetur rem libero saepe
-                                            natus, nobis dolor?
+                                            Our website is accessible on all devices and supports Google account login for a convenient and efficient user experience.
                                         </Text>
                                     </Grid.Col>
 
@@ -304,13 +342,7 @@ export default function Homepage() {
                                         </Text>
                                         <Flex align="center" gap="md">
                                             <Text>
-                                                Lorem ipsum dolor sit amet
-                                                consectetur adipisicing elit. Unde
-                                                distinctio explicabo, quia illum
-                                                totam perferendis. Consequatur eaque
-                                                aperiam totam reiciendis vero, a
-                                                facere tenetur rem libero saepe
-                                                natus, nobis dolor?
+                                                Virtual money is a simulated currency within the event platform. Its value and unit are defined by the Event Manager and can be used by Guest to support projects they find interesting and promising.
                                             </Text>
                                             <Image
                                                 w={100}
@@ -357,7 +389,7 @@ export default function Homepage() {
                             <Grid justify="space-between">
 
                                 <Text mb="2rem">
-                                    Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of Letraset sheets containing.
+                                    This website was created as a project for course 261492 by a group of fourth-year students from the Department of Computer Engineering, Faculty of Engineering, Chiang Mai University.
                                 </Text>
 
                                 {/* panthon kansap container */}
@@ -365,7 +397,7 @@ export default function Homepage() {
                                     <Image
                                         h={200}
                                         w={200}
-                                        src="https://hips.hearstapps.com/hmg-prod/images/dog-puppy-on-garden-royalty-free-image-1586966191.jpg?crop=0.752xw:1.00xh;0.175xw,0&resize=1200:*"
+                                        src="/src/images/image-1.jpg"
                                     />
 
                                     <Text c="redcolor.4" fw={500} my="md">Mr. Panthon Kansap</Text>
