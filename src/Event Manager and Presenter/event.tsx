@@ -73,6 +73,8 @@ import Navbar from "../components/navbar";
 import EditDescriptionEvent from "./editDescriptionEvent";
 import { DateInput, TimeInput } from "@mantine/dates";
 import EventResult from "./eventResult";
+import Chart from "chart.js/auto";
+import { CategoryScale } from "chart.js";
 
 interface EventType {
   id: number;
@@ -163,6 +165,8 @@ export default function Event() {
       }
     },
   });
+
+  Chart.register(CategoryScale);
 
   const editorDescription = useEditor({
     extensions: [
