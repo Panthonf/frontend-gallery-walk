@@ -48,12 +48,33 @@ export default function EventResult(props: { eventId: unknown }) {
     setNumberOfBars(value);
   };
 
+  // console.log("eventResult=" + JSON.stringify(eventResult));
+  let chartDataArray = JSON.parse(JSON.stringify(eventResult));
+  // console.log("chartDataArray=" + JSON.stringify(chartDataArray));
+
+  if (eventResult !== null) {
+    //chartDataArray.sort((a, b) => b.virtual_money - a.virtual_money);
+    const arrOutput = [];
+    let count = 1;
+
+    for (let i = 0; i < chartDataArray.length; i++, count++) {
+      if (count > numberOfBars) break;
+      if (count % 2 == 0) {
+        arrOutput.push(chartDataArray[i]);
+      } else {
+        arrOutput.unshift(chartDataArray[i]);
+      }
+    }
+    chartDataArray = arrOutput;
+  }
+
+  console.log("eventResult=" + JSON.stringify(eventResult));
   const _Data = {
-    labels: eventResult?.map((data) => data.title).slice(0, numberOfBars),
+    labels: chartDataArray?.map((data) => data.title).slice(0, numberOfBars),
     datasets: [
       {
         label: "Virtual Money ",
-        data: eventResult
+        data: chartDataArray
           ?.map((data) => data.total_virtual_money)
           .slice(0, numberOfBars),
         backgroundColor: [
@@ -105,11 +126,13 @@ export default function EventResult(props: { eventId: unknown }) {
               <Group mt="xs" color="red">
                 <Space h="lg" />
                 <Radio
+                  color="red"
                   value="3"
                   label="Top 3 teams"
                   onClick={() => handleSelectChange(3)}
                 />
                 <Radio
+                  color="red"
                   value="5"
                   label="Top 5 teams"
                   onClick={() => handleSelectChange(5)}
@@ -127,6 +150,7 @@ export default function EventResult(props: { eventId: unknown }) {
                 onChange={(value) => handleSelectChange(Number(value))}
               />
             </Flex> */}
+
             {chartContent}
             <TableSort data={eventResult} />
           </div>
