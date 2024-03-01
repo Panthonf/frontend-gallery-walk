@@ -86,13 +86,17 @@ export default function Navbar() {
                                 w={30}
                                 src="/src/images/icon-1.PNG"
                             />
-                            <Text fw={500}>Gallery walk</Text>
+                            <a href="/">
+                                <UnstyledButton>
+                                    <Text fw={500}>Gallery walk</Text>
+                                </UnstyledButton>
+                            </a>
                         </Flex>
                     </Grid.Col>
 
                     <Grid.Col span="auto">
                         <a href="/dashboard">
-                            <UnstyledButton mr="lg">
+                            <UnstyledButton>
                                 <Text>Dashboard</Text>
                             </UnstyledButton>
                         </a>
@@ -113,7 +117,7 @@ export default function Navbar() {
                                 <Menu.Target>
                                     <UnstyledButton>
                                         <Group>
-                                            <Flex align="center" gap="md">
+                                            <Flex align="center" gap="sm">
                                                 {userData?.profile_pic ? (
                                                     <Image
                                                         src={userData?.profile_pic}
