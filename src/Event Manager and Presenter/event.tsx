@@ -38,7 +38,6 @@ import moment from "moment";
 import styles from "../styles.module.css";
 import QRCode from "qrcode";
 import {
-    IconArrowLeft,
     IconCoins,
     IconDotsVertical,
     IconEdit,
@@ -632,33 +631,6 @@ export default function Event() {
                         </Modal>
                     </>
                 )}
-                {/* <Flex align="flex-end">
-          <Text lineClamp={5}>
-            <div
-              dangerouslySetInnerHTML={{ __html: event?.description ?? "" }}
-            />
-          </Text>
-          <ActionIcon variant="subtle" onClick={open} color="redcolor.4">
-            <IconArrowsDiagonal size={14} stroke={1.5} />
-          </ActionIcon>
-        </Flex>
-
-        <Modal
-          opened={opened}
-          onClose={close}
-          title="Description"
-          centered
-          radius="xs"
-          size="90%"
-          padding="lg"
-          className={styles.scrollBar} // Use your actual style class
-        >
-          <Text>
-            <div
-              dangerouslySetInnerHTML={{ __html: event?.description ?? "" }}
-            />
-          </Text>
-        </Modal> */}
             </>
         );
     };
@@ -681,28 +653,35 @@ export default function Event() {
                     title="QR Code for Presenter"
                     centered
                     radius="xs"
-                    size="90%"
                     padding="lg"
                     className={styles.scrollBar}
                 >
                     <Center>
-                        <div>
-                            <Text c="graycolor.3" mb="md">
-                                Scan QR code to join the event
-                            </Text>
-                            <Image src={qrCodeDataUrl} alt="QR Code" />
+                        <Text c="graycolor.2">
+                            Scan QR code to join the event
+                        </Text>
+                    </Center>
 
-                            <Center>
-                                <Anchor
-                                    href={qrCodeDataUrl}
-                                    download="qr-code-presenter.png"
-                                    target="_blank"
-                                    rel="noreferrer"
-                                >
-                                    Download QR Code
-                                </Anchor>
-                            </Center>
-                        </div>
+                    <Center>
+                        <Image
+                            src={qrCodeDataUrl}
+                            alt="QR Code"
+                            my="sm"
+                            w={300}
+                            h={300}
+                        />
+                    </Center>
+
+                    <Center>
+                        <Anchor
+                            href={qrCodeDataUrl}
+                            download="qr-code-presenter.png"
+                            target="_blank"
+                            rel="noreferrer"
+                            c="redcolor.4"
+                        >
+                            <Button >Download QR Code</Button>
+                        </Anchor>
                     </Center>
                 </Modal>
             </>
@@ -1351,15 +1330,6 @@ export default function Event() {
             <div style={{ marginBottom: "3.5rem" }}>
                 <ChangeThumbnail />
 
-                <Affix position={{ top: 90, left: 20 }}>
-                    <a href="/dashboard">
-                        <Button size="xs" leftSection={<IconArrowLeft size={14} />}>
-                            <Text c="pinkcolor.1" size="small">
-                                Back
-                            </Text>
-                        </Button>
-                    </a>
-                </Affix>
                 {/* event information */}
                 <Box w="80%" mx="auto">
                     <Flex justify="space-between" align="flex-start" mt="xl" mb="md">
@@ -1369,7 +1339,7 @@ export default function Event() {
                                     updateEventName();
                                 })}
                             >
-                                <Text c="redcolor.4" fw={600} size="topic" mb="xs">
+                                <Text c="redcolor.4" fw={600} size="header" mb="xs">
                                     {editEventName ? (
                                         <TextInput
                                             label="Event Name"
@@ -2302,7 +2272,7 @@ export default function Event() {
                                                         <Text size="xsmall" c="graycolor.2">
                                                             Project name
                                                         </Text>
-                                                        <Text size="base" fw={500}>
+                                                        <Text size="topic" fw={500} c="redcolor.4">
                                                             {project.title}
                                                         </Text>
                                                     </Grid.Col>
@@ -2314,7 +2284,7 @@ export default function Event() {
                                                     </Grid.Col>
 
                                                     <Grid.Col span="content" ta="end">
-                                                        <Text size="sm" c="redcolor.4">
+                                                        <Text size="base" c="redcolor.4" fw={500}>
                                                             {project.virtual_money} {event?.unit_money}
                                                         </Text>
                                                         <Text size="small" c="graycolor.2">
