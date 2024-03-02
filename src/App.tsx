@@ -48,7 +48,7 @@ const theme = createTheme({
     small: "12px",
     base: "14px",
     topic: "16px",
-    header: "18px",
+    header: "24px",
   },
   colors: {
     whitecolor: generateColors("#fffdfd"),
@@ -60,6 +60,14 @@ const theme = createTheme({
     greencolor: generateColors("#36AE7C"),
     yellowcolor: generateColors("#F9D923"),
     bluecolor: generateColors("#187498"),
+  },
+
+  breakpoints: {
+    xs: '30em',
+    sm: '50em',
+    md: '64em',
+    lg: '74em',
+    xl: '90em',
   },
 
   components: {
