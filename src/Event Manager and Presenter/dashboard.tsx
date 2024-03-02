@@ -1,9 +1,9 @@
 import {
-    // ChangeEvent,
     useEffect,
     useState,
 } from "react";
 import axios from "axios";
+
 import {
     Text,
     Divider,
@@ -12,19 +12,18 @@ import {
     Button,
     Flex,
     TextInput,
-    // Select,
     Group,
     Container,
     SimpleGrid,
     Anchor,
     AspectRatio,
-    Stack,
     HoverCard,
     Loader,
     Center,
     Affix,
     ActionIcon,
-    //   UnstyledButton,
+    Box,
+
 } from "@mantine/core";
 import { Pagination } from "@mantine/core";
 import Navbar from "../components/navbar";
@@ -33,18 +32,18 @@ import moment from "moment";
 import {
     IconSquarePlus,
     IconSearch,
-    IconArrowNarrowRight,
-    IconTrash,
+    IconMapPin,
+    IconPresentation,
+    IconClockHour3,
 } from "@tabler/icons-react";
 
 import styles from "../styles.module.css";
 import ProjectsDashboard from "./projectsDashboard";
-import Swal from "sweetalert2";
 
 export default function Dashboard() {
     const [query, setQuery] = useState("");
     const [page, setPage] = useState(1);
-    const [pageSize] = useState(3);
+    const [pageSize] = useState(8);
     const [totalEvents, setTotalEvents] = useState(0);
     const [events, setEvents] = useState([]);
 
@@ -172,50 +171,50 @@ export default function Dashboard() {
         video_link: string;
     };
 
-    const handleDeleteEvent = async (eventId: number) => {
-        Swal.fire({
-            title: "Are you sure?",
-            text: "Do you want to delete this event?",
-            icon: "warning",
-            showCancelButton: true,
-            confirmButtonText: "Yes",
-            cancelButtonText: "No",
-        }).then(async (result) => {
-            if (result.isConfirmed) {
-                try {
-                    await axios
-                        .delete(
-                            `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
-                            {
-                                withCredentials: true,
-                            }
-                        )
-                        .then(() => {
-                            Swal.fire({
-                                title: "Success",
-                                text: "Delete event success",
-                                icon: "success",
-                                timer: 2000,
-                                showConfirmButton: false,
-                            }).then(() => {
-                                window.location.href = "/dashboard";
-                            });
-                        })
-                        .catch((err) => {
-                            console.log(err);
-                            Swal.fire({
-                                title: "Error",
-                                text: "Delete event error",
-                                icon: "error",
-                                confirmButtonText: "OK",
-                            });
-                        });
-                } catch (error) {
-                    console.error("Error fetching events:", error);
-                }
-            }
-        });
-    };
+    // const handleDeleteEvent = async (eventId: number) => {
+    //     Swal.fire({
+    //         title: "Are you sure?",
+    //         text: "Do you want to delete this event?",
+    //         icon: "warning",
+    //         showCancelButton: true,
+    //         confirmButtonText: "Yes",
+    //         cancelButtonText: "No",
+    //     }).then(async (result) => {
+    //         if (result.isConfirmed) {
+    //             try {
+    //                 await axios
+    //                     .delete(
+    //                         `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+    //                         {
+    //                             withCredentials: true,
+    //                         }
+    //                     )
+    //                     .then(() => {
+    //                         Swal.fire({
+    //                             title: "Success",
+    //                             text: "Delete event success",
+    //                             icon: "success",
+    //                             timer: 2000,
+    //                             showConfirmButton: false,
+    //                         }).then(() => {
+    //                             window.location.href = "/dashboard";
+    //                         });
+    //                     })
+    //                     .catch((err) => {
+    //                         console.log(err);
+    //                         Swal.fire({
+    //                             title: "Error",
+    //                             text: "Delete event error",
+    //                             icon: "error",
+    //                             confirmButtonText: "OK",
+    //                         });
+    //                     });
+    //             } catch (error) {
+    //                 console.error("Error fetching events:", error);
+    //             }
+    //         }
+    //     });
+    // };
 
     // thuumbnail container
     const defaultThumbnailUrl = `https://placehold.co/400?text=`;
@@ -226,77 +225,77 @@ export default function Dashboard() {
             `${defaultThumbnailUrl}${encodeURIComponent(event.event_name)}`;
 
         return (
-            <Card
-                key={event.id}
-                className={styles.cardContainer}
-                p="1rem"
-                radius="md"
-                mb="0.3rem"
-            >
-                <Grid columns={24} p={0}>
-                    <Grid.Col span="auto" p={0}>
+
+            <Anchor href={`/event/${event.id}`} underline="never">
+
+                <Card key={event.id}
+                    className={styles.cardContainer}
+                    withBorder padding="lg" radius="md" >
+
+                    <Card.Section mb="sm">
                         {thumbnailUrl && (
-                            <AspectRatio ratio={1} maw={200} p={0}>
+                            <AspectRatio h={150} p={0}>
                                 <img src={thumbnailUrl} style={{ borderRadius: "0.2rem" }} />
                             </AspectRatio>
                         )}
-                    </Grid.Col>
-                    <Grid.Col span={18} pl="1rem">
-                        
-                        <Anchor href="/event/${event.id}" underline="hover" c="redcolor.4">
-                            <Text size="topic" c="redcolor.4" fw={600} truncate="end">{event.event_name}</Text>
-                        </Anchor>
+                    </Card.Section>
 
-                        <Grid gutter="1rem" columns={12} my="xs">
-                            <Grid.Col span="content">
-                                <Text size="xsmall" mb="xs">
+                    <Card.Section>
+                        <Flex justify="space-between">
+                            <Box w="75%">
+                                <Text size="topic" c="redcolor.4" fw={600} truncate="end">{event.event_name}</Text>
+                            </Box>
+
+                            <Flex gap="xs" align="center">
+                                <HoverCard width={280} shadow="md">
+                                    <HoverCard.Target>
+                                        <Anchor href={"https://www.google.com/maps/search/" + encodeURIComponent(event.location)} underline="never">
+                                            <ActionIcon variant="transparent" c="redcolor.4">
+                                                <IconMapPin size={14} />
+                                            </ActionIcon>
+                                        </Anchor>
+                                    </HoverCard.Target>
+                                    <HoverCard.Dropdown w="max-content" bg="var(--whitecolor)">
+                                        <Text>{event.location || "-"}</Text>
+                                    </HoverCard.Dropdown>
+                                </HoverCard>
+                                <Flex align="center" gap="0.3rem">
+                                    <IconPresentation size={14} />
+                                    {event.total_projects || 0}
+                                </Flex>
+                            </Flex>
+                        </Flex>
+
+                        <Flex justify="flex-start" gap="2rem">
+                            <div>
+                                <Text size="xsmall" c="graycolor.4">
                                     Start event
                                 </Text>
-                                <Text>
-                                    {moment(event.start_date).format("LL [at] HH:mm A")}
-                                </Text>
-                            </Grid.Col>
+                                {moment(event.start_date).format("LL")}
 
-                            <Grid.Col span="content">
-                                <Text size="xsmall" mb="xs">
+                                <Flex align="center" gap="xs">
+                                    <IconClockHour3 size={14} />
+                                    {moment().format('LT')}
+                                </Flex>
+                            </div>
+                            <div>
+                                <Text size="xsmall" c="graycolor.4">
                                     End event
                                 </Text>
-                                <Text>{moment(event.end_date).format("LL [at] HH:mm A")}</Text>
-                            </Grid.Col>
+                                {moment(event.end_date).format("LL")}
 
-                            <Grid.Col span={2}>
-                                <Text size="xsmall" mb="xs">
-                                    Location
-                                </Text>
+                                <Flex align="center" gap="xs">
+                                    <IconClockHour3 size={14} />
+                                    {moment().format('LT')}
+                                </Flex>
+                            </div>
 
-                                <Group justify="flex-start" style={{ cursor: "pointer" }}>
-                                    <HoverCard width={280} shadow="md">
-                                        <HoverCard.Target>
-                                            <Text truncate="end" maw="max-content" c="dark.9">
-                                                <Anchor href={"https://www.google.com/maps/search/" + encodeURIComponent(event.location)}>
-                                                    {event.location || "-"}
-                                                </Anchor>
-                                            </Text>
-                                        </HoverCard.Target>
-                                        <HoverCard.Dropdown className={styles.hoverCard}>
-                                            <Text maw="max-content">{event.location || "-"}</Text>
-                                        </HoverCard.Dropdown>
-                                    </HoverCard>
-                                </Group>
-                            </Grid.Col>
+                        </Flex>
 
-                            <Grid.Col span={2}>
-                                <Text size="xsmall" mb="xs">
-                                    Projects
-                                </Text>
-                                <Text>{event.total_projects || 0}</Text>
-                            </Grid.Col>
-                        </Grid>
+                        <Divider size="xs" color="graycolor.2" my="xs" />
 
-                        <Divider size="xs" color="graycolor.2" />
-
-                        <div style={{ marginTop: "1rem" }}>
-                            <Text size="xsmall" mb="xs">
+                        <div>
+                            <Text size="xsmall" c="graycolor.4">
                                 Description
                             </Text>
                             <Text lineClamp={2}>
@@ -307,32 +306,20 @@ export default function Dashboard() {
                                 />
                             </Text>
                         </div>
-                    </Grid.Col>
 
-                    <Grid.Col span="content">
-                        <Stack h={180} align="flex-end" justify="space-between">
-                            <ActionIcon
-                                variant="subtle"
-                                color="redcolor.4"
-                                onClick={() => {
-                                    handleDeleteEvent(event.id)
-                                }}
-                            >
-                                <IconTrash size={14} />
-                            </ActionIcon>
+                    </Card.Section>
 
-                            <Anchor href={`/event/${event.id}`} underline="never" ta="end">
-                                <Button
-                                    rightSection={<IconArrowNarrowRight size={14} />}
-                                    size="small"
-                                >
-                                    Event
-                                </Button>
-                            </Anchor>
-                        </Stack>
-                    </Grid.Col>
-                </Grid>
-            </Card>
+                    {/* <ActionIcon
+                        variant="subtle"
+                        color="redcolor.4"
+                        onClick={() => {
+                            handleDeleteEvent(event.id)
+                        }}
+                    >
+                        <IconTrash size={14} />
+                    </ActionIcon> */}
+                </Card >
+            </Anchor>
         );
     });
 
@@ -429,7 +416,7 @@ export default function Dashboard() {
                                                 Events
                                             </Text>
                                             <Container fluid p="0">
-                                                <SimpleGrid cols={{ base: 1, sm: 1 }} m="0">
+                                                <SimpleGrid cols={{ base: 1, sm: 2, md: 3, lg: 3, xl: 4 }} m="0" spacing="md">
                                                     {card}
                                                 </SimpleGrid>
                                             </Container>
