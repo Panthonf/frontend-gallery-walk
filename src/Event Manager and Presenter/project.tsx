@@ -1137,17 +1137,31 @@ export default function Projects() {
                   <SimpleGrid cols={3} mt="md">
                     {project?.project_document.map((document) => (
                       <Flex align="center" gap="md">
-                        <Anchor
-                          ml="md"
-                          href={document.document_url}
-                          ta="start"
-                          target="_blank"
-                          rel="noreferrer"
-                          underline="always"
-                          c={"bluecolor.4"}
-                        >
-                          {document.document_name}
-                        </Anchor>
+                        {document.document_name.includes(".pdf") ? (
+                          <Anchor
+                            ml="md"
+                            href={"/pdf?pdf=" + document.document_url}
+                            ta="start"
+                            target="_blank"
+                            rel="noreferrer"
+                            underline="always"
+                            c={"bluecolor.4"}
+                          >
+                            {document.document_name}
+                          </Anchor>
+                        ) : (
+                          <Anchor
+                            ml="md"
+                            href={document.document_url}
+                            ta="start"
+                            target="_blank"
+                            rel="noreferrer"
+                            underline="always"
+                            c={"bluecolor.4"}
+                          >
+                            {document.document_name}
+                          </Anchor>
+                        )}
                         <ActionIcon
                           onClick={() => {
                             deleteProjectDocument(
