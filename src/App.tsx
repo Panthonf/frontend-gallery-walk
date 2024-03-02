@@ -37,6 +37,7 @@ import Projects from "./Event Manager and Presenter/project.tsx";
 import EditEvent from "./Event Manager and Presenter/editEvent.tsx";
 import GuestWelcome from "./Guest/guestWelcome.tsx";
 import PresenterWelcome from "./Event Manager and Presenter/presenterWelcome.tsx";
+import PDFViewer from "./components/pdf.tsx";
 
 // import Test from "./test.tsx";
 // import { DateTimePicker } from "@mantine/dates";
@@ -151,6 +152,7 @@ export default function App() {
           {/* 404 */}
           <Route path="*" element={<NotFoundTitle />} />
           <Route path="/404" element={<NotFoundTitle />} />
+          <Route path="/pdf" element={<PDFViewer />} />
         </Routes>
       </MantineProvider>
     </Router>
