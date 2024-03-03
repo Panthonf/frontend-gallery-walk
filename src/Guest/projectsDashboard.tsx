@@ -59,6 +59,7 @@ export default function ProjectsDashboard(props: {
         setIsProjectDataLoading(false);
       } catch (err) {
         // console.error("Error fetching events:", error);
+        setIsProjectDataLoading(false);
       }
     };
 
@@ -123,14 +124,31 @@ export default function ProjectsDashboard(props: {
                     (doc: { document_url: string; document_name: string }) => {
                       return (
                         <div>
-                          <Anchor
-                            href={doc.document_url}
-                            target="_blank"
-                            underline="always"
-                            c="graycolor.2"
-                          >
-                            {doc.document_name}
-                          </Anchor>
+                          {doc.document_name.includes(".pdf") ? (
+                            <Anchor
+                              ml="md"
+                              href={"/pdf?pdf=" + doc.document_url}
+                              ta="start"
+                              target="_blank"
+                              rel="noreferrer"
+                              underline="always"
+                              c={"bluecolor.4"}
+                            >
+                              {doc.document_name}
+                            </Anchor>
+                          ) : (
+                            <Anchor
+                              ml="md"
+                              href={doc.document_url}
+                              ta="start"
+                              target="_blank"
+                              rel="noreferrer"
+                              underline="always"
+                              c={"bluecolor.4"}
+                            >
+                              {doc.document_name}
+                            </Anchor>
+                          )}
                         </div>
                       );
                     }
