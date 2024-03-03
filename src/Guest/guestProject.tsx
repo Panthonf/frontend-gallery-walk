@@ -11,20 +11,19 @@ import {
   Pagination,
   Paper,
   Textarea,
+  ScrollArea,
   // Image,
   // Avatar,
 } from "@mantine/core";
 import axios from "axios";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconCoins, IconSend } from "@tabler/icons-react";
-import { useForm } from "@mantine/form";
+import { isNotEmpty, useForm } from "@mantine/form";
 import Swal from "sweetalert2";
 
 export default function GuestProject({ projectId }: { projectId: number }) {
-  // const { projectId } = useParams();
-  //   const [isLoading, setIsLoading] = useState(true);
   const [isCommentsLoading, setIsCommentsLoading] = useState(true);
   const [guestData, setGuestData] = useState<GuestType>({
     profile_pic: "",
@@ -38,6 +37,11 @@ export default function GuestProject({ projectId }: { projectId: number }) {
   const [pageSize] = useState(5);
   const [page, setPage] = useState(1);
   const [totalComments, setTotalComments] = useState(0);
+  const [alreadyGivenVirtualMoney, setAlreadyGivenVirtualMoney] = useState({
+    amount: 0,
+  });
+  const [isGivenLoading, setIsGivenLoading] = useState(true);
+  const [isGuestDataLoading, setIsGuestDataLoading] = useState(true);
 
   const navigate = useNavigate();
   const { eventId } = useParams();
@@ -59,16 +63,14 @@ export default function GuestProject({ projectId }: { projectId: number }) {
 
   const commentForm = useForm({
     initialValues: {
-      comment: "",
+      commentLike: "",
+      commentBetter: "",
+      commentIdea: "",
     },
     validate: {
-      comment: (value) => {
-        if (value.length < 0) {
-          return "Comment must be greater than 0";
-        } else if (value.length > 500) {
-          return "Comment must be less than 100";
-        }
-      },
+      commentLike: isNotEmpty("This field is required"),
+      commentBetter: isNotEmpty("This field is required"),
+      commentIdea: isNotEmpty("This field is required"),
     },
   });
 
@@ -85,16 +87,81 @@ export default function GuestProject({ projectId }: { projectId: number }) {
       );
 
       if (response.data.success === true) {
-        // console.log("comments", response.data);
+        console.log("comments", response.data);
         setCommentData(response.data.data);
         setTotalComments(response.data.totalComments);
-      } else {
-        // console.log("comments", response.data);
       }
     } catch (err) {
       // console.log("err ggg", err);
     }
   }
+
+  useEffect(() => {
+    const fetchAlreadyGive = () => {
+      axios
+        .get(
+          `${
+            import.meta.env.VITE_BASE_ENDPOINTMENT
+          }guests/get-already-given-virtual-money?projectId=${projectId}&guestId=${
+            guestData.id
+          }&eventId=${eventId}`,
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          if (res.data.success === true) {
+            setAlreadyGivenVirtualMoney(res.data.data);
+            setIsGivenLoading(false);
+          }
+        })
+        .catch((error) => {
+          console.error("Error during fetchAlreadyGiven:", error);
+          setIsGivenLoading(false);
+          // Handle error gracefully, show a message to the user, or retry
+        });
+    };
+    fetchAlreadyGive();
+  }, [eventId, guestData.id, projectId]);
+
+  const fetchAlreadyGive = () => {
+    axios
+      .get(
+        `${
+          import.meta.env.VITE_BASE_ENDPOINTMENT
+        }guests/get-already-given-virtual-money?projectId=${projectId}&guestId=${
+          guestData.id
+        }&eventId=${eventId}`,
+        {
+          withCredentials: true,
+        }
+      )
+      .then((res) => {
+        if (res.data.success === true) {
+          setAlreadyGivenVirtualMoney(res.data.data);
+        }
+      })
+      .catch(() => {
+        // console.error("Error during fetchAlreadyGiven:", error);
+      });
+  };
+
+  const fetchGuestData = useCallback(async () => {
+    await axios
+      .get(`${import.meta.env.VITE_BASE_ENDPOINTMENT}guests/get-guest-data`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        if (res.data.success === true) {
+          setGuestData(res.data.data);
+          setIsGuestDataLoading(false);
+          setIsCommentsLoading(false);
+        }
+        setIsGuestDataLoading(false);
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     const isLoggedIn = async () => {
       try {
@@ -114,31 +181,6 @@ export default function GuestProject({ projectId }: { projectId: number }) {
       }
     };
     isLoggedIn();
-    // async function fetchProjectData() {
-    //   const response = await axios
-    //     .get(
-    //       `${
-    //         import.meta.env.VITE_BASE_ENDPOINTMENT
-    //       }projects/get-data/${projectId}`,
-    //       {
-    //         withCredentials: true,
-    //       }
-    //     )
-    //     .then((res) => {
-    //       if (res.data.success === true) {
-    //         setIsLoading(false);
-    //         setIsCommentsLoading(false);
-    //         document.title = res.data.data.title;
-    //       } else {
-    //         navigate(-1);
-    //       }
-    //     })
-    //     .catch(() => {
-    //       // console.log("err", err);
-    //     });
-    //   return response;
-    // }
-
     async function fetchProjectComments() {
       try {
         const response = await axios.get(
@@ -157,33 +199,13 @@ export default function GuestProject({ projectId }: { projectId: number }) {
         } else {
           // console.log("comments", response.data);
         }
-      } catch (err) {
+      } catch {
         // console.log("err ggg", err);
       }
     }
-
-    // fetchProjectData();
     fetchGuestData();
     fetchProjectComments();
-  }, [navigate, page, pageSize, projectId]);
-
-  async function fetchGuestData() {
-    await axios
-      .get(`${import.meta.env.VITE_BASE_ENDPOINTMENT}guests/get-guest-data`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        if (res.data.success === true) {
-          // console.log("guest data", res.data.data);
-          setGuestData(res.data.data);
-          //   setIsLoading(false);
-          setIsCommentsLoading(false);
-        }
-      })
-      .catch(() => {
-        // console.log("err", err);
-      });
-  }
+  }, [fetchGuestData, navigate, page, pageSize, projectId]);
 
   async function giveVirtualMoney() {
     await axios
@@ -212,6 +234,7 @@ export default function GuestProject({ projectId }: { projectId: number }) {
           close();
           //   setIsLoading(false);
           fetchGuestData();
+          fetchAlreadyGive();
           form.reset();
         } else {
           //   setIsLoading(false);
@@ -232,7 +255,9 @@ export default function GuestProject({ projectId }: { projectId: number }) {
       .post(
         `${import.meta.env.VITE_BASE_ENDPOINTMENT}guests/add-comment`,
         {
-          comment: commentForm.values.comment,
+          comment_like: commentForm.values.commentLike,
+          comment_better: commentForm.values.commentBetter,
+          comment_idea: commentForm.values.commentIdea,
           projectId: projectId,
         },
         {
@@ -282,28 +307,55 @@ export default function GuestProject({ projectId }: { projectId: number }) {
           <IconCoins size={16} />
         </Group>
 
-        <Group align="flex-end" gap="xs" mt={25}>
-          <Text fw={500} c="greencolor.4">
-            {guestData?.virtual_money}
+        <Flex justify="space-between" align="baseline" gap="xs">
+          <Text fz="50" fw={500} c="greencolor.4">
+            {isGuestDataLoading ? (
+              <Loader color="greencolor.4" size={14} />
+            ) : (
+              guestData.virtual_money.toLocaleString()
+            )}
           </Text>
-        </Group>
+
+          <Text fz="md" c="dimmed">
+            {isGivenLoading ? (
+              <>
+                <Flex align="center" gap="xs">
+                  <Loader color="greencolor.4" size={14} />
+                </Flex>
+              </>
+            ) : (
+              <>{alreadyGivenVirtualMoney.amount.toLocaleString()} given</>
+            )}{" "}
+          </Text>
+        </Flex>
 
         <Text fz="xs" c="dimmed" mt={7}>
           Your Virtual Money
         </Text>
       </Paper>
       <form onSubmit={form.onSubmit(() => giveVirtualMoney())}>
-        <NumberInput
-          mt="md"
-          label="Virtual Money"
-          placeholder="Enter amount"
-          {...form.getInputProps("amount")}
-        />
-        <Group justify="flex-end" mt="md">
+        <Text size="md" c="greencolor.4" mt="md">
+          Give Virtual Money
+        </Text>
+        <Flex
+          gap="xl"
+          justify="flex-start"
+          align="center"
+          direction="row"
+          wrap="wrap"
+        >
+          <NumberInput
+            // label="Virtual Money"
+            placeholder="Enter amount"
+            defaultValue={0}
+            thousandSeparator=","
+            {...form.getInputProps("amount")}
+          />
+
           <Button type="submit" color="greencolor.4">
-            Submit
+            <IconSend size={14} />
           </Button>
-        </Group>
+        </Flex>
       </form>
 
       <Divider my="md" />
@@ -317,15 +369,20 @@ export default function GuestProject({ projectId }: { projectId: number }) {
           addComment(), commentForm.reset();
         })}
       >
-        <Textarea {...commentForm.getInputProps("comment")} />
-        <Text size="xs" c="dimmed" mt="xs" ta="end">
-          {commentForm.values.comment.length} / 500
+        <Text size="xs" c="dimmed" mt="xs">
+          What i like about this project?
         </Text>
+        <Textarea {...commentForm.getInputProps("commentLike")} />
 
-        {/* <TextInput
-          placeholder="Comment"
-          {...commentForm.getInputProps("comment")}
-        /> */}
+        <Text size="xs" c="dimmed" mt="xs">
+          What could make this project better?
+        </Text>
+        <Textarea {...commentForm.getInputProps("commentBetter")} />
+
+        <Text size="xs" c="dimmed" mt="xs">
+          New idea or suggestion for this project?
+        </Text>
+        <Textarea {...commentForm.getInputProps("commentIdea")} />
 
         <Group justify="flex-end" mt="md">
           <Button
@@ -362,15 +419,23 @@ export default function GuestProject({ projectId }: { projectId: number }) {
                       ).fromNow()}
                     </Text>
                   </Flex>
-                  <Text
-                    style={{
-                      overflowWrap: "break-word",
-                    }}
 
-                    // mb="sm"
-                  >
-                    {(comment as { comment: string }).comment}
-                  </Text>
+                  <ScrollArea mt="sm" h={200}>
+                    <Text size="xs" c="dimmed">
+                      What i like about this project?
+                    </Text>
+                    {(comment as { comment_like: string }).comment_like}
+
+                    <Text size="xs" c="dimmed" mt="sm">
+                      What could make this project better?
+                    </Text>
+                    {(comment as { comment_better: string }).comment_better}
+
+                    <Text size="xs" c="dimmed" mt="sm">
+                      New idea or suggestion for this project?
+                    </Text>
+                    {(comment as { comment_idea: string }).comment_idea}
+                  </ScrollArea>
                   <Divider mt="4" />
                 </Text>
               ))}
