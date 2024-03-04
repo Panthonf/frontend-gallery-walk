@@ -16,13 +16,14 @@ import {
   SimpleGrid,
   Anchor,
 } from "@mantine/core";
-import { IconSearch, IconCoin } from "@tabler/icons-react";
+import { IconSearch, IconCoin, IconMessagePlus } from "@tabler/icons-react";
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import styles from "../styles.module.css";
 import { useDisclosure } from "@mantine/hooks";
 import GuestProject from "./guestProject";
+import Comment from "./comment";
 export default function ProjectsDashboard(props: {
   eventId: string | undefined;
 }) {
@@ -82,13 +83,13 @@ export default function ProjectsDashboard(props: {
     const [opened, { open, close }] = useDisclosure(false);
 
     return (
-      <>
+      <div>
         <Modal
           opened={opened}
           onClose={close}
           title="Project Details"
-          //   centered
-          w="fit-content"
+          style={{ width: "fit-content" }}
+          h={500}
         >
           <Text size="topic" c="greencolor.4" fw={500} truncate="end">
             {projectTitle}
@@ -114,46 +115,32 @@ export default function ProjectsDashboard(props: {
                 Document
               </Text>
               <div>
-                <SimpleGrid cols={2} spacing={1}>
-                  {(
-                    document as {
-                      document_name: string;
-                      document_url: string;
-                    }[]
-                  ).map(
-                    (doc: { document_url: string; document_name: string }) => {
-                      return (
-                        <div>
-                          {doc.document_name.includes(".pdf") ? (
-                            <Anchor
-                              ml="md"
-                              href={"/pdf?pdf=" + doc.document_url}
-                              ta="start"
-                              target="_blank"
-                              rel="noreferrer"
-                              underline="always"
-                              c={"bluecolor.4"}
-                            >
-                              {doc.document_name}
-                            </Anchor>
-                          ) : (
-                            <Anchor
-                              ml="md"
-                              href={doc.document_url}
-                              ta="start"
-                              target="_blank"
-                              rel="noreferrer"
-                              underline="always"
-                              c={"bluecolor.4"}
-                            >
-                              {doc.document_name}
-                            </Anchor>
-                          )}
-                        </div>
-                      );
-                    }
-                  )}
-                </SimpleGrid>
+                {(
+                  document as {
+                    document_name: string;
+                    document_url: string;
+                  }[]
+                ).map(
+                  (doc: { document_url: string; document_name: string }) => {
+                    return (
+                      <ul>
+                        <li>
+                          <Anchor
+                            mt="md"
+                            href={doc.document_url}
+                            ta="start"
+                            target="_blank"
+                            rel="noreferrer"
+                            underline="always"
+                            c={"bluecolor.4"}
+                          >
+                            {doc.document_name.split("-").pop()}
+                          </Anchor>
+                        </li>
+                      </ul>
+                    );
+                  }
+                )}
               </div>
             </>
           )}
@@ -198,7 +185,7 @@ export default function ProjectsDashboard(props: {
             </Text>
           </UnstyledButton>
         </Flex>
-      </>
+      </div>
     );
   };
 
@@ -217,6 +204,26 @@ export default function ProjectsDashboard(props: {
           onClick={open}
         >
           <IconCoin />
+        </ActionIcon>
+      </div>
+    );
+  };
+
+  const ModalGiveComment = ({ projectId }: { projectId: number }) => {
+    const [opened, { open, close }] = useDisclosure(false);
+
+    return (
+      <div>
+        <Modal opened={opened} onClose={close} title="Give Comment">
+          <Comment projectId={projectId} />
+        </Modal>
+        <ActionIcon
+          variant="filled"
+          color="greencolor.4"
+          aria-label="Settings"
+          onClick={open}
+        >
+          <IconMessagePlus />
         </ActionIcon>
       </div>
     );
@@ -297,6 +304,17 @@ export default function ProjectsDashboard(props: {
                                 position: "absolute",
                                 top: "0",
                                 right: "0",
+                              }}
+                            >
+                              <ModalGiveComment
+                                projectId={Number(project.id)}
+                              />
+                            </div>
+                            <div
+                              style={{
+                                position: "absolute",
+                                right: "2rem",
+                                top: "0",
                               }}
                             >
                               <ModalGiveVirtualMoney
