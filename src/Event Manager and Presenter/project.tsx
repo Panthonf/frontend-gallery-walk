@@ -334,7 +334,7 @@ export default function Projects() {
 
       for (const value of formData.values()) {
         const file = value as File; // Cast the value to File type
-        if (file.size > 1000000) {
+        if (file.size > 5000000) {
           // Corrected the size check
           Swal.fire({
             icon: "error",
@@ -1040,7 +1040,7 @@ export default function Projects() {
                         </Center>
                       )}
 
-                      <SimpleGrid cols={3} mt="md">
+                      <SimpleGrid spacing="lg" cols={4} mt="md">
                         {project?.project_image.map((image) => (
                           <div>
                             {/* <AspectRatio ratio={1080 / 720} maw={300} mx="auto"> */}
@@ -1161,36 +1161,34 @@ export default function Projects() {
                       </Button>
                     </Center>
                   )}
-                  <SimpleGrid cols={3} mt="md">
-                    {project?.project_document.map((document) => (
-                      <Flex align="center" gap="md">
-                        <Anchor
-                          ml="md"
-                          href={document.document_url}
-                          ta="start"
-                          target="_blank"
-                          rel="noreferrer"
-                          underline="always"
-                          c={"bluecolor.4"}
-                        >
-                          {document.document_name}
-                        </Anchor>
-                        <ActionIcon
-                          onClick={() => {
-                            deleteProjectDocument(
-                              document.project_id,
-                              document.document_name
-                            );
-                          }}
-                          variant="subtle"
-                          size="xs"
-                          color="redcolor.4"
-                        >
-                          <IconTrash size={14} stroke={1.5} />
-                        </ActionIcon>
-                      </Flex>
-                    ))}
-                  </SimpleGrid>
+                  {project?.project_document.map((document) => (
+                    <Flex mt="md" align={"center"} gap="md">
+                      <Anchor
+                        // w="max-content"
+                        href={document.document_url}
+                        ta={"start"}
+                        target="_blank"
+                        rel="noreferrer"
+                        underline="always"
+                        c={"bluecolor.4"}
+                      >
+                        {document.document_name}
+                      </Anchor>
+                      <ActionIcon
+                        onClick={() => {
+                          deleteProjectDocument(
+                            document.project_id,
+                            document.document_name
+                          );
+                        }}
+                        variant="subtle"
+                        size="xs"
+                        color="redcolor.4"
+                      >
+                        <IconTrash size={14} stroke={1.5} />
+                      </ActionIcon>
+                    </Flex>
+                  ))}
                 </div>
               </Grid>
             </Card>
