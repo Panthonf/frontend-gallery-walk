@@ -38,6 +38,7 @@ import EditEvent from "./Event Manager and Presenter/editEvent.tsx";
 import GuestWelcome from "./Guest/guestWelcome.tsx";
 import PresenterWelcome from "./Event Manager and Presenter/presenterWelcome.tsx";
 import PDFViewer from "./components/pdfViewer.tsx";
+import ImagePreview from "./Guest/imagePreview.tsx";
 
 // import Test from "./test.tsx";
 // import { DateTimePicker } from "@mantine/dates";
@@ -64,11 +65,11 @@ const theme = createTheme({
   },
 
   breakpoints: {
-    xs: '30em',
-    sm: '50em',
-    md: '64em',
-    lg: '74em',
-    xl: '90em',
+    xs: "30em",
+    sm: "50em",
+    md: "64em",
+    lg: "74em",
+    xl: "90em",
   },
 
   components: {
@@ -161,6 +162,7 @@ export default function App() {
           <Route path="/pdf" element={<PDFViewer />} />
           <Route path="*" element={<NotFoundTitle />} />
           <Route path="/404" element={<NotFoundTitle />} />
+          <Route path="/image" element={<ImagePreview />} />
         </Routes>
       </MantineProvider>
     </Router>

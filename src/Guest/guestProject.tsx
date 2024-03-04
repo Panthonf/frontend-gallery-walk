@@ -12,6 +12,7 @@ import {
   Paper,
   Textarea,
   ScrollArea,
+  LoadingOverlay,
   // Image,
   // Avatar,
 } from "@mantine/core";
@@ -19,7 +20,7 @@ import axios from "axios";
 import moment from "moment";
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { IconCoins, IconSend } from "@tabler/icons-react";
+import { IconCoins, IconMessagePlus, IconSend } from "@tabler/icons-react";
 import { isNotEmpty, useForm } from "@mantine/form";
 import Swal from "sweetalert2";
 
@@ -42,6 +43,10 @@ export default function GuestProject({ projectId }: { projectId: number }) {
   });
   const [isGivenLoading, setIsGivenLoading] = useState(true);
   const [isGuestDataLoading, setIsGuestDataLoading] = useState(true);
+  const [isGiveVirtualMoneyLoading, setIsGiveVirtualMoneyLoading] =
+    useState(false);
+  const [giveVirtualMoneyError, setGiveVirtualMoneyError] = useState("");
+  const [unit, setUnit] = useState("");
 
   const navigate = useNavigate();
   const { eventId } = useParams();
@@ -122,6 +127,21 @@ export default function GuestProject({ projectId }: { projectId: number }) {
         });
     };
     fetchAlreadyGive();
+
+    const fetchEventData = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        setUnit(res.data.data.unit_money);
+      } catch (err) {
+        // console.error("Error fetching event data:", err);
+      }
+    };
+    fetchEventData();
   }, [eventId, guestData.id, projectId]);
 
   const fetchAlreadyGive = () => {
@@ -153,6 +173,7 @@ export default function GuestProject({ projectId }: { projectId: number }) {
       })
       .then((res) => {
         if (res.data.success === true) {
+          console.log("guest data", res.data.data);
           setGuestData(res.data.data);
           setIsGuestDataLoading(false);
           setIsCommentsLoading(false);
@@ -172,6 +193,7 @@ export default function GuestProject({ projectId }: { projectId: number }) {
           }
         );
         if (response.data.authenticated === false) {
+          console.log("not authenticated");
           window.location.href = `${
             import.meta.env.VITE_FRONTEND_ENDPOINT
           }/guest/login`;
@@ -208,6 +230,7 @@ export default function GuestProject({ projectId }: { projectId: number }) {
   }, [fetchGuestData, navigate, page, pageSize, projectId]);
 
   async function giveVirtualMoney() {
+    setIsGiveVirtualMoneyLoading(true);
     await axios
       .post(
         `${
@@ -224,20 +247,22 @@ export default function GuestProject({ projectId }: { projectId: number }) {
       )
       .then((res) => {
         if (res.data.success === true) {
-          Swal.fire({
-            icon: "success",
-            title: "Success",
-            text: `Virtual money given ${form.values.amount}`,
-            timer: 1000,
-            showConfirmButton: false,
-          });
+          // Swal.fire({
+          //   icon: "success",
+          //   title: "Success",
+          //   text: `Virtual money given ${form.values.amount}`,
+          //   timer: 1000,
+          //   showConfirmButton: false,
+          // });
           close();
           //   setIsLoading(false);
           fetchGuestData();
           fetchAlreadyGive();
+          setIsGiveVirtualMoneyLoading(false);
           form.reset();
         } else {
           //   setIsLoading(false);
+          setGiveVirtualMoneyError(res.data.message);
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -302,36 +327,53 @@ export default function GuestProject({ projectId }: { projectId: number }) {
   return (
     <>
       <Paper withBorder p="md" radius="md" bg="none" h="max-content">
-        <Group justify="space-between">
-          <Text c="graycolor.2">You have</Text>
-          <IconCoins size={16} />
-        </Group>
+        {isGuestDataLoading || isGivenLoading ? (
+          <LoadingOverlay
+            visible={isGivenLoading}
+            zIndex={1000}
+            overlayProps={{ radius: "sm", blur: 2 }}
+            loaderProps={{ color: "greencolor.4", type: "dots" }}
+          />
+        ) : (
+          <>
+            <Group justify="space-between">
+              <Text c="graycolor.2">You have</Text>
+              <IconCoins size={16} />
+            </Group>
 
-        <Flex justify="space-between" align="baseline" gap="xs">
-          <Text fz="50" fw={500} c="greencolor.4">
-            {isGuestDataLoading ? (
-              <Loader color="greencolor.4" size={14} />
-            ) : (
-              guestData.virtual_money.toLocaleString()
-            )}
-          </Text>
+            <Flex justify="space-between" align="baseline" gap="xs">
+              <Flex align="baseline" gap="xs">
+                <Text fz="50" fw={500} c="greencolor.4">
+                  {isGuestDataLoading ? (
+                    <Loader color="greencolor.4" size={14} />
+                  ) : (
+                    guestData.virtual_money.toLocaleString()
+                  )}
+                </Text>
+                <Text c="greencolor.3" fz="md">
+                  {unit}
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex justify="flex-end" align="center" gap="xs">
+              <Text fz="md" c="dimmed">
+                {isGivenLoading ? (
+                  <>
+                    <Flex align="center" gap="xs">
+                      <Loader color="greencolor.4" size={14} />
+                    </Flex>
+                  </>
+                ) : (
+                  <>{alreadyGivenVirtualMoney.amount.toLocaleString()} given</>
+                )}{" "}
+              </Text>
+            </Flex>
 
-          <Text fz="md" c="dimmed">
-            {isGivenLoading ? (
-              <>
-                <Flex align="center" gap="xs">
-                  <Loader color="greencolor.4" size={14} />
-                </Flex>
-              </>
-            ) : (
-              <>{alreadyGivenVirtualMoney.amount.toLocaleString()} given</>
-            )}{" "}
-          </Text>
-        </Flex>
-
-        <Text fz="xs" c="dimmed" mt={7}>
+            {/* <Text fz="xs" c="dimmed" mt={7}>
           Your Virtual Money
-        </Text>
+        </Text> */}
+          </>
+        )}
       </Paper>
       <form onSubmit={form.onSubmit(() => giveVirtualMoney())}>
         <Text size="md" c="greencolor.4" mt="md">
@@ -351,9 +393,18 @@ export default function GuestProject({ projectId }: { projectId: number }) {
             thousandSeparator=","
             {...form.getInputProps("amount")}
           />
+          {giveVirtualMoneyError && (
+            <Text c="red" size="sm">
+              {giveVirtualMoneyError}
+            </Text>
+          )}
 
           <Button type="submit" color="greencolor.4">
-            <IconSend size={14} />
+            {isGiveVirtualMoneyLoading ? (
+              <Loader type="dots" color="white" size={20} />
+            ) : (
+              <IconSend size={14} />
+            )}
           </Button>
         </Flex>
       </form>
@@ -386,11 +437,10 @@ export default function GuestProject({ projectId }: { projectId: number }) {
 
         <Group justify="flex-end" mt="md">
           <Button
-            w="fit-content"
             color="greencolor.4"
             size="sm"
             type="submit"
-            rightSection={<IconSend size={14} />}
+            rightSection={<IconMessagePlus size={14} />}
           >
             Send
           </Button>
@@ -400,7 +450,7 @@ export default function GuestProject({ projectId }: { projectId: number }) {
         <>
           {isCommentsLoading ? (
             <Center>
-              <Loader mt="lg" color="blue" />
+              <Loader my="lg" color="greencolor.4" />
             </Center>
           ) : (
             <>

@@ -166,7 +166,10 @@ export default function ProjectsDashboard(props: {
                   {(image as { project_image_url: string }[]).map(
                     (img: { project_image_url: string }) => {
                       return (
-                        <div>
+                        <Anchor
+                          href={"/image?image=" + img.project_image_url}
+                          target="_blank"
+                        >
                           <Image
                             mt="md"
                             src={img.project_image_url}
@@ -174,7 +177,7 @@ export default function ProjectsDashboard(props: {
                             w={300}
                             h={300}
                           />
-                        </div>
+                        </Anchor>
                       );
                     }
                   )}
