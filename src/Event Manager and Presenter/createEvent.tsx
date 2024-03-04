@@ -18,6 +18,8 @@ import {
     Box,
     Indicator,
     Modal,
+    HoverCard,
+    Anchor,
 } from "@mantine/core";
 import { useForm } from "@mantine/form";
 import { isNotEmpty } from "@mantine/form";
@@ -40,7 +42,7 @@ import {
     IconClock,
     IconClockHour3,
     IconPhotoUp,
-    IconPhotoX,
+    // IconPhotoX,
     // IconMapPin,
 } from "@tabler/icons-react";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
@@ -59,9 +61,13 @@ export default function CreateEvent() {
     const [files, setFiles] = useState<FileWithPath[]>([]);
     const BASE_ENDPOINT = import.meta.env.VITE_BASE_ENDPOINTMENT;
 
+
     const previews = files.map((file, index) => {
         const imageUrl = URL.createObjectURL(file);
-        return <img key={index} src={imageUrl} alt="preview" width="55%" />;
+
+        return (
+            <img key={index} src={imageUrl} alt="preview" width="55%" />
+        );
     });
 
     // step controller
@@ -767,26 +773,22 @@ export default function CreateEvent() {
                                                         Preview
                                                     </Text>
 
-                                                    <div style={{ position: "relative" }}>
-                                                        {previews}
+                                                    {previews}
 
-                                                        <ActionIcon
-                                                            variant="filled"
-                                                            radius="xl"
-                                                            aria-label="Settings"
-                                                            style={{
-                                                                position: "absolute",
-                                                                right: "5rem",
-                                                                top: "-0.5rem",
-                                                            }}
-                                                            color="redcolor.4"
-                                                            onClick={() => setFiles([])}
-                                                        >
-                                                            <IconPhotoX size={14} />
-                                                        </ActionIcon>
-                                                    </div>
-
-
+                                                    {/* <ActionIcon
+                                                        variant="filled"
+                                                        radius="xl"
+                                                        aria-label="Settings"
+                                                        style={{
+                                                            position: "absolute",
+                                                            right: "0rem",
+                                                            top: "0rem",
+                                                        }}
+                                                        color="redcolor.4"
+                                                        onClick={() => setFiles([])}
+                                                    >
+                                                        <IconPhotoX size={14} />
+                                                    </ActionIcon> */}
                                                 </div>
                                             </Center>
                                         ) : (
@@ -840,8 +842,9 @@ export default function CreateEvent() {
                                     style={{
                                         borderRight: "1rem solid var(--redcolor)",
                                     }}
-
+                                    gutter="1.75rem"
                                 >
+                                    {/* event manager container */}
                                     <Grid.Col span="content">
                                         <Calendar
                                             minDate={form.getInputProps("startDateEvent").value}
@@ -879,15 +882,15 @@ export default function CreateEvent() {
 
                                         <Divider mt="xs" mb="lg" />
 
-                                        <Text mb="xs">
+                                        <Flex mb="xs">
                                             <Text span fw={500} mr="sm">
-                                                Event Name:{" "}
+                                                Event Name:
                                             </Text>
-                                            {form.values.eventName.toString()}
-                                        </Text>
+                                            <Text c="redcolor.4">{form.values.eventName.toString()}</Text>
+                                        </Flex>
 
                                         <Grid>
-                                            <Grid.Col span={6}>
+                                            <Grid.Col span={{ sm: 6, md: 4 ,lg: 4, xl: 2 }}>
                                                 <Text size="xsmall" c="graycolor.4">
                                                     Start event
                                                 </Text>
@@ -901,7 +904,7 @@ export default function CreateEvent() {
                                                 </Flex>
                                             </Grid.Col>
 
-                                            <Grid.Col span={6}>
+                                            <Grid.Col span={{ sm: 6 ,lg: 4, xl: 2 }}>
                                                 <Text size="xsmall" c="graycolor.4">
                                                     End event
                                                 </Text>
@@ -914,52 +917,31 @@ export default function CreateEvent() {
                                                     )}
                                                 </Flex>
                                             </Grid.Col>
-                                        </Grid>
 
-                                        {/* <Grid gutter="md" mt="xs">
-                                            <Grid.Col>
-                                                <Text span fw={500}>
-                                                    Start event date:{" "}
+                                            <Grid.Col span={{ sm: 12 ,lg: 8, xl: 2 }}>
+                                                <Text size="xsmall" c="graycolor.4">
+                                                    Location
                                                 </Text>
-                                                <Text span c="redcolor.4" mx="xs">
-                                                    {moment(form.values.startDateEvent).format("LL")}
-                                                </Text>
-                                                {" at "}
-                                                <Text span c="redcolor.4" mx="xs">
-                                                    {moment(form.values.startTimeEvent, "HH:mm").format(
-                                                        "hh:mm A"
-                                                    )}
-                                                </Text>
-                                            </Grid.Col>
-                                            <Grid.Col>
-                                                <Text span fw={500}>
-                                                    End event date:{" "}
-                                                </Text>
-                                                <Text span c="redcolor.4" mx="xs">
-                                                    {moment(form.values.endDateEvent).format("LL")}
-                                                </Text>
-                                                {" at "}
-                                                <Text span c="redcolor.4" mx="xs">
-                                                    {moment(form.values.endTimeEvent, "HH:mm").format(
-                                                        "hh:mm A"
-                                                    )}
-                                                </Text>
+
+                                                <HoverCard width={280} shadow="md">
+                                                    <HoverCard.Target>
+                                                        <Anchor href={"https://www.google.com/maps/search/" + encodeURIComponent(form.values.location.toString())} underline="never">
+                                                            <Text c="redcolor.4">{form.values.location.toString()}</Text>
+                                                        </Anchor>
+                                                    </HoverCard.Target>
+                                                    <HoverCard.Dropdown w="max-content" bg="var(--whitecolor)">
+                                                        <Text c="redcolor.4">{form.values.location.toString()}</Text>
+                                                    </HoverCard.Dropdown>
+                                                </HoverCard>
                                             </Grid.Col>
                                         </Grid>
-
-                                        <div>
-                                            <Text span fw={500}>
-                                                Location:{" "}
-                                            </Text>
-                                            {form.values.location.toString()}
-                                        </div> */}
 
                                         <Text fw={500} mb="0.3rem" mt="xs">
                                             Description
                                         </Text>
                                         <Flex align="flex-end">
                                             <Text
-                                                lineClamp={5}
+                                                lineClamp={4}
                                                 dangerouslySetInnerHTML={{
                                                     __html: form.values.description.toString(),
                                                 }}
@@ -992,14 +974,118 @@ export default function CreateEvent() {
                                     </Grid.Col>
                                 </Grid>
 
-                                <Flex justify="space-between">
+                                {/* presenter container */}
+                                <Flex gap="1.75rem" justify="flex-start">
+                                    <Grid
+                                        className={styles.boxContainer}
+                                        style={{
+                                            borderRight: "1rem solid var(--bluecolor)",
+                                        }}
+                                        gutter="1.75rem"
+                                        w="50%"
+                                    >
+                                        <Grid.Col span="auto">
+                                            <Text fw={500} c="bluecolor.4" size="topic">
+                                                Presenter Details
+                                            </Text>
+                                            <Divider mt="xs" mb="lg" />
+                                            <Grid>
+                                                <Grid.Col span={{ sm: 12 ,lg: 6 }}>
+                                                    <Text size="xsmall" c="graycolor.4">
+                                                        Start submission
+                                                    </Text>
+                                                    <Flex align="center" gap="xs">
+                                                        <Text c="bluecolor.4">{moment(form.values.startDateProject).format("LL")}</Text>
+                                                        <IconClockHour3 size={14} />
+                                                        {moment(form.values.startTimeProject, "HH:mm").format(
+                                                            "HH:MM A"
+                                                        )}
+                                                    </Flex>
+                                                </Grid.Col>
+                                                <Grid.Col span={{ sm: 12 ,lg: 6 }}>
+                                                    <Text size="xsmall" c="graycolor.4">
+                                                        End submission
+                                                    </Text>
+                                                    <Flex align="center" gap="xs">
+                                                        <Text c="bluecolor.4">{moment(form.values.endDateProject).format("LL")}</Text>
+                                                        <IconClockHour3 size={14} />
+                                                        {moment(form.values.endTimeProject, "HH:mm").format(
+                                                            "HH:MM A"
+                                                        )}
+                                                    </Flex>
+                                                </Grid.Col>
+                                            </Grid>
+                                        </Grid.Col>
+                                    </Grid>
+
+                                    <Grid
+                                        className={styles.boxContainer}
+                                        style={{
+                                            borderRight: "1rem solid var(--greencolor)",
+                                        }}
+                                        gutter="1.75rem"
+                                        w="50%"
+                                    >
+                                        <Grid.Col span="auto">
+                                            <Text fw={500} c="greencolor.4" size="topic">
+                                                Guest Details
+                                            </Text>
+                                            <Divider mt="xs" mb="lg" />
+                                            <Grid>
+                                                <Grid.Col span={6}>
+                                                    <Text size="xsmall" c="graycolor.4">
+                                                        Virtual money
+                                                    </Text>
+                                                    <Text c="greencolor.4">{form.values.virtualMoney}</Text>
+                                                </Grid.Col>
+                                                <Grid.Col span={6}>
+                                                    <Text size="xsmall" c="graycolor.4">
+                                                        Unit
+                                                    </Text>
+                                                    <Text c="greencolor.4">{form.values.unit}</Text>
+                                                </Grid.Col>
+                                            </Grid>
+                                        </Grid.Col>
+                                    </Grid>
+
+                                    {/* <Grid
+                                        className={styles.boxContainer}
+                                        style={{
+                                            borderRight: "1rem solid var(--greencolor)",
+                                        }}
+                                        w="50%"
+                                    >
+                                        <Grid.Col span={12}>
+                                            <Text fw={500} c="greencolor.4" size="topic">
+                                                Guest Details
+                                            </Text>
+                                            <Divider mt="xs" mb="lg" />
+                                            <Text mb="xs">
+                                                <div>
+                                                    <Text span fw={500}>
+                                                        Virtual money:{" "}
+                                                    </Text>
+                                                    <Text span c="pinkcolor.2" mx="xs">
+                                                        {form.values.virtualMoney}
+                                                    </Text>
+                                                    {" Unit "}
+                                                    <Text span c="pinkcolor.2" mx="xs">
+                                                        {form.values.unit}
+                                                    </Text>
+                                                </div>
+                                            </Text>
+                                        </Grid.Col>
+                                    </Grid> */}
+                                </Flex>
+
+                                {/* <Flex justify="space-between">
                                     <Grid
                                         className={styles.boxContainer}
                                         style={{
                                             borderRight: "1rem solid var(--deepredcolor)",
                                         }}
                                         columns={12}
-                                    // align="center"
+                                    
                                     >
                                         <Grid.Col span="content">
                                             <Calendar
@@ -1077,7 +1163,7 @@ export default function CreateEvent() {
                                         style={{
                                             borderRight: "1rem solid var(--pinkcolor)",
                                         }}
-                                    // align="center"
+                                    
                                     >
                                         <Grid.Col span={12}>
                                             <Text fw={500} c="pinkcolor.2" size="md">
@@ -1104,7 +1190,7 @@ export default function CreateEvent() {
                                             </Text>
                                         </Grid.Col>
                                     </Grid>
-                                </Flex>
+                                </Flex> */}
                             </div>
                         </Stepper.Step>
                     </Stepper>
