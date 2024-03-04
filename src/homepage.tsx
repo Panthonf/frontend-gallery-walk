@@ -60,6 +60,8 @@ const sentences = [
 
 export default function Homepage() {
 
+    document.title = "Gallery Walk";    
+
     // useForm mantine
     const form = useForm<FormValues>({
         initialValues: { name: "", email: "", message: "" },
