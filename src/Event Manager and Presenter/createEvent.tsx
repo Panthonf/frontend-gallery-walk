@@ -38,6 +38,7 @@ import {
     IconArrowRight,
     IconArrowsDiagonal,
     IconClock,
+    IconClockHour3,
     IconPhotoUp,
     IconPhotoX,
     // IconMapPin,
@@ -60,7 +61,7 @@ export default function CreateEvent() {
 
     const previews = files.map((file, index) => {
         const imageUrl = URL.createObjectURL(file);
-        return <img key={index} src={imageUrl} alt="preview" width="600rem" />;
+        return <img key={index} src={imageUrl} alt="preview" width="55%" />;
     });
 
     // step controller
@@ -376,7 +377,7 @@ export default function CreateEvent() {
     const pickerStartEvent = (
         <ActionIcon
             variant="subtle"
-            color="gray"
+            color="graycolor.4"
             onClick={() => refstartevent.current?.showPicker()}
         >
             <IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
@@ -386,7 +387,7 @@ export default function CreateEvent() {
     const pickerEndEvent = (
         <ActionIcon
             variant="subtle"
-            color="gray"
+            color="graycolor.4"
             onClick={() => refendevent.current?.showPicker()}
         >
             <IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
@@ -396,7 +397,7 @@ export default function CreateEvent() {
     const pickerStartProject = (
         <ActionIcon
             variant="subtle"
-            color="gray"
+            color="graycolor.4"
             onClick={() => refstartproject.current?.showPicker()}
         >
             <IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
@@ -406,7 +407,7 @@ export default function CreateEvent() {
     const pickerEndProject = (
         <ActionIcon
             variant="subtle"
-            color="gray"
+            color="graycolor.4"
             onClick={() => refendproject.current?.showPicker()}
         >
             <IconClock style={{ width: rem(16), height: rem(16) }} stroke={1.5} />
@@ -443,7 +444,9 @@ export default function CreateEvent() {
             <Center
                 style={{
                     height: "max-content",
+                    width: "90%",
                     padding: "3rem",
+                    margin: "auto"
                 }}
             >
                 <div>
@@ -459,8 +462,8 @@ export default function CreateEvent() {
                             <div
                                 style={{
                                     height: "100%",
-                                    width: "calc(100vw - 25rem)",
-                                    margin: "3rem 0 0 0",
+                                    width: "90%",
+                                    margin: "3rem auto auto auto",
                                 }}
                             >
                                 <form onSubmit={form.onSubmit(onSubmit)}>
@@ -484,38 +487,40 @@ export default function CreateEvent() {
                                                     {...form.getInputProps("eventName")}
                                                 />
                                             </Grid.Col>
-                                            <Grid.Col span={4}>
+
+                                            <Grid.Col span={{ sm: 8, lg: 4 }}>
                                                 <DatePickerInput
                                                     label="Start Date"
-                                                    description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+                                                    description="for event"
                                                     placeholder="Start Date"
                                                     withAsterisk
                                                     {...form.getInputProps("startDateEvent")}
                                                 />
                                             </Grid.Col>
-                                            <Grid.Col span={2}>
+                                            <Grid.Col span={{ sm: 4, lg: 2 }}>
                                                 <TimeInput
                                                     label="Start Time"
-                                                    description="Lorem ipsum dolor sit amet"
+                                                    description="for event"
                                                     ref={refstartevent}
                                                     rightSection={pickerStartEvent}
                                                     withAsterisk
                                                     {...form.getInputProps("startTimeEvent")}
                                                 />
                                             </Grid.Col>
-                                            <Grid.Col span={4}>
+
+                                            <Grid.Col span={{ sm: 8, lg: 4 }}>
                                                 <DatePickerInput
                                                     label="End Date"
                                                     placeholder="End Date"
-                                                    description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+                                                    description="for event"
                                                     withAsterisk
                                                     {...form.getInputProps("endDateEvent")}
                                                 />
                                             </Grid.Col>
-                                            <Grid.Col span={2}>
+                                            <Grid.Col span={{ sm: 4, lg: 2 }}>
                                                 <TimeInput
                                                     label="End Time"
-                                                    description="Lorem ipsum dolor sit amet"
+                                                    description="for event"
                                                     ref={refendevent}
                                                     rightSection={pickerEndEvent}
                                                     withAsterisk
@@ -570,11 +575,11 @@ export default function CreateEvent() {
 
                                             <Grid.Col span={12}>
                                                 <TextInput
-                                                    // rightSection={<IconMapPin size={14} />}
                                                     label="Location"
                                                     placeholder="Location"
                                                     {...form.getInputProps("location")}
                                                 />
+
                                             </Grid.Col>
                                         </Grid>
                                     </div>
@@ -582,49 +587,49 @@ export default function CreateEvent() {
                                     <Grid
                                         className={styles.boxContainer}
                                         style={{
-                                            borderRight: "1rem solid var(--deepredcolor)",
+                                            borderRight: "1rem solid var(--bluecolor)",
                                         }}
                                     >
                                         <Grid.Col span={12}>
-                                            <Text fw={500} c="deepredcolor.9" size="md">
+                                            <Text fw={500} c="bluecolor.4" size="md">
                                                 Presenter Details
-                                            </Text>
-                                            <Text size="sm" c="graycolor.2">
-                                                Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                elit.
                                             </Text>
                                         </Grid.Col>
 
-                                        <Grid.Col span={4}>
+                                        <Grid.Col span={{ sm: 8, lg: 4 }}>
                                             <DatePickerInput
-                                                label="Start submission"
+                                                label="Start date"
                                                 defaultValue={new Date()}
-                                                placeholder="Start submission"
+                                                description="for presenter"
+                                                placeholder="Start date"
                                                 required
                                                 {...form.getInputProps("startDateProject")}
                                             />
                                         </Grid.Col>
-                                        <Grid.Col span={2}>
+                                        <Grid.Col span={{ sm: 4, lg: 2 }}>
                                             <TimeInput
-                                                label="Start submission time"
+                                                label="Start time"
+                                                description="for presenter"
                                                 ref={refstartproject}
                                                 rightSection={pickerStartProject}
                                                 required
                                                 {...form.getInputProps("startTimeProject")}
                                             />
                                         </Grid.Col>
-                                        <Grid.Col span={4}>
+                                        <Grid.Col span={{ sm: 8, lg: 4 }}>
                                             <DatePickerInput
-                                                label="End submission"
+                                                label="End date"
+                                                description="for presenter"
                                                 placeholder="End submission"
                                                 required
                                                 {...form.getInputProps("endDateProject")}
                                             />
                                         </Grid.Col>
-                                        <Grid.Col span={2}>
+                                        <Grid.Col span={{ sm: 4, lg: 2 }}>
                                             <TimeInput
-                                                label="End submission time"
+                                                label="End time"
                                                 ref={refendproject}
+                                                description="for presenter"
                                                 rightSection={pickerEndProject}
                                                 required
                                                 {...form.getInputProps("endTimeProject")}
@@ -635,11 +640,11 @@ export default function CreateEvent() {
                                     <Grid
                                         className={styles.boxContainer}
                                         style={{
-                                            borderRight: "1rem solid var(--pinkcolor)",
+                                            borderRight: "1rem solid var(--greencolor)",
                                         }}
                                     >
                                         <Grid.Col span={12}>
-                                            <Text fw={500} c="pinkcolor.2" size="md">
+                                            <Text fw={500} c="greencolor.4" size="md">
                                                 Guest Details
                                             </Text>
                                         </Grid.Col>
@@ -647,7 +652,7 @@ export default function CreateEvent() {
                                             <Radio.Group
                                                 name="favoriteFramework"
                                                 label="Select virtual money"
-                                                description="Lorem ipsum dolor sit amet, consectetur adipisicing elit."
+                                                description="Virtual money is event platform offers virtual support for projects"
                                                 value={selectedFramework}
                                                 onChange={(value) =>
                                                     handleFrameworkChange(value as string)
@@ -658,7 +663,7 @@ export default function CreateEvent() {
                                                         <Radio
                                                             icon={CheckIcon}
                                                             size="xs"
-                                                            color="redcolor.4"
+                                                            color="greencolor.4"
                                                             mr="md"
                                                             value="default"
                                                         />
@@ -666,8 +671,7 @@ export default function CreateEvent() {
                                                     </Flex>
 
                                                     <Text size="small" ml="xl" c="graycolor.2">
-                                                        Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                        elit.
+                                                        The default money is 10,000 Unit
                                                     </Text>
                                                 </Box>
 
@@ -676,16 +680,15 @@ export default function CreateEvent() {
                                                         <Radio
                                                             icon={CheckIcon}
                                                             size="xs"
-                                                            color="redcolor.4"
+                                                            color="greencolor.4"
                                                             mr="md"
                                                             value="custom"
                                                         />
-                                                        <Text>Customize virtual money</Text>
+                                                        <Text>Customize virtual money.</Text>
                                                     </Flex>
 
                                                     <Text size="small" ml="xl" c="graycolor.2">
-                                                        Lorem ipsum dolor sit amet, consectetur adipisicing
-                                                        elit.
+                                                        Can customize by your own.
                                                     </Text>
                                                 </Box>
                                             </Radio.Group>
@@ -720,8 +723,8 @@ export default function CreateEvent() {
                             <div
                                 style={{
                                     height: "100%",
-                                    width: "calc(100vw - 25rem)",
-                                    margin: "3rem 0 0 0",
+                                    width: "84vw",
+                                    margin: "3rem auto auto auto",
                                 }}
                             >
                                 <Dropzone
@@ -751,71 +754,59 @@ export default function CreateEvent() {
                                     }}
                                     className={styles.dropzoneContainer}
                                 >
-                                    <Center h="calc(100vh - 34rem)">
-                                        <div>
-                                            <Group justify="center" align="space-between" p="md">
-                                                <Text ta="center" mt="xl" c="dimmed">
-                                                    {previews.length > 0 ? (
-                                                        <>
-                                                            <Text size="xl" inline>
-                                                                <Flex
-                                                                    gap="md"
-                                                                    justify="center"
-                                                                    align="center"
-                                                                    direction="column"
-                                                                    wrap="wrap"
-                                                                >
-                                                                    {previews.length > 0 && (
-                                                                        <div>
-                                                                            <Text
-                                                                                size="base"
-                                                                                c="deepredcolor.9"
-                                                                                fw={500}
-                                                                                mb="md"
-                                                                            >
-                                                                                Preview
-                                                                            </Text>
-                                                                            <div style={{ position: "relative" }}>
-                                                                                {previews}
-                                                                                <ActionIcon
-                                                                                    variant="filled"
-                                                                                    radius="xl"
-                                                                                    aria-label="Settings"
-                                                                                    style={{
-                                                                                        position: "absolute",
-                                                                                        right: "-0.8rem",
-                                                                                        top: "-0.8rem",
-                                                                                    }}
-                                                                                    color="redcolor.4"
-                                                                                    onClick={() => setFiles([])}
-                                                                                >
-                                                                                    <IconPhotoX size={14} />
-                                                                                </ActionIcon>
-                                                                            </div>
-                                                                        </div>
-                                                                    )}
-                                                                </Flex>
-                                                            </Text>
-                                                        </>
-                                                    ) : (
-                                                        <div>
-                                                            <Text c="redcolor.4">
-                                                                <IconPhotoUp size={36} stroke={1.5} />
-                                                            </Text>
-                                                            <Text size="base" inline>
-                                                                Drag image here or click to select file
-                                                            </Text>
-                                                            <Text c="graycolor.2" inline mt="1rem">
-                                                                Lorem ipsum dolor sit amet consectetur
-                                                                adipisicing elit. Dolorem aliquam aspernatur est
-                                                                harum.
-                                                            </Text>
-                                                        </div>
-                                                    )}
-                                                </Text>
-                                            </Group>
-                                        </div>
-                                    </Center>
+                                    <div>
+                                        {previews.length > 0 ? (
+                                            <Center h="55vh" ta="center">
+                                                <div>
+                                                    <Text
+                                                        size="base"
+                                                        c="redcolor.4"
+                                                        fw={500}
+                                                        mb="md"
+                                                    >
+                                                        Preview
+                                                    </Text>
+
+                                                    <div style={{ position: "relative" }}>
+                                                        {previews}
+
+                                                        <ActionIcon
+                                                            variant="filled"
+                                                            radius="xl"
+                                                            aria-label="Settings"
+                                                            style={{
+                                                                position: "absolute",
+                                                                right: "5rem",
+                                                                top: "-0.5rem",
+                                                            }}
+                                                            color="redcolor.4"
+                                                            onClick={() => setFiles([])}
+                                                        >
+                                                            <IconPhotoX size={14} />
+                                                        </ActionIcon>
+                                                    </div>
+
+
+                                                </div>
+                                            </Center>
+                                        ) : (
+                                            <Center h="55vh" m="auto" ta="center">
+                                                <div>
+                                                    <Text c="redcolor.4">
+                                                        <IconPhotoUp size={36} stroke={1.5} />
+                                                    </Text>
+                                                    <Text size="base" inline>
+                                                        Drag image here or click to select file
+                                                    </Text>
+                                                    <Text c="graycolor.2" inline mt="1rem">
+                                                        Lorem ipsum dolor sit amet consectetur
+                                                        adipisicing elit. Dolorem aliquam aspernatur est
+                                                        harum.
+                                                    </Text>
+                                                </div>
+                                            </Center>
+                                        )}
+                                    </div>
 
                                     <Center>
                                         <Button
@@ -840,8 +831,8 @@ export default function CreateEvent() {
                             <div
                                 style={{
                                     height: "100%",
-                                    width: "calc(100vw - 25rem)",
-                                    margin: "3rem 0 0 0",
+                                    width: "100%",
+                                    margin: "3rem auto auto auto",
                                 }}
                             >
                                 <Grid
@@ -849,7 +840,7 @@ export default function CreateEvent() {
                                     style={{
                                         borderRight: "1rem solid var(--redcolor)",
                                     }}
-                                    align="center"
+
                                 >
                                     <Grid.Col span="content">
                                         <Calendar
@@ -882,23 +873,51 @@ export default function CreateEvent() {
                                     </Grid.Col>
 
                                     <Grid.Col span="auto">
-                                        <Text fw={500} c="redcolor.4" size="md">
+                                        <Text fw={500} c="redcolor.4" size="topic">
                                             Event Manager Details
                                         </Text>
-                                        <Text size="sm" c="graycolor.2">
-                                            Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                                        </Text>
+
                                         <Divider mt="xs" mb="lg" />
 
                                         <Text mb="xs">
-                                            <Text span fw={500}>
+                                            <Text span fw={500} mr="sm">
                                                 Event Name:{" "}
                                             </Text>
                                             {form.values.eventName.toString()}
                                         </Text>
 
-                                        <Text mb="xs">
-                                            <div>
+                                        <Grid>
+                                            <Grid.Col span={6}>
+                                                <Text size="xsmall" c="graycolor.4">
+                                                    Start event
+                                                </Text>
+                                                <Text c="redcolor.4">{moment(form.values.startDateEvent).format("LL")}</Text>
+
+                                                <Flex align="center" gap="xs">
+                                                    <IconClockHour3 size={14} />
+                                                    {moment(form.values.startTimeEvent, "HH:mm").format(
+                                                        "hh:mm A"
+                                                    )}
+                                                </Flex>
+                                            </Grid.Col>
+
+                                            <Grid.Col span={6}>
+                                                <Text size="xsmall" c="graycolor.4">
+                                                    End event
+                                                </Text>
+                                                <Text c="redcolor.4">{moment(form.values.endDateEvent).format("LL")}</Text>
+
+                                                <Flex align="center" gap="xs">
+                                                    <IconClockHour3 size={14} />
+                                                    {moment(form.values.endTimeEvent, "HH:mm").format(
+                                                        "hh:mm A"
+                                                    )}
+                                                </Flex>
+                                            </Grid.Col>
+                                        </Grid>
+
+                                        {/* <Grid gutter="md" mt="xs">
+                                            <Grid.Col>
                                                 <Text span fw={500}>
                                                     Start event date:{" "}
                                                 </Text>
@@ -911,8 +930,8 @@ export default function CreateEvent() {
                                                         "hh:mm A"
                                                     )}
                                                 </Text>
-                                            </div>
-                                            <div>
+                                            </Grid.Col>
+                                            <Grid.Col>
                                                 <Text span fw={500}>
                                                     End event date:{" "}
                                                 </Text>
@@ -925,18 +944,19 @@ export default function CreateEvent() {
                                                         "hh:mm A"
                                                     )}
                                                 </Text>
-                                            </div>
-                                            <div>
-                                                <Text span fw={500}>
-                                                    Location:{" "}
-                                                </Text>
-                                                {form.values.location.toString()}
-                                            </div>
-                                        </Text>
+                                            </Grid.Col>
+                                        </Grid>
 
-                                        {/* <Text fw={500} mb="0.3rem">
+                                        <div>
+                                            <Text span fw={500}>
+                                                Location:{" "}
+                                            </Text>
+                                            {form.values.location.toString()}
+                                        </div> */}
+
+                                        <Text fw={500} mb="0.3rem" mt="xs">
                                             Description
-                                        </Text> */}
+                                        </Text>
                                         <Flex align="flex-end">
                                             <Text
                                                 lineClamp={5}

@@ -350,7 +350,7 @@ export default function Dashboard() {
                         >
                             Event manager
                         </Button>
-                        {/* <Text>|</Text> */}
+
                         <Button
                             variant="transparent"
                             size="xs"
@@ -397,10 +397,10 @@ export default function Dashboard() {
                                             <Loader mt="lg" size={40} color="redcolor.4" />
                                         </Center>
                                     )}
-                                    {!(isLoading || events.length > 0) && ( // Check both loading and events
+                                    {!(isLoading || events && events.length > 0) && ( // Check both loading and events
                                         <Center h="60vh">
                                             <Flex align="center" direction="column">
-                                                <Text size="topic" c="redcolor.4">
+                                                <Text size="topic" fw={500} c="redcolor.4">
                                                     No events found
                                                 </Text>
                                                 <Text mt="5" size="sm" c="graycolor.2">
@@ -456,9 +456,17 @@ export default function Dashboard() {
             </Grid>
 
             {/* footer */}
+            <Affix className={styles.footer} bg={activeTab === "Presenter" ? "bluecolor.4" : "redcolor.4"}>
+                <Center h="1.5rem">
+                    <Text c={activeTab === "Presenter" ? "white" : "white"} size="small" ta="center">
+                        {activeTab === "Presenter" ? "Presenter" : "Event Manager"}
+                    </Text>
+                </Center>
+            </Affix>
+
             <Affix className={`${styles.footer} ${activeTab === "Presenter" ? styles.presenter : styles.event}`} style={{ backgroundColor: activeTab === "Presenter" ? "redcolor.4" : "bluecolor.4" }}>
                 <Center h="1.5rem">
-                    <Text c={activeTab === "Presenter" ? "bluecolor.1" : "redcolor.1"} size="small" ta="center">
+                    <Text c="var(--whitecolor)" size="small" ta="center">
                         {activeTab === "Presenter" ? "Presenter" : "Event Manager"}
                     </Text>
                 </Center>

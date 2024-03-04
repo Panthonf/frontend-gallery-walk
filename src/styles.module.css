@@ -48,9 +48,9 @@ p {
     background-color: var(--redcolor);
 }
 
-.footer.presenter {
+/* .footer.presenter {
     background-color: var(--bluecolor);
-}
+} */
 
 .footer.guest {
     background-color: var(--greencolor);
@@ -168,7 +168,9 @@ p {
 .dropzoneContainer {
     position: relative;
     cursor: pointer;
-    height: calc(100vh - 30rem);
+    height: 60vh;
+    width: 90%;
+    margin: auto auto;
     border: 0.1rem dashed var(--graycolor);
     border-radius: 0.125rem;
 }
