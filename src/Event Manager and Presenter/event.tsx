@@ -2190,13 +2190,31 @@ export default function Event() {
                         )}
                       </div>
                       <Dropzone accept={IMAGE_MIME_TYPE} onDrop={onDrop}>
-                        <Button
-                          mt="md"
-                          leftSection={<IconPhotoUp size={14} />}
-                          variant="default"
-                        >
-                          Upload Image
-                        </Button>
+                        <Flex mt="md" align="end" justify="flex-start">
+                          <div>
+                            {files.length === 5 ? (
+                              <Button
+                                //   mt="md"
+                                leftSection={<IconPhotoUp size={14} />}
+                                variant="default"
+                                disabled
+                              >
+                                Upload Image
+                              </Button>
+                            ) : (
+                              <Button
+                                //   mt="md"
+                                leftSection={<IconPhotoUp size={14} />}
+                                variant="default"
+                              >
+                                Upload Image
+                              </Button>
+                            )}
+                          </div>
+                          <div>
+                            <Text ml="sm">({files.length}/5)</Text>
+                          </div>
+                        </Flex>
                       </Dropzone>
 
                       <SimpleGrid
