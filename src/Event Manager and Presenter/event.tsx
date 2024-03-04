@@ -29,6 +29,7 @@ import {
   LoadingOverlay,
   FileInput,
   Badge,
+  Loader,
 } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { useClipboard, useDisclosure } from "@mantine/hooks";
@@ -147,6 +148,7 @@ export default function Event() {
 
   const [visible, { toggle: toggleCreateProject }] = useDisclosure(false);
   const [documents, setDocuments] = useState<File[]>([]);
+  const [isProjectLoading, setIsProjectLoading] = useState(true);
 
   const editor = useEditor({
     extensions: [
@@ -307,9 +309,11 @@ export default function Event() {
         .then((res) => {
           console.log("projects hhh", res.data.data);
           setProjects(res.data.data);
+          setIsProjectLoading(false);
         })
         .catch((err) => {
           console.log("projects err", err);
+          setIsProjectLoading(false);
         });
     };
 
@@ -2274,71 +2278,79 @@ export default function Event() {
               </Flex>
 
               <div style={{ height: "100vh", marginTop: "2rem" }}>
-                {projects ? (
-                  <div>
-                    {projects.map((project: ProjectType) => (
-                      <Card
-                        key={project.id}
-                        className={styles.cardContainer}
-                        p="lg"
-                        mt="1rem"
-                      >
-                        <Grid align="flex-start" gutter="2rem">
-                          <Grid.Col span={2}>
-                            <Text size="xsmall" c="graycolor.2">
-                              Project name
-                            </Text>
-                            <Text size="topic" fw={500} c="redcolor.4">
-                              {project.title}
-                            </Text>
-                          </Grid.Col>
-                          <Grid.Col span="auto">
-                            <Text size="xsmall" c="graycolor.2">
-                              Description
-                            </Text>
-                            <ModalProject project={project} />
-                          </Grid.Col>
-
-                          <Grid.Col span="content" ta="end">
-                            <Text size="base" c="redcolor.4" fw={500}>
-                              {project.virtual_money} {event?.unit_money}
-                            </Text>
-                            <Text size="small" c="graycolor.2">
-                              {moment(project?.created_at).format(
-                                "LL [at] HH:mm A"
-                              )}
-                            </Text>
-                          </Grid.Col>
-                        </Grid>
-                      </Card>
-                    ))}
-                  </div>
+                {isProjectLoading ? (
+                  <Center>
+                    <Loader mt="lg" type="dots" color="redcolor.4" />
+                  </Center>
                 ) : (
-                  <div>
-                    <Text size="md" my="md" fw={500}>
-                      No Projects
-                    </Text>
-                  </div>
-                )}
+                  <>
+                    {projects ? (
+                      <div>
+                        {projects.map((project: ProjectType) => (
+                          <Card
+                            key={project.id}
+                            className={styles.cardContainer}
+                            p="lg"
+                            mt="1rem"
+                          >
+                            <Grid align="flex-start" gutter="2rem">
+                              <Grid.Col span={2}>
+                                <Text size="xsmall" c="graycolor.2">
+                                  Project name
+                                </Text>
+                                <Text size="topic" fw={500} c="redcolor.4">
+                                  {project.title}
+                                </Text>
+                              </Grid.Col>
+                              <Grid.Col span="auto">
+                                <Text size="xsmall" c="graycolor.2">
+                                  Description
+                                </Text>
+                                <ModalProject project={project} />
+                              </Grid.Col>
 
-                <Center mt="md">
-                  <Pagination.Root
-                    color="redcolor.4"
-                    size="sm"
-                    total={Math.ceil(totalProjects / pageSize)}
-                    boundaries={2}
-                    value={page}
-                    onChange={(newPage) => setPage(newPage)}
-                  >
-                    <Group gap={5} justify="center">
-                      <Pagination.First />
-                      <Pagination.Previous />
-                      <Pagination.Items />
-                      <Pagination.Next />
-                      <Pagination.Last />
-                    </Group>
-                  </Pagination.Root>
-                </Center>
+                              <Grid.Col span="content" ta="end">
+                                <Text size="base" c="redcolor.4" fw={500}>
+                                  {project.virtual_money} {event?.unit_money}
+                                </Text>
+                                <Text size="small" c="graycolor.2">
+                                  {moment(project?.created_at).format(
+                                    "LL [at] HH:mm A"
+                                  )}
+                                </Text>
+                              </Grid.Col>
+                            </Grid>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <div>
+                        <Text size="md" my="md" fw={500}>
+                          No Projects
+                        </Text>
+                      </div>
+                    )}
+
+                    <Center mt="md">
+                      <Pagination.Root
+                        color="redcolor.4"
+                        size="sm"
+                        total={Math.ceil(totalProjects / pageSize)}
+                        boundaries={2}
+                        value={page}
+                        onChange={(newPage) => setPage(newPage)}
+                      >
+                        <Group gap={5} justify="center">
+                          <Pagination.First />
+                          <Pagination.Previous />
+                          <Pagination.Items />
+                          <Pagination.Next />
+                          <Pagination.Last />
+                        </Group>
+                      </Pagination.Root>
+                    </Center>
+                  </>
+                )}
               </div>
             </Box>
           </Tabs.Panel>
