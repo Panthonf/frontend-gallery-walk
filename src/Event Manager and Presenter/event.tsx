@@ -56,6 +56,7 @@ import {
     IconPhotoUp,
     IconFile,
     IconLink,
+    IconClockHour3,
 } from "@tabler/icons-react";
 import { isNotEmpty, useForm } from "@mantine/form";
 
@@ -1309,7 +1310,7 @@ export default function Event() {
                 <Modal
                     opened={opened}
                     onClose={close}
-                    title="Authentication"
+                    title="Event cover image"
                     size="90%"
                     centered
                 >
@@ -1390,12 +1391,12 @@ export default function Event() {
                                     )}
                                 </Text>
                             </form>
-                            <Flex mb="md" gap="2rem">
+                            <Grid mb="md" gutter="3rem">
                                 <form onSubmit={form2.onSubmit(updateEventStart)}>
-                                    <div>
+                                    <Grid.Col span="auto">
                                         <Flex align="center">
-                                            <Text size="xsmall" c="graycolor.3">
-                                                Start of event
+                                            <Text size="xsmall" c="graycolor.4">
+                                                Start event
                                             </Text>
                                             {canEdit && (
                                                 <Button
@@ -1407,6 +1408,7 @@ export default function Event() {
                                                 />
                                             )}
                                         </Flex>
+
                                         {editStartDateEvent ? (
                                             <>
                                                 <DateInput
@@ -1416,9 +1418,9 @@ export default function Event() {
                                                     onChange={(date) => {
                                                         form2?.setFieldValue(
                                                             "startDate",
-                                                            moment(date).format("MMMM D, YYYY") +
+                                                            moment(date).format("LL") +
                                                             " " +
-                                                            moment(form2?.values.startDate).format("HH:mm")
+                                                            moment(form2?.values.startDate).format("HH:MM A")
                                                         );
                                                     }}
                                                 />
@@ -1444,12 +1446,16 @@ export default function Event() {
                                                 />
                                             </>
                                         ) : (
-                                            <>
-                                                <Text>
-                                                    {moment(event?.start_date).format("LL [at] HH:mm")}
-                                                </Text>
-                                            </>
+                                            <div>
+                                                <Text c="redcolor.4">{moment(event?.start_date).format("LL")}</Text>
+
+                                                <Flex align="center" gap="xs">
+                                                    <IconClockHour3 size={14} />
+                                                    {moment(event?.start_date).format("HH:MM A")}
+                                                </Flex>
+                                            </div>
                                         )}
+
                                         {editStartDateEvent ? (
                                             <Button
                                                 onClick={handleEdit}
@@ -1465,13 +1471,14 @@ export default function Event() {
                                                 Save
                                             </Button>
                                         )}
-                                    </div>
+                                    </Grid.Col>
                                 </form>
+
                                 <form onSubmit={form2.onSubmit(updateEventEnd)}>
-                                    <div>
+                                    <Grid.Col span="auto">
                                         <Flex align="center">
-                                            <Text size="xsmall" c="graycolor.3">
-                                                End of event
+                                            <Text size="xsmall" c="graycolor.4">
+                                                End event
                                             </Text>
                                             {canEdit && (
                                                 <Button
@@ -1483,18 +1490,19 @@ export default function Event() {
                                                 />
                                             )}
                                         </Flex>
+
                                         {editEndDateEvent ? (
                                             <>
                                                 <DateInput
-                                                    label="End of event"
+                                                    label="End event"
                                                     required
-                                                    value={moment(form2?.values.endDate).toDate()}
+                                                    value={moment(form2?.values.startDate).toDate()}
                                                     onChange={(date) => {
                                                         form2?.setFieldValue(
                                                             "endDate",
-                                                            moment(date).format("MMMM D, YYYY") +
+                                                            moment(date).format("LL") +
                                                             " " +
-                                                            moment(form2?.values.endDate).format("HH:mm")
+                                                            moment(form2?.values.startDate).format("HH:MM A")
                                                         );
                                                     }}
                                                 />
@@ -1502,36 +1510,34 @@ export default function Event() {
                                                     mt="xs"
                                                     label="End Event Time"
                                                     required
-                                                    ref={refEndTime}
+                                                    ref={refStartTime}
                                                     rightSection={pickerControlEndTime}
-                                                    value={moment(form2?.values.endDate).format("HH:mm")}
+                                                    value={moment(form2?.values.startDate).format(
+                                                        "HH:MM A"
+                                                    )}
                                                     onChange={(date) => {
                                                         form2?.setFieldValue(
                                                             "endDate",
-                                                            moment(form2?.values.endDate).format(
-                                                                "MMMM D, YYYY"
+                                                            moment(form2?.values.startDate).format(
+                                                                "HH:MM A"
                                                             ) +
                                                             " " +
                                                             date.target.value
                                                         );
                                                     }}
                                                 />
-                                                {form2.errors.endDate && (
-                                                    <Text mt="sm" c="red">
-                                                        {form2.errors.endDate}
-                                                    </Text>
-                                                )}
                                             </>
                                         ) : (
-                                            <>
-                                                <Text>
-                                                    {moment(event?.end_date).format("LL [at] HH:mm")}
-                                                </Text>
-                                                {form2.errors.endDate && (
-                                                    <Text c="red">{form2.errors.endDate}</Text>
-                                                )}
-                                            </>
+                                            <div>
+                                                <Text c="redcolor.4">{moment(event?.end_date).format("LL")}</Text>
+
+                                                <Flex align="center" gap="xs">
+                                                    <IconClockHour3 size={14} />
+                                                    {moment(event?.end_date).format("HH:MM A")}
+                                                </Flex>
+                                            </div>
                                         )}
+
                                         {editEndDateEvent ? (
                                             <Button
                                                 onClick={handleEditEndDate}
@@ -1547,10 +1553,11 @@ export default function Event() {
                                                 Save
                                             </Button>
                                         )}
-                                    </div>
+                                    </Grid.Col>
                                 </form>
+
                                 <form onSubmit={form2.onSubmit(updateEventLocation)}>
-                                    <div>
+                                    <Grid.Col span="auto">
                                         <Flex align="center">
                                             <Text size="xsmall" c="graycolor.3">
                                                 Location
@@ -1598,9 +1605,9 @@ export default function Event() {
                                         ) : (
                                             <>{event?.location ? event?.location : "No location"}</>
                                         )}
-                                    </div>
+                                    </Grid.Col>
                                 </form>
-                            </Flex>
+                            </Grid>
                         </div>
                         <Flex align="center" justify="flex-end" gap="md">
                             <Group>
@@ -1734,9 +1741,9 @@ export default function Event() {
                         </Tabs.Tab>
                     </Tabs.List>
                     <Tabs.Panel value="infomation">
-                        <Card className={styles.cardContainer} mx="auto">
+                        <Card className={styles.cardInformation} mx="auto">
                             <Grid>
-                                <Grid.Col span={4}>
+                                <Grid.Col span={{ sm: 6, lg: 4 }}>
                                     <Grid>
                                         <Grid.Col span={4}>
                                             <Text c="redcolor.4">Event Presenter</Text>
@@ -1809,11 +1816,17 @@ export default function Event() {
                                                         </>
                                                     ) : (
                                                         <>
-                                                            <Text>
-                                                                {moment(event?.submit_start).format(
-                                                                    "LL [at] HH:mm"
-                                                                )}
-                                                            </Text>
+                                                            <Grid align="center" gutter="md">
+                                                                <Grid.Col span={5}>
+                                                                    <Text c="redcolor.4">{moment(event?.submit_start).format("LL")}</Text>
+                                                                </Grid.Col>
+                                                                <Grid.Col span="content">
+                                                                    <Flex align="center" gap="xs">
+                                                                        <IconClockHour3 size={14} />
+                                                                        {moment(event?.submit_start).format("HH:MM A")}
+                                                                    </Flex>
+                                                                </Grid.Col>
+                                                            </Grid>
                                                         </>
                                                     )}
                                                     {editSubmissionStart ? (
@@ -1907,11 +1920,17 @@ export default function Event() {
                                                             </>
                                                         ) : (
                                                             <>
-                                                                <Text>
-                                                                    {moment(event?.submit_end).format(
-                                                                        "LL [at] HH:mm"
-                                                                    )}
-                                                                </Text>
+                                                                <Grid align="center" gutter="md">
+                                                                    <Grid.Col span={5}>
+                                                                        <Text c="redcolor.4">{moment(event?.submit_end).format("LL")}</Text>
+                                                                    </Grid.Col>
+                                                                    <Grid.Col span="content">
+                                                                        <Flex align="center" gap="xs">
+                                                                            <IconClockHour3 size={14} />
+                                                                            {moment(event?.submit_end).format("HH:MM A")}
+                                                                        </Flex>
+                                                                    </Grid.Col>
+                                                                </Grid>
                                                             </>
                                                         )}
                                                         {editSubmissionEnd ? (
@@ -2027,7 +2046,7 @@ export default function Event() {
                                     </Grid>
                                 </Grid.Col>
                                 <Grid.Col span="auto">
-                                    <SimpleGrid cols={{ base: 1, sm: 3 }}>{stats}</SimpleGrid>
+                                    <SimpleGrid cols={{ sm: 1, lg: 2 }}>{stats}</SimpleGrid>
                                 </Grid.Col>
                                 <Grid.Col>
                                     <Flex justify="flex-start" align="center" mb="xs">
@@ -2051,6 +2070,7 @@ export default function Event() {
                             </Grid>
                         </Card>
                     </Tabs.Panel>
+
                     {/* projects container */}
                     <Tabs.Panel value="projects" mt="3rem">
                         <Box w="100%" mx="auto">
@@ -2257,13 +2277,13 @@ export default function Event() {
                                 />
                             </Flex>
 
-                            <div style={{ height: "100vh", marginTop: "2rem" }}>
+                            <div style={{ height: "100%", marginTop: "2rem" }}>
                                 {projects ? (
                                     <div>
                                         {projects.map((project: ProjectType) => (
                                             <Card
                                                 key={project.id}
-                                                className={styles.cardContainer}
+                                                className={styles.cardInformation}
                                                 p="lg"
                                                 mt="1rem"
                                             >
@@ -2283,7 +2303,7 @@ export default function Event() {
                                                         <ModalProject project={project} />
                                                     </Grid.Col>
 
-                                                    <Grid.Col span="content" ta="end">
+                                                    <Grid.Col span={{ sm: 2, lg: "content" }} ta="end">
                                                         <Text size="base" c="redcolor.4" fw={500}>
                                                             {project.virtual_money} {event?.unit_money}
                                                         </Text>
@@ -2328,7 +2348,7 @@ export default function Event() {
                     </Tabs.Panel>
                     <Tabs.Panel value="settings">
                         {canEdit ? (
-                            <Card className={styles.cardContainer} mx="auto" mb="lg">
+                            <Card className={styles.cardInformation} mx="auto" mb="lg">
                                 <EventResult eventId={eventId} />
                             </Card>
                         ) : (
@@ -2346,7 +2366,7 @@ export default function Event() {
                                         </Flex>
                                     </Card>
                                 ) : (
-                                    <Card className={styles.cardContainer} mx="auto" mb="lg">
+                                    <Card className={styles.cardInformation} mx="auto" mb="lg">
                                         <EventResult eventId={eventId} />
                                     </Card>
                                 )}
