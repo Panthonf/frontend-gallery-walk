@@ -61,6 +61,8 @@ import { generateRandomName } from "../components/generate_name";
 // import { colors } from "unique-names-generator";
 import QRCode from "qrcode";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
+import Zoom from "react-medium-image-zoom";
+import "react-medium-image-zoom/dist/styles.css";
 
 type ProjectType = {
   project_image: {
@@ -326,32 +328,53 @@ export default function Projects() {
     documents.forEach((file) => {
       formData.append("file", file);
     });
+
     try {
-      await axios
-        .post(
+      let canUploadFlag = true;
+
+      for (const value of formData.values()) {
+        const file = value as File; // Cast the value to File type
+        if (file.size > 1000000) {
+          // Corrected the size check
+          Swal.fire({
+            icon: "error",
+            title: "Oops...",
+            html: `File <u>${file.name}</u> <br> size must be less than 5 MB`,
+            footer: "<b>Please delete the file and try again.</b>",
+          });
+          canUploadFlag = false;
+          break; // Stop loop if any file is too large
+        }
+      }
+
+      if (canUploadFlag) {
+        await axios.post(
           `${
             import.meta.env.VITE_BASE_ENDPOINTMENT
           }projects/upload-documents/${projectId}`,
           formData,
-          {
-            withCredentials: true,
-          }
-        )
-        .then((res) => {
-          console.log("upload project document", res.data);
-          Swal.fire({
-            title: "Success",
-            text: "Updated project documents",
-            icon: "success",
-            timer: 2000,
-            showConfirmButton: false,
-          }).then(() => {
-            setDocuments([]);
-            fetchProject();
-          });
+          { withCredentials: true }
+        );
+
+        console.log("upload project document");
+        Swal.fire({
+          title: "Success",
+          text: "Updated project documents",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+        }).then(() => {
+          setDocuments([]);
+          fetchProject();
         });
+      }
     } catch (error) {
-      console.error("Error fetching events:", error);
+      console.error("Error uploading documents:", error);
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "An error occurred while uploading documents.",
+      });
     }
   };
 
@@ -944,7 +967,7 @@ export default function Projects() {
                 </Grid.Col>
                 <div>
                   <Text c="graycolor.2" mt="md">
-                    Images
+                    Images ({project?.project_image.length}/5)
                   </Text>
 
                   <Dropzone accept={IMAGE_MIME_TYPE} onDrop={onDrop}>
@@ -964,13 +987,14 @@ export default function Projects() {
                   )}
                   {project?.project_image.length !== 0 || files.length !== 0 ? (
                     <>
-                      <SimpleGrid cols={3} mt="md">
-                        <div>
+                      <div>
+                        <SimpleGrid cols={3} mt="md">
                           {files.map((file, index) => {
                             const imageUrl = URL.createObjectURL(file);
                             return (
-                              <>
+                              <div>
                                 {/* <AspectRatio ratio={1080 / 720} maw={300} mx="auto"> */}
+
                                 <Image
                                   radius={8}
                                   h={200}
@@ -980,6 +1004,7 @@ export default function Projects() {
                                   alt={`Preview ${index + 1}`}
                                   onLoad={() => URL.revokeObjectURL(imageUrl)}
                                 />
+
                                 {/* </AspectRatio> */}
                                 <Button
                                   onClick={() => {
@@ -993,11 +1018,12 @@ export default function Projects() {
                                 >
                                   <IconTrash size={14} />
                                 </Button>
-                              </>
+                              </div>
                             );
-                          })}
-                        </div>
-                      </SimpleGrid>
+                          })}{" "}
+                        </SimpleGrid>
+                      </div>
+
                       {files.length > 0 && (
                         <Center>
                           <Button
@@ -1018,13 +1044,15 @@ export default function Projects() {
                         {project?.project_image.map((image) => (
                           <div>
                             {/* <AspectRatio ratio={1080 / 720} maw={300} mx="auto"> */}
-                            <Image
-                              src={image.project_image_url}
-                              alt="Project image"
-                              key={image.id}
-                              h={200}
-                              w="auto"
-                            />
+                            <Zoom>
+                              <Image
+                                src={image.project_image_url}
+                                alt="Project image"
+                                key={image.id}
+                                h={200}
+                                w="auto"
+                              />
+                            </Zoom>
                             {/* </AspectRatio> */}
                             <Button
                               onClick={() => {
@@ -1059,7 +1087,6 @@ export default function Projects() {
                     placeholder="Upload files"
                     onChange={(files) => {
                       setDocuments([...documents, ...files]);
-                      console.log("files", documents);
                     }}
                     multiple
                   >
@@ -1137,31 +1164,17 @@ export default function Projects() {
                   <SimpleGrid cols={3} mt="md">
                     {project?.project_document.map((document) => (
                       <Flex align="center" gap="md">
-                        {document.document_name.includes(".pdf") ? (
-                          <Anchor
-                            ml="md"
-                            href={"/pdf?pdf=" + document.document_url}
-                            ta="start"
-                            target="_blank"
-                            rel="noreferrer"
-                            underline="always"
-                            c={"bluecolor.4"}
-                          >
-                            {document.document_name}
-                          </Anchor>
-                        ) : (
-                          <Anchor
-                            ml="md"
-                            href={document.document_url}
-                            ta="start"
-                            target="_blank"
-                            rel="noreferrer"
-                            underline="always"
-                            c={"bluecolor.4"}
-                          >
-                            {document.document_name}
-                          </Anchor>
-                        )}
+                        <Anchor
+                          ml="md"
+                          href={document.document_url}
+                          ta="start"
+                          target="_blank"
+                          rel="noreferrer"
+                          underline="always"
+                          c={"bluecolor.4"}
+                        >
+                          {document.document_name}
+                        </Anchor>
                         <ActionIcon
                           onClick={() => {
                             deleteProjectDocument(
