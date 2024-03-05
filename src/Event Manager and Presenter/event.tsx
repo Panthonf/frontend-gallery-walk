@@ -29,6 +29,7 @@ import {
   LoadingOverlay,
   FileInput,
   Badge,
+  Loader,
 } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { useClipboard, useDisclosure } from "@mantine/hooks";
@@ -38,7 +39,6 @@ import moment from "moment";
 import styles from "../styles.module.css";
 import QRCode from "qrcode";
 import {
-  IconArrowLeft,
   IconCoins,
   IconDotsVertical,
   IconEdit,
@@ -57,6 +57,7 @@ import {
   IconPhotoUp,
   IconFile,
   IconLink,
+  IconClockHour3,
 } from "@tabler/icons-react";
 import { isNotEmpty, useForm } from "@mantine/form";
 
@@ -148,6 +149,7 @@ export default function Event() {
 
   const [visible, { toggle: toggleCreateProject }] = useDisclosure(false);
   const [documents, setDocuments] = useState<File[]>([]);
+  const [isProjectDataLoading, setIsProjectDataLoading] = useState(true);
 
   const editor = useEditor({
     extensions: [
@@ -308,9 +310,11 @@ export default function Event() {
         .then((res) => {
           console.log("projects hhh", res.data.data);
           setProjects(res.data.data);
+          setIsProjectDataLoading(false);
         })
         .catch((err) => {
           console.log("projects err", err);
+          setIsProjectDataLoading(false);
         });
     };
 
@@ -635,33 +639,6 @@ export default function Event() {
             </Modal>
           </>
         )}
-        {/* <Flex align="flex-end">
-          <Text lineClamp={5}>
-            <div
-              dangerouslySetInnerHTML={{ __html: event?.description ?? "" }}
-            />
-          </Text>
-          <ActionIcon variant="subtle" onClick={open} color="redcolor.4">
-            <IconArrowsDiagonal size={14} stroke={1.5} />
-          </ActionIcon>
-        </Flex>
-
-        <Modal
-          opened={opened}
-          onClose={close}
-          title="Description"
-          centered
-          radius="xs"
-          size="90%"
-          padding="lg"
-          className={styles.scrollBar} // Use your actual style class
-        >
-          <Text>
-            <div
-              dangerouslySetInnerHTML={{ __html: event?.description ?? "" }}
-            />
-          </Text>
-        </Modal> */}
       </>
     );
   };
@@ -684,28 +661,27 @@ export default function Event() {
           title="QR Code for Presenter"
           centered
           radius="xs"
-          size="90%"
           padding="lg"
           className={styles.scrollBar}
         >
           <Center>
-            <div>
-              <Text c="graycolor.3" mb="md">
-                Scan QR code to join the event
-              </Text>
-              <Image src={qrCodeDataUrl} alt="QR Code" />
+            <Text c="graycolor.2">Scan QR code to join the event</Text>
+          </Center>
 
-              <Center>
-                <Anchor
-                  href={qrCodeDataUrl}
-                  download="qr-code-presenter.png"
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Download QR Code
-                </Anchor>
-              </Center>
-            </div>
+          <Center>
+            <Image src={qrCodeDataUrl} alt="QR Code" my="sm" w={300} h={300} />
+          </Center>
+
+          <Center>
+            <Anchor
+              href={qrCodeDataUrl}
+              download="qr-code-presenter.png"
+              target="_blank"
+              rel="noreferrer"
+              c="redcolor.4"
+            >
+              <Button>Download QR Code</Button>
+            </Anchor>
           </Center>
         </Modal>
       </>
@@ -1334,7 +1310,7 @@ export default function Event() {
         <Modal
           opened={opened}
           onClose={close}
-          title="Authentication"
+          title="Event cover image"
           size="90%"
           centered
         >
@@ -1355,15 +1331,6 @@ export default function Event() {
       <div style={{ marginBottom: "3.5rem" }}>
         <ChangeThumbnail />
 
-        <Affix position={{ top: 90, left: 20 }}>
-          <a href="/dashboard">
-            <Button size="xs" leftSection={<IconArrowLeft size={14} />}>
-              <Text c="pinkcolor.1" size="small">
-                Back
-              </Text>
-            </Button>
-          </a>
-        </Affix>
         {/* event information */}
         <Box w="80%" mx="auto">
           <Flex justify="space-between" align="flex-start" mt="xl" mb="md">
@@ -1373,7 +1340,7 @@ export default function Event() {
                   updateEventName();
                 })}
               >
-                <Text c="redcolor.4" fw={600} size="topic" mb="xs">
+                <Text c="redcolor.4" fw={600} size="header" mb="xs">
                   {editEventName ? (
                     <TextInput
                       label="Event Name"
@@ -1424,12 +1391,12 @@ export default function Event() {
                   )}
                 </Text>
               </form>
-              <Flex mb="md" gap="2rem">
+              <Grid mb="md" gutter="3rem">
                 <form onSubmit={form2.onSubmit(updateEventStart)}>
-                  <div>
+                  <Grid.Col span="auto">
                     <Flex align="center">
-                      <Text size="xsmall" c="graycolor.3">
-                        Start of event
+                      <Text size="xsmall" c="graycolor.4">
+                        Start event
                       </Text>
                       {canEdit && (
                         <Button
@@ -1441,6 +1408,7 @@ export default function Event() {
                         />
                       )}
                     </Flex>
+
                     {editStartDateEvent ? (
                       <>
                         <DateInput
@@ -1450,9 +1418,11 @@ export default function Event() {
                           onChange={(date) => {
                             form2?.setFieldValue(
                               "startDate",
-                              moment(date).format("MMMM D, YYYY") +
+                              moment(date).format("LL") +
                                 " " +
-                                moment(form2?.values.startDate).format("HH:mm")
+                                moment(form2?.values.startDate).format(
+                                  "HH:MM A"
+                                )
                             );
                           }}
                         />
@@ -1478,12 +1448,18 @@ export default function Event() {
                         />
                       </>
                     ) : (
-                      <>
-                        <Text>
-                          {moment(event?.start_date).format("LL [at] HH:mm")}
+                      <div>
+                        <Text c="redcolor.4">
+                          {moment(event?.start_date).format("LL")}
                         </Text>
-                      </>
+
+                        <Flex align="center" gap="xs">
+                          <IconClockHour3 size={14} />
+                          {moment(event?.start_date).format("HH:MM A")}
+                        </Flex>
+                      </div>
                     )}
+
                     {editStartDateEvent ? (
                       <Button
                         onClick={handleEdit}
@@ -1499,13 +1475,14 @@ export default function Event() {
                         Save
                       </Button>
                     )}
-                  </div>
+                  </Grid.Col>
                 </form>
+
                 <form onSubmit={form2.onSubmit(updateEventEnd)}>
-                  <div>
+                  <Grid.Col span="auto">
                     <Flex align="center">
-                      <Text size="xsmall" c="graycolor.3">
-                        End of event
+                      <Text size="xsmall" c="graycolor.4">
+                        End event
                       </Text>
                       {canEdit && (
                         <Button
@@ -1517,18 +1494,21 @@ export default function Event() {
                         />
                       )}
                     </Flex>
+
                     {editEndDateEvent ? (
                       <>
                         <DateInput
-                          label="End of event"
+                          label="End event"
                           required
-                          value={moment(form2?.values.endDate).toDate()}
+                          value={moment(form2?.values.startDate).toDate()}
                           onChange={(date) => {
                             form2?.setFieldValue(
                               "endDate",
-                              moment(date).format("MMMM D, YYYY") +
+                              moment(date).format("LL") +
                                 " " +
-                                moment(form2?.values.endDate).format("HH:mm")
+                                moment(form2?.values.startDate).format(
+                                  "HH:MM A"
+                                )
                             );
                           }}
                         />
@@ -1536,36 +1516,36 @@ export default function Event() {
                           mt="xs"
                           label="End Event Time"
                           required
-                          ref={refEndTime}
+                          ref={refStartTime}
                           rightSection={pickerControlEndTime}
-                          value={moment(form2?.values.endDate).format("HH:mm")}
+                          value={moment(form2?.values.startDate).format(
+                            "HH:MM A"
+                          )}
                           onChange={(date) => {
                             form2?.setFieldValue(
                               "endDate",
-                              moment(form2?.values.endDate).format(
-                                "MMMM D, YYYY"
+                              moment(form2?.values.startDate).format(
+                                "HH:MM A"
                               ) +
                                 " " +
                                 date.target.value
                             );
                           }}
                         />
-                        {form2.errors.endDate && (
-                          <Text mt="sm" c="red">
-                            {form2.errors.endDate}
-                          </Text>
-                        )}
                       </>
                     ) : (
-                      <>
-                        <Text>
-                          {moment(event?.end_date).format("LL [at] HH:mm")}
+                      <div>
+                        <Text c="redcolor.4">
+                          {moment(event?.end_date).format("LL")}
                         </Text>
-                        {form2.errors.endDate && (
-                          <Text c="red">{form2.errors.endDate}</Text>
-                        )}
-                      </>
+
+                        <Flex align="center" gap="xs">
+                          <IconClockHour3 size={14} />
+                          {moment(event?.end_date).format("HH:MM A")}
+                        </Flex>
+                      </div>
                     )}
+
                     {editEndDateEvent ? (
                       <Button
                         onClick={handleEditEndDate}
@@ -1581,10 +1561,11 @@ export default function Event() {
                         Save
                       </Button>
                     )}
-                  </div>
+                  </Grid.Col>
                 </form>
+
                 <form onSubmit={form2.onSubmit(updateEventLocation)}>
-                  <div>
+                  <Grid.Col span="auto">
                     <Flex align="center">
                       <Text size="xsmall" c="graycolor.3">
                         Location
@@ -1632,9 +1613,9 @@ export default function Event() {
                     ) : (
                       <>{event?.location ? event?.location : "No location"}</>
                     )}
-                  </div>
+                  </Grid.Col>
                 </form>
-              </Flex>
+              </Grid>
             </div>
             <Flex align="center" justify="flex-end" gap="md">
               <Group>
@@ -1770,9 +1751,9 @@ export default function Event() {
             </Tabs.Tab>
           </Tabs.List>
           <Tabs.Panel value="infomation">
-            <Card className={styles.cardContainer} mx="auto">
+            <Card className={styles.cardInformation} mx="auto">
               <Grid>
-                <Grid.Col span={4}>
+                <Grid.Col span={{ sm: 6, lg: 4 }}>
                   <Grid>
                     <Grid.Col span={4}>
                       <Text c="redcolor.4">Event Presenter</Text>
@@ -1845,11 +1826,21 @@ export default function Event() {
                             </>
                           ) : (
                             <>
-                              <Text>
-                                {moment(event?.submit_start).format(
-                                  "LL [at] HH:mm"
-                                )}
-                              </Text>
+                              <Grid align="center" gutter="md">
+                                <Grid.Col span={5}>
+                                  <Text c="redcolor.4">
+                                    {moment(event?.submit_start).format("LL")}
+                                  </Text>
+                                </Grid.Col>
+                                <Grid.Col span="content">
+                                  <Flex align="center" gap="xs">
+                                    <IconClockHour3 size={14} />
+                                    {moment(event?.submit_start).format(
+                                      "HH:MM A"
+                                    )}
+                                  </Flex>
+                                </Grid.Col>
+                              </Grid>
                             </>
                           )}
                           {editSubmissionStart ? (
@@ -1943,11 +1934,21 @@ export default function Event() {
                               </>
                             ) : (
                               <>
-                                <Text>
-                                  {moment(event?.submit_end).format(
-                                    "LL [at] HH:mm"
-                                  )}
-                                </Text>
+                                <Grid align="center" gutter="md">
+                                  <Grid.Col span={5}>
+                                    <Text c="redcolor.4">
+                                      {moment(event?.submit_end).format("LL")}
+                                    </Text>
+                                  </Grid.Col>
+                                  <Grid.Col span="content">
+                                    <Flex align="center" gap="xs">
+                                      <IconClockHour3 size={14} />
+                                      {moment(event?.submit_end).format(
+                                        "HH:MM A"
+                                      )}
+                                    </Flex>
+                                  </Grid.Col>
+                                </Grid>
                               </>
                             )}
                             {editSubmissionEnd ? (
@@ -2063,7 +2064,7 @@ export default function Event() {
                   </Grid>
                 </Grid.Col>
                 <Grid.Col span="auto">
-                  <SimpleGrid cols={{ base: 1, sm: 3 }}>{stats}</SimpleGrid>
+                  <SimpleGrid cols={{ sm: 1, lg: 2 }}>{stats}</SimpleGrid>
                 </Grid.Col>
                 <Grid.Col>
                   <Flex justify="flex-start" align="center" mb="xs">
@@ -2087,6 +2088,7 @@ export default function Event() {
               </Grid>
             </Card>
           </Tabs.Panel>
+
           {/* projects container */}
           <Tabs.Panel value="projects" mt="3rem">
             <Box w="100%" mx="auto">
@@ -2293,78 +2295,89 @@ export default function Event() {
                 />
               </Flex>
 
-              <div style={{ height: "100vh", marginTop: "2rem" }}>
-                {projects ? (
-                  <div>
-                    {projects.map((project: ProjectType) => (
-                      <Card
-                        key={project.id}
-                        className={styles.cardContainer}
-                        p="lg"
-                        mt="1rem"
-                      >
-                        <Grid align="flex-start" gutter="2rem">
-                          <Grid.Col span={2}>
-                            <Text size="xsmall" c="graycolor.2">
-                              Project name
-                            </Text>
-                            <Text size="base" fw={500}>
-                              {project.title}
-                            </Text>
-                          </Grid.Col>
-                          <Grid.Col span="auto">
-                            <Text size="xsmall" c="graycolor.2">
-                              Description
-                            </Text>
-                            <ModalProject project={project} />
-                          </Grid.Col>
-
-                          <Grid.Col span="content" ta="end">
-                            <Text size="sm" c="redcolor.4">
-                              {project.virtual_money} {event?.unit_money}
-                            </Text>
-                            <Text size="small" c="graycolor.2">
-                              {moment(project?.created_at).format(
-                                "LL [at] HH:mm A"
-                              )}
-                            </Text>
-                          </Grid.Col>
-                        </Grid>
-                      </Card>
-                    ))}
-                  </div>
+              <div style={{ height: "100%", marginTop: "2rem" }}>
+                {isProjectDataLoading ? (
+                  <Flex justify="center" align="center" direction="column">
+                    <Loader mt="md" type="dots" size="lg" color="redcolor.4" />
+                  </Flex>
                 ) : (
-                  <div>
-                    <Text size="md" my="md" fw={500}>
-                      No Projects
-                    </Text>
-                  </div>
-                )}
+                  <>
+                    {projects ? (
+                      <div>
+                        {projects.map((project: ProjectType) => (
+                          <Card
+                            key={project.id}
+                            className={styles.cardInformation}
+                            p="lg"
+                            mt="1rem"
+                          >
+                            <Grid align="flex-start" gutter="2rem">
+                              <Grid.Col span={2}>
+                                <Text size="xsmall" c="graycolor.2">
+                                  Project name
+                                </Text>
+                                <Text size="topic" fw={500} c="redcolor.4">
+                                  {project.title}
+                                </Text>
+                              </Grid.Col>
+                              <Grid.Col span="auto">
+                                <Text size="xsmall" c="graycolor.2">
+                                  Description
+                                </Text>
+                                <ModalProject project={project} />
+                              </Grid.Col>
 
-                <Center mt="md">
-                  <Pagination.Root
-                    color="redcolor.4"
-                    size="sm"
-                    total={Math.ceil(totalProjects / pageSize)}
-                    boundaries={2}
-                    value={page}
-                    onChange={(newPage) => setPage(newPage)}
-                  >
-                    <Group gap={5} justify="center">
-                      <Pagination.First />
-                      <Pagination.Previous />
-                      <Pagination.Items />
-                      <Pagination.Next />
-                      <Pagination.Last />
-                    </Group>
-                  </Pagination.Root>
-                </Center>
+                              <Grid.Col
+                                span={{ sm: 2, lg: "content" }}
+                                ta="end"
+                              >
+                                <Text size="base" c="redcolor.4" fw={500}>
+                                  {project.virtual_money} {event?.unit_money}
+                                </Text>
+                                <Text size="small" c="graycolor.2">
+                                  {moment(project?.created_at).format(
+                                    "LL [at] HH:mm A"
+                                  )}
+                                </Text>
+                              </Grid.Col>
+                            </Grid>
+                          </Card>
+                        ))}
+                      </div>
+                    ) : (
+                      <div>
+                        <Text size="md" my="md" fw={500}>
+                          No Projects
+                        </Text>
+                      </div>
+                    )}
+
+                    <Center mt="md">
+                      <Pagination.Root
+                        color="redcolor.4"
+                        size="sm"
+                        total={Math.ceil(totalProjects / pageSize)}
+                        boundaries={2}
+                        value={page}
+                        onChange={(newPage) => setPage(newPage)}
+                      >
+                        <Group gap={5} justify="center">
+                          <Pagination.First />
+                          <Pagination.Previous />
+                          <Pagination.Items />
+                          <Pagination.Next />
+                          <Pagination.Last />
+                        </Group>
+                      </Pagination.Root>
+                    </Center>
+                  </>
+                )}
               </div>
             </Box>
           </Tabs.Panel>
           <Tabs.Panel value="settings">
             {canEdit ? (
-              <Card className={styles.cardContainer} mx="auto" mb="lg">
+              <Card className={styles.cardInformation} mx="auto" mb="lg">
                 <EventResult eventId={eventId} />
               </Card>
             ) : (
@@ -2382,7 +2395,7 @@ export default function Event() {
                     </Flex>
                   </Card>
                 ) : (
-                  <Card className={styles.cardContainer} mx="auto" mb="lg">
+                  <Card className={styles.cardInformation} mx="auto" mb="lg">
                     <EventResult eventId={eventId} />
                   </Card>
                 )}
@@ -2394,1070 +2407,6 @@ export default function Event() {
 
       {/* footer */}
       <Affix mt="2rem" className={` ${styles.footer} ${styles.event}`}></Affix>
-
-      {/* <div>
-                <Affix position={{ top: 90, left: 20 }}>
-                    <a href="/dashboard">
-                        <Button size="xs" leftSection={<IconArrowLeft size={14} />}>
-                            <Text c="pinkcolor.1" size="small">
-                                Back
-                            </Text>
-                        </Button>
-                    </a>
-                </Affix>
-
-                <Box w="80%" mx="auto">
-                    <Flex justify="space-between" align="flex-start" my="xl">
-                        <div>
-    
-                            <form
-                                onSubmit={form2.onSubmit(() => {
-                                    updateEventName();
-                                })}
-                            >
-                                <Text c="redcolor.4" fw={600} size="topic" mb="xs">
-                                    {editEventName ? (
-                                        <TextInput
-                                            label="Event Name"
-                                            placeholder="Event Name"
-                                            value={form2?.values.eventName}
-                                            required
-                                            onChange={(e) => {
-                                                form2?.setFieldValue("eventName", e.target.value);
-                                            }}
-                                        />
-                                    ) : (
-                                        <>
-                                            <Flex align="center">
-                                                <Text size="header" c="redcolor.4" fw={600}>
-                                                    {event?.event_name}
-                                                </Text>
-                                                {canEdit && (
-                                                    <Button
-                                                        rightSection={<IconEdit size={14} />}
-                                                        onClick={handleEditEventName}
-                                                        variant="white"
-                                                        size="xs"
-                                                    />
-                                                )}
-                                            </Flex>
-                                        </>
-                                    )}
-
-                                    {editEventName ? (
-                                        <Button
-                                            onClick={handleEditEventName}
-                                            variant="white"
-                                            size="xs"
-                                            mt="md"
-                                        >
-                                            Cancel
-                                        </Button>
-                                    ) : null}
-
-                                    {editEventName && (
-                                        <Button
-                                            variant="light"
-                                            size="xs"
-                                            mt="md"
-                                            rightSection
-                                            type="submit"
-                                        >
-                                            Save
-                                        </Button>
-                                    )}
-                                </Text>
-                            </form>
-
-
-                            <Flex mb="md" gap="2rem">
-                                <form onSubmit={form2.onSubmit(updateEventStart)}>
-                                    <div>
-                                        <Flex align="center">
-                                            <Text size="xsmall" c="graycolor.3">
-                                                Start of event
-                                            </Text>
-                                            {canEdit && (
-                                                <Button
-                                                    rightSection={<IconEdit size={14} />}
-                                                    onClick={handleEdit}
-                                                    variant="white"
-                                                    color="graycolor.2"
-                                                    size="xs"
-                                                />
-                                            )}
-                                        </Flex>
-
-                                        {editStartDateEvent ? (
-                                            <>
-                                                <DateInput
-                                                    label="Start of event"
-                                                    required
-                                                    value={moment(form2?.values.startDate).toDate()}
-                                                    onChange={(date) => {
-                                                        form2?.setFieldValue(
-                                                            "startDate",
-                                                            moment(date).format("MMMM D, YYYY") +
-                                                            " " +
-                                                            moment(form2?.values.startDate).format("HH:mm")
-                                                        );
-                                                    }}
-                                                />
-                                                <TimeInput
-                                                    mt="xs"
-                                                    label="Start Event Time"
-                                                    required
-                                                    ref={refStartTime}
-                                                    rightSection={pickerControlStartTime}
-                                                    value={moment(form2?.values.startDate).format(
-                                                        "HH:mm"
-                                                    )}
-                                                    onChange={(date) => {
-                                                        form2?.setFieldValue(
-                                                            "startDate",
-                                                            moment(form2?.values.startDate).format(
-                                                                "MMMM D, YYYY"
-                                                            ) +
-                                                            " " +
-                                                            date.target.value
-                                                        );
-                                                    }}
-                                                />
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Text>
-                                                    {moment(event?.start_date).format("LL [at] HH:mm")}
-                                                </Text>
-                                            </>
-                                        )}
-
-                                        {editStartDateEvent ? (
-                                            <Button
-                                                onClick={handleEdit}
-                                                variant="white"
-                                                size="xs"
-                                                mt="md"
-                                            >
-                                                Cancel
-                                            </Button>
-                                        ) : null}
-
-                                        {editStartDateEvent && (
-                                            <Button variant="light" size="xs" mt="md" type="submit">
-                                                Save
-                                            </Button>
-                                        )}
-                                    </div>
-                                </form>
-
-       
-                                <form onSubmit={form2.onSubmit(updateEventEnd)}>
-                                    <div>
-                                        <Flex align="center">
-                                            <Text size="xsmall" c="graycolor.3">
-                                                End of event
-                                            </Text>
-                                            {canEdit && (
-                                                <Button
-                                                    rightSection={<IconEdit size={14} />}
-                                                    onClick={handleEditEndDate}
-                                                    variant="white"
-                                                    color="graycolor.2"
-                                                    size="xs"
-                                                />
-                                            )}
-                                        </Flex>
-
-                                        {editEndDateEvent ? (
-                                            <>
-                                                <DateInput
-                                                    label="End of event"
-                                                    required
-                                                    value={moment(form2?.values.endDate).toDate()}
-                                                    onChange={(date) => {
-                                                        form2?.setFieldValue(
-                                                            "endDate",
-                                                            moment(date).format("MMMM D, YYYY") +
-                                                            " " +
-                                                            moment(form2?.values.endDate).format("HH:mm")
-                                                        );
-                                                    }}
-                                                />
-                                                <TimeInput
-                                                    mt="xs"
-                                                    label="End Event Time"
-                                                    required
-                                                    ref={refEndTime}
-                                                    rightSection={pickerControlEndTime}
-                                                    value={moment(form2?.values.endDate).format("HH:mm")}
-                                                    onChange={(date) => {
-                                                        form2?.setFieldValue(
-                                                            "endDate",
-                                                            moment(form2?.values.endDate).format(
-                                                                "MMMM D, YYYY"
-                                                            ) +
-                                                            " " +
-                                                            date.target.value
-                                                        );
-                                                    }}
-                                                />
-                                                {form2.errors.endDate && (
-                                                    <Text mt="sm" c="red">
-                                                        {form2.errors.endDate}
-                                                    </Text>
-                                                )}
-                                            </>
-                                        ) : (
-                                            <>
-                                                <Text>
-                                                    {moment(event?.end_date).format("LL [at] HH:mm")}
-                                                </Text>
-                                                {form2.errors.endDate && (
-                                                    <Text c="red">{form2.errors.endDate}</Text>
-                                                )}
-                                            </>
-                                        )}
-
-                                        {editEndDateEvent ? (
-                                            <Button
-                                                onClick={handleEditEndDate}
-                                                variant="white"
-                                                size="xs"
-                                                mt="md"
-                                            >
-                                                Cancel
-                                            </Button>
-                                        ) : null}
-
-                                        {editEndDateEvent && (
-                                            <Button variant="light" size="xs" mt="md" type="submit">
-                                                Save
-                                            </Button>
-                                        )}
-                                    </div>
-                                </form>
-
-                                <form onSubmit={form2.onSubmit(updateEventLocation)}>
-                                    <div>
-                                        <Flex align="center">
-                                            <Text size="xsmall" c="graycolor.3">
-                                                Location
-                                            </Text>
-                                            {canEdit && (
-                                                <Button
-                                                    rightSection={<IconEdit size={14} />}
-                                                    onClick={handleEditLocation}
-                                                    variant="white"
-                                                    color="graycolor.2"
-                                                    size="xs"
-                                                />
-                                            )}
-                                        </Flex>
-
-                                        {editLocation ? (
-                                            <>
-                                                <TextInput
-                                                    label="Location"
-                                                    placeholder="Location"
-                                                    value={form2?.values.location}
-                                                    required
-                                                    onChange={(e) => {
-                                                       
-                                                        form2?.setFieldValue("location", e.target.value);
-                                                    }}
-                                                />
-                                                <Button
-                                                    onClick={handleEditLocation}
-                                                    variant="white"
-                                                    size="xs"
-                                                    mt="md"
-                                                >
-                                                    Cancel
-                                                </Button>
-                                                <Button
-                                                    variant="light"
-                                                    size="xs"
-                                                    mt="md"
-                                                    rightSection
-                                                    type="submit"
-                                                >
-                                                    Save
-                                                </Button>
-                                            </>
-                                        ) : (
-                                            <>{event?.location ? event?.location : "No location"}</>
-                                        )}
-                                    </div>
-                                </form>
-                            </Flex>
-                        </div>
-
-                        <Flex align="center" justify="flex-end" gap="md">
-                            <Group>
-                                {canEdit && (
-                                    <Tooltip label="Publish event" refProp="rootRef">
-                                        <Switch
-                                            checked={isPublished}
-                                            onChange={handlePublishToggle}
-                                            onLabel="Unpublish"
-                                            offLabel="Publish"
-                                            id="publish-toggle"
-                                            size="lg"
-                                            color="greencolor.7"
-                                        />
-                                    </Tooltip>
-                                )}
-                                <ActionIcon.Group>
-                                    <QrCodeModal />
-
-                                    <Menu position="bottom-end" shadow="sm">
-                                        <Menu.Target>
-                                            <ActionIcon variant="default" size="lg">
-                                                <IconCopy size={16} />
-                                            </ActionIcon>
-                                        </Menu.Target>
-                                        <Menu.Dropdown>
-                                            <Menu.Item
-                                                leftSection={<IconUserQuestion size={14} />}
-                                                color="pinkcolor.2"
-                                            >
-                                                <Anchor
-                                                    target="_blank"
-                                                    onClick={() => {
-                                                        guestClipboard.copy(
-                                                            `${import.meta.env.VITE_BASE_ENDPOINTMENT
-                                                            }guests/access/event/${eventId}`
-                                                        );
-                                                        Swal.fire({
-                                                            title: "Copied!",
-                                                            text: "Link for guest copied",
-                                                            icon: "success",
-                                                            timer: 2000,
-                                                            showConfirmButton: false,
-                                                        });
-                                                    }}
-                                                    underline="never"
-                                                    c="pinkcolor.2"
-                                                >
-                                                    Link for guest
-                                                </Anchor>
-                                            </Menu.Item>
-                                            <Menu.Item
-                                                leftSection={<IconUserShare size={14} />}
-                                                color="deepredcolor.9"
-                                            >
-                                                <Anchor
-                                                    target="_blank"
-                                                    onClick={() => {
-                                                        presenterClipboard.copy(
-                                                            `${import.meta.env.VITE_BASE_ENDPOINTMENT
-                                                            }presenters/${eventId}`
-                                                        );
-                                                        Swal.fire({
-                                                            title: "Copied!",
-                                                            text: "Link for presenter copied",
-                                                            icon: "success",
-                                                            timer: 2000,
-                                                            showConfirmButton: false,
-                                                        });
-                                                    }}
-                                                    underline="never"
-                                                    c="deepredcolor.9"
-                                                >
-                                                    Link for presenter
-                                                </Anchor>
-                                            </Menu.Item>
-                                        </Menu.Dropdown>
-                                    </Menu>
-                                    {canEdit && (
-                                        <Menu position="bottom-end" shadow="sm">
-                                            <Menu.Target>
-                                                <ActionIcon variant="default" size="lg">
-                                                    <IconDotsVertical size={16} />
-                                                </ActionIcon>
-                                            </Menu.Target>
-                                            <Menu.Dropdown>
-                                                <Menu.Item
-                                                    leftSection={<IconTrash size={14} />}
-                                                    color="red"
-                                                    onClick={handleDeleteEvent}
-                                                >
-                                                    Delete event
-                                                </Menu.Item>
-                                            </Menu.Dropdown>
-                                        </Menu>
-                                    )}
-                                </ActionIcon.Group>
-                            </Group>
-                        </Flex>
-                    </Flex>
-                </Box>
-
-                <Tabs
-                    radius="xs"
-                    color="redcolor.4"
-                    defaultValue="gallery"
-                    w="80%"
-                    mx="auto"
-                    h="max-content"
-                >
-                    <Tabs.List mb="2rem">
-                        <Tabs.Tab
-                            value="gallery"
-                            leftSection={<IconInfoSquare size={14} />}
-                        >
-                            Event Infomation
-                        </Tabs.Tab>
-                        <Tabs.Tab
-                            value="messages"
-                            leftSection={<IconPresentationAnalytics size={14} />}
-                        >
-                            Projects ({totalProjects})
-                        </Tabs.Tab>
-                        <Tabs.Tab value="settings" leftSection={<IconChartBar size={14} />}>
-                            Result
-                        </Tabs.Tab>
-                    </Tabs.List>
-                    <Tabs.Panel value="gallery">
-                        <UpdateThumbnail />
-                        <Card className={styles.cardContainer} mx="auto">
-                            <Grid>
-                                <Grid.Col span={4}>
-                                    <Grid>
-                                        <Grid.Col span={4}>
-                                            <Text c="redcolor.4">Event Presenter</Text>
-                                        </Grid.Col>
-                                        <Grid.Col span={8}>
-                                            <div>
-                                                <form
-                                                    onSubmit={form3.onSubmit(() =>
-                                                        updateEventProjectStartSubmission()
-                                                    )}
-                                                >
-                                                    <Flex align="center">
-                                                        <Text size="xsmall" c="graycolor.3">
-                                                            Start submit project
-                                                        </Text>
-                                                        {canEdit && (
-                                                            <Button
-                                                                rightSection={<IconEdit size={14} />}
-                                                                onClick={handleSubmissionStart}
-                                                                variant="white"
-                                                                color="graycolor.2"
-                                                                size="xs"
-                                                            />
-                                                        )}
-                                                    </Flex>
-
-                                                    {editSubmissionStart ? (
-                                                        <>
-                                                            <DateInput
-                                                                label="Submission Start"
-                                                                required
-                                                                value={moment(
-                                                                    form3?.values.submissionStart
-                                                                ).toDate()}
-                                                                onChange={(date) => {
-                                                                    form3?.setFieldValue(
-                                                                        "submissionStart",
-                                                                        moment(date).format("MMMM D, YYYY") +
-                                                                        " " +
-                                                                        moment(
-                                                                            form3?.values.submissionStart
-                                                                        ).format("HH:mm")
-                                                                    );
-                                                                }}
-                                                            />
-                                                            <TimeInput
-                                                                mt="xs"
-                                                                label="Submission Start Time"
-                                                                required
-                                                                ref={rerSubmitStart}
-                                                                rightSection={pickerControlSubmissionStart}
-                                                                value={moment(
-                                                                    form3?.values.submissionStart
-                                                                ).format("HH:mm")}
-                                                                onChange={(date) => {
-                                                                    form3?.setFieldValue(
-                                                                        "submissionStart",
-                                                                        moment(
-                                                                            form3?.values.submissionStart
-                                                                        ).format("MMMM D, YYYY") +
-                                                                        " " +
-                                                                        date.target.value
-                                                                    );
-                                                                }}
-                                                            />
-                                                            {form3.errors.submissionStart && (
-                                                                <Text mt="sm" c="red">
-                                                                    {form3.errors.submissionStart}
-                                                                </Text>
-                                                            )}
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            <Text>
-                                                                {moment(event?.submit_start).format(
-                                                                    "LL [at] HH:mm"
-                                                                )}
-                                                            </Text>
-                                                        </>
-                                                    )}
-
-                                                    {editSubmissionStart ? (
-                                                        <Button
-                                                            onClick={handleSubmissionStart}
-                                                            variant="white"
-                                                            size="xs"
-                                                            mt="md"
-                                                            mb="md"
-                                                        >
-                                                            Cancel
-                                                        </Button>
-                                                    ) : null}
-
-                                                    {editSubmissionStart && (
-                                                        <Button
-                                                            variant="light"
-                                                            size="xs"
-                                                            mt="md"
-                                                            rightSection
-                                                            type="submit"
-                                                            mb="md"
-                                                        >
-                                                            Save
-                                                        </Button>
-                                                    )}
-                                                </form>
-
-                                                <form
-                                                    onSubmit={form3.onSubmit(() =>
-                                                        updateEventProjectEndSubmission()
-                                                    )}
-                                                >
-                                                    <Flex align="center">
-                                                        <Text size="xsmall" c="graycolor.3">
-                                                            End submit project
-                                                        </Text>
-                                                        {canEdit && (
-                                                            <Button
-                                                                rightSection={<IconEdit size={14} />}
-                                                                onClick={handleSubmissionEnd}
-                                                                variant="white"
-                                                                color="graycolor.2"
-                                                                size="xs"
-                                                            />
-                                                        )}
-                                                    </Flex>
-
-                                                    <Text>
-                                                        {editSubmissionEnd ? (
-                                                            <>
-                                                               
-                                                                    label="Submission End"
-                                                                    required
-                                                                    value={moment(
-                                                                        form3?.values.submissionEnd
-                                                                    ).toDate()}
-                                                                    onChange={(date) => {
-                                                                        form3?.setFieldValue(
-                                                                            "submissionEnd",
-                                                                            moment(date).format("MMMM D, YYYY") +
-                                                                            " " +
-                                                                            moment(
-                                                                                form3?.values.submissionEnd
-                                                                            ).format("HH:mm")
-                                                                        );
-                                                                    }}
-                                                                />
-                                                                <TimeInput
-                                                                    mt="xs"
-                                                                    label="Submission End Time"
-                                                                    required
-                                                                    ref={rerSubmitEnd}
-                                                                    rightSection={pickerControlSubmissionEnd}
-                                                                    value={moment(
-                                                                        form3?.values.submissionEnd
-                                                                    ).format("HH:mm")}
-                                                                    onChange={(date) => {
-                                                                        form3?.setFieldValue(
-                                                                            "submissionEnd",
-                                                                            moment(
-                                                                                form3?.values.submissionEnd
-                                                                            ).format("MMMM D, YYYY") +
-                                                                            " " +
-                                                                            date.target.value
-                                                                        );
-                                                                    }}
-                                                                />
-                                                                {form3.errors.submissionEnd && (
-                                                                    <Text mt="sm" c="red">
-                                                                        {form3.errors.submissionEnd}
-                                                                    </Text>
-                                                                )}
-                                                            </>
-                                                        ) : (
-                                                            <>
-                                                                <Text>
-                                                                    {moment(event?.submit_end).format(
-                                                                        "LL [at] HH:mm"
-                                                                    )}
-                                                                </Text>
-                                                            </>
-                                                        )}
-
-                                                        {editSubmissionEnd ? (
-                                                            <Button
-                                                                onClick={handleSubmissionEnd}
-                                                                variant="white"
-                                                                size="xs"
-                                                                mt="md"
-                                                                mb="md"
-                                                            >
-                                                                Cancel
-                                                            </Button>
-                                                        ) : null}
-
-                                                        {editSubmissionEnd && (
-                                                            <Button
-                                                                variant="light"
-                                                                size="xs"
-                                                                mt="md"
-                                                                rightSection
-                                                                type="submit"
-                                                                mb="md"
-                                                            >
-                                                                Save
-                                                            </Button>
-                                                        )}
-                                                    </Text>
-                                                </form>
-                                            </div>
-                                        </Grid.Col>
-
-                                        <Grid.Col span={4}>
-                                            <Text c="redcolor.4">Guest</Text>
-                                        </Grid.Col>
-                                        <Grid.Col span={8}>
-                                            <div>
-                                                <Flex align="center">
-                                                    <Text size="xsmall" c="graycolor.3">
-                                                        Virtual Money
-                                                    </Text>
-                                                    {canEdit && (
-                                                        <Button
-                                                            rightSection={<IconEdit size={14} />}
-                                                            onClick={handleEditVirtualMoney}
-                                                            variant="white"
-                                                            color="graycolor.2"
-                                                            size="xs"
-                                                        />
-                                                    )}
-                                                </Flex>
-
-                                                <form
-                                                    onSubmit={virtualMoneyForm.onSubmit(() =>
-                                                        updateEvent()
-                                                    )}
-                                                >
-                                                    {editVirtualMoney ? (
-                                                        <>
-                                                            <TextInput
-                                                                label="Virtual Money"
-                                                                placeholder="Virtual Money"
-                                                                value={
-                                                                    virtualMoneyForm?.values.virtualMoney || 0
-                                                                }
-                                                                required
-                                                                onChange={(e) => {
-                                                                    console.log("e", e.target.value);
-                                                                    virtualMoneyForm?.setFieldValue(
-                                                                        "virtualMoney",
-                                                                        parseInt(e.target.value)
-                                                                    );
-                                                                }}
-                                                            />
-                                                            <TextInput
-                                                                mt="sm"
-                                                                label="Unit Money"
-                                                                placeholder="Unit Money"
-                                                                value={virtualMoneyForm?.values.unitMoney}
-                                                                required
-                                                                onChange={(e) => {
-                                                                    // console.log("e", e.target.value);
-                                                                    virtualMoneyForm?.setFieldValue(
-                                                                        "unitMoney",
-                                                                        e.target.value
-                                                                    );
-                                                                }}
-                                                            />
-                                                            <Flex justify="flex-start" mt="md">
-                                                                <Button
-                                                                    onClick={handleEditVirtualMoney}
-                                                                    variant="white"
-                                                                    size="xs"
-                                                                    mt="md"
-                                                                >
-                                                                    Cancel
-                                                                </Button>
-                                                                <Button
-                                                                    variant="light"
-                                                                    size="xs"
-                                                                    mt="md"
-                                                                    rightSection
-                                                                    type="submit"
-                                                                >
-                                                                    Save
-                                                                </Button>
-                                                            </Flex>
-                                                        </>
-                                                    ) : (
-                                                        <>
-                                                            {event?.virtual_money} {event?.unit_money}
-                                                        </>
-                                                    )}
-                                                </form>
-                                            </div>
-                                        </Grid.Col>
-                                    </Grid>
-                                </Grid.Col>
-
-                                <Grid.Col span="auto">
-                                    <SimpleGrid cols={{ base: 1, sm: 3 }}>{stats}</SimpleGrid>
-                                </Grid.Col>
-
-                                <Grid.Col mb="md">
-                                    <Flex justify="flex-start" align="center" mb="xs">
-                                        <Text w={500} c="graycolor.2">
-                                            Description
-                                            {canEdit && (
-                                                <Button
-                                                    onClick={() => {
-                                                        setEditDescription(!editDescription);
-                                                    }}
-                                                    leftSection={<IconEdit size={14} />}
-                                                    variant="white"
-                                                    color="graycolor.2"
-                                                    size="xs"
-                                                />
-                                            )}
-                                        </Text>
-                                    </Flex>
-
-                                    <ModalEvent />
-                                </Grid.Col>
-                            </Grid>
-                        </Card>
-                    </Tabs.Panel>
-
-                    <Tabs.Panel value="messages" mt="3rem">
-                        <Box w="100%" mx="auto">
-                            <Flex justify="space-between" align="flex-start">
-                                <Button
-                                    size="sm"
-                                    leftSection={<IconSquarePlus size={14} />}
-                                    onClick={toggleAddProject}
-                                >
-                                    <Text c="pinkcolor.1" size="small">
-                                        Add Project
-                                    </Text>
-                                </Button>
-                                <Modal
-                                    title="Create New Project"
-                                    opened={addProjectOpened}
-                                    onClose={toggleAddProject}
-                                    centered
-                                    size="80%"
-                                >
-                                    <LoadingOverlay
-                                        visible={visible}
-                                        loaderProps={{ children: "Uploading..." }}
-                                    />
-                                    <form
-                                        onSubmit={form.onSubmit(() => {
-                                            onSubmit();
-                                        })}
-                                    >
-                                        <TextInput
-                                            label="Title"
-                                            placeholder="Project Title"
-                                            required
-                                            {...form.getInputProps("title")}
-                                        />
-
-                                        <Text size="base" mt="md" fw={500}>
-                                            Description
-                                        </Text>
-
-                                        <RichTextEditor mt="xs" editor={editor}>
-                                            <RichTextEditor.Toolbar sticky stickyOffset={60}>
-                                                <RichTextEditor.ControlsGroup>
-                                                    <RichTextEditor.Bold />
-                                                    <RichTextEditor.Italic />
-                                                    <RichTextEditor.Underline />
-                                                    <RichTextEditor.Strikethrough />
-                                                    <RichTextEditor.ClearFormatting />
-                                                    <RichTextEditor.Highlight />
-                                                    <RichTextEditor.Code />
-                                                </RichTextEditor.ControlsGroup>
-                                                <RichTextEditor.ControlsGroup>
-                                                    <RichTextEditor.H1 />
-                                                    <RichTextEditor.H2 />
-                                                    <RichTextEditor.H3 />
-                                                    <RichTextEditor.H4 />
-                                                </RichTextEditor.ControlsGroup>
-                                                <RichTextEditor.ControlsGroup>
-                                                    <RichTextEditor.Blockquote />
-                                                    <RichTextEditor.Hr />
-                                                    <RichTextEditor.BulletList />
-                                                    <RichTextEditor.OrderedList />
-                                                    <RichTextEditor.Subscript />
-                                                    <RichTextEditor.Superscript />
-                                                </RichTextEditor.ControlsGroup>
-                                                <RichTextEditor.ControlsGroup>
-                                                    <RichTextEditor.Link />
-                                                    <RichTextEditor.Unlink />
-                                                </RichTextEditor.ControlsGroup>
-                                                <RichTextEditor.ControlsGroup>
-                                                    <RichTextEditor.AlignLeft />
-                                                    <RichTextEditor.AlignCenter />
-                                                    <RichTextEditor.AlignJustify />
-                                                    <RichTextEditor.AlignRight />
-                                                </RichTextEditor.ControlsGroup>
-                                            </RichTextEditor.Toolbar>
-                                            <RichTextEditor.Content
-                                                {...form.getInputProps("description")}
-                                            />
-                                        </RichTextEditor>
-                                        <Text mt="sm" c="red">
-                                            {form.errors.description && (
-                                                <>{form.errors.description}</>
-                                            )}
-                                        </Text>
-
-                                        <div>
-                                            <FileInput
-                                                mt="md"
-                                                accept="docx, pdf, pptx, xlsx"
-                                                label="Upload files"
-                                                placeholder="Upload files"
-                                                onChange={(files) => {
-                                                    setDocuments([...documents, ...files]);
-                                                    console.log("files", documents);
-                                                }}
-                                                multiple
-                                            >
-                                                <Button
-                                                    mt="md"
-                                                    leftSection={<IconFile size={14} />}
-                                                    variant="default"
-                                                >
-                                                    Upload File
-                                                </Button>
-                                            </FileInput>
-                                            <div>
-                                                {documents.length > 0 && (
-                                                    <>
-                                                        {" "}
-                                                        <Flex align="center" mt="md" justify="flex-start">
-                                                            {documents.map((file, index) => (
-                                                                <div>
-                                                                    <Text size="sm" ml="md" c="graycolor.2">
-                                                                        {file.name}
-                                                                    </Text>
-                                                                    <Button
-                                                                        ml="md"
-                                                                        variant="light"
-                                                                        size="xs"
-                                                                        mt="md"
-                                                                        onClick={() => {
-                                                                            setDocuments(
-                                                                                documents.filter((_, i) => i !== index)
-                                                                            );
-                                                                        }}
-                                                                    >
-                                                                        Clear
-                                                                    </Button>
-                                                                </div>
-                                                            ))}
-                                                        </Flex>
-                                                        <Center mt="md">
-                                                            <Text size="sm" c="graycolor.2">
-                                                                {documents.length} files selected
-                                                            </Text>
-                                                        </Center>
-                                                    </>
-                                                )}
-                                            </div>
-                                            <Dropzone accept={IMAGE_MIME_TYPE} onDrop={onDrop}>
-                                                <Button
-                                                    mt="md"
-                                                    leftSection={<IconPhotoUp size={14} />}
-                                                    variant="default"
-                                                >
-                                                    Upload Image
-                                                </Button>
-                                            </Dropzone>
-
-                                            <SimpleGrid
-                                                cols={{ base: 1, sm: 4 }}
-                                                mt={previews.length > 0 ? "xl" : 0}
-                                            >
-                                                {previews}
-                                            </SimpleGrid>
-                                            <Center>
-                                                {previews.length > 0 && (
-                                                    <>
-                                                        <Text size="sm" mt="md" c="graycolor.2">
-                                                            {files.length} files selected
-                                                        </Text>
-                                                        <Button
-                                                            ml="md"
-                                                            variant="light"
-                                                            size="xs"
-                                                            mt="md"
-                                                            onClick={() => {
-                                                                setFiles([]);
-                                                            }}
-                                                        >
-                                                            Clear
-                                                        </Button>
-                                                    </>
-                                                )}
-                                            </Center>
-                                        </div>
-
-                                        <Box ta="end">
-                                            <Button type="submit" size="sm" mt="md">
-                                                <Text c="pinkcolor.1" size="small">
-                                                    Submit
-                                                </Text>
-                                            </Button>
-                                        </Box>
-                                    </form>
-                                </Modal>
-                                <TextInput
-                                    value={query}
-                                    onChange={(event) => setQuery(event.target.value)}
-                                    placeholder="Search project"
-                                    rightSection={<IconSearch size={14} />}
-                                    w="50%"
-                                />
-                                <Select
-                                    ml="md"
-                                    data={["5", "10", "15", "20"]}
-                                    value={pageSize.toString()}
-                                    onChange={(e) => {
-                                       
-                                        if (e !== null) {
-                                            setPageSize(parseInt(e));
-                                        }
-                                    }}
-                                />
-                            </Flex>
-
-                            <div style={{ height: "100vh", marginTop: "2rem" }}>
-                                {projects ? (
-                                    <div>
-                                        {projects.map((project: ProjectType) => (
-                                            <Card
-                                                key={project.id}
-                                                className={styles.cardContainer}
-                                                p="lg"
-                                                mt="1rem"
-                                            >
-                                                <Grid align="flex-start" gutter="2rem">
-                                                    <Grid.Col span={2}>
-                                                        <Text size="xsmall" c="graycolor.2">
-                                                            Project name
-                                                        </Text>
-                                                        <Text size="base" fw={500}>
-                                                            {project.title}
-                                                        </Text>
-                                                    </Grid.Col>
-                                                    <Grid.Col span="auto">
-                                                        <Text size="xsmall" c="graycolor.2">
-                                                            Description
-                                                        </Text>
-                                                        <ModalProject project={project} />
-                                                    </Grid.Col>
-
-                                                    <Grid.Col span="content" ta="end">
-                                                        <Text size="sm" c="redcolor.4">
-                                                            {project.virtual_money} {event?.unit_money}
-                                                        </Text>
-                                                        <Text size="small" c="graycolor.2">
-                                                            {moment(project?.created_at).format(
-                                                                "LL [at] HH:mm A"
-                                                            )}
-                                                        </Text>
-                                                    </Grid.Col>
-                                                </Grid>
-                                            </Card>
-                                        ))}
-                                    </div>
-                                ) : (
-                                    <div>
-                                        <Text size="md" my="md" fw={500}>
-                                            No Projects
-                                        </Text>
-                                    </div>
-                                )}
-
-                                <Center mt="md">
-                                    <Pagination.Root
-                                        color="redcolor.4"
-                                        size="sm"
-                                        total={Math.ceil(totalProjects / pageSize)}
-                                        boundaries={2}
-                                        value={page}
-                                        onChange={(newPage) => setPage(newPage)}
-                                    >
-                                        <Group gap={5} justify="center">
-                                            <Pagination.First />
-                                            <Pagination.Previous />
-                                            <Pagination.Items />
-                                            <Pagination.Next />
-                                            <Pagination.Last />
-                                        </Group>
-                                    </Pagination.Root>
-                                </Center>
-                            </div>
-                        </Box>
-                    </Tabs.Panel>
-
-                    <Tabs.Panel value="settings">
-                        {canEdit ? (
-                            <Card className={styles.cardContainer} mx="auto" mb="lg">
-                                <EventResult eventId={eventId} />
-                            </Card>
-                        ) : (
-                            <>
-                                {moment(event?.end_date).isAfter(moment()) ? (
-                                    <Card className={styles.cardContainer} mx="auto" mb="lg">
-                                        <Flex justify="center" align="center" direction="column">
-                                            <Text size="lg" c="redcolor.5" fw={600}>
-                                                Result
-                                            </Text>
-                                            <Text size="md" c="redcolor.3">
-                                                The result will be available after the event ends{" "}
-                                                {moment(event?.end_date).fromNow()}
-                                            </Text>
-                                        </Flex>
-                                    </Card>
-                                ) : (
-                                    <Card className={styles.cardContainer} mx="auto" mb="lg">
-                                        <EventResult eventId={eventId} />
-                                    </Card>
-                                )}
-                            </>
-                        )}
-                    </Tabs.Panel>
-                </Tabs>
-
-                <div className={styles.footer}></div>
-            </div> */}
     </body>
   );
 }

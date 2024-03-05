@@ -1,4 +1,12 @@
-import { Text, Center, Container, Button, Affix, Image, Flex, Divider } from "@mantine/core";
+import { 
+    Text, 
+    Center, 
+    Container, 
+    Button, 
+    Affix, 
+    Image, 
+    Divider 
+} from "@mantine/core";
 
 import "@mantine/core/styles.css";
 
@@ -6,7 +14,6 @@ import "@mantine/core/styles.css";
 import styles from "./styles.module.css";
 
 import {
-    IconArrowLeft,
     IconBrandGoogleFilled,
 } from "@tabler/icons-react";
 
@@ -19,18 +26,6 @@ export default function Login() {
     return (
         <body>
 
-            {/* back to homepage button */}
-            <Affix position={{ top: "0", left: "0" }} p="lg">
-                <a href="/">
-                    <Button variant="subtle" color="redcolor.4">
-                        <Flex align="center">
-                            <IconArrowLeft size={14} />
-                            <Text ml="md" c="redcolor.4">Gallery walk</Text>
-                        </Flex>
-                    </Button>
-                </a>
-            </Affix>
-
             {/* image container */}
             <Affix position={{ top: "150", left: "420" }} style={{ zIndex: "0" }}>
                 <Image
@@ -38,6 +33,7 @@ export default function Login() {
                     opacity="50%"
                     src="/src/images/icon-3.png"
                     style={{ transform: "rotate(180deg)" }}
+                    visibleFrom=""
                 />
             </Affix>
 
@@ -64,7 +60,7 @@ export default function Login() {
                     {/* google account container */}
                     <Center>
                         <Button
-                            color="deepredcolor.9"
+                            color="redcolor.4"
                             size="md"
                             w="100%"
                             justify="center"
@@ -73,7 +69,7 @@ export default function Login() {
                             leftSection={<IconBrandGoogleFilled size={14} />}
                             onClick={handleGoogleLogin}
                         >
-                            <Text c="deepredcolor.9">Login with Google account</Text>
+                            <Text c="redcolor.4">Login with Google account</Text>
                         </Button>
                     </Center>
                 </Container>

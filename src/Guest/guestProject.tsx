@@ -4,28 +4,20 @@ import {
   Group,
   Text,
   NumberInput,
-  //   TextInput,
-  Divider,
   Loader,
-  Center,
-  Pagination,
   Paper,
-  Textarea,
+  LoadingOverlay,
   // Image,
   // Avatar,
 } from "@mantine/core";
 import axios from "axios";
-import moment from "moment";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { IconCoins, IconSend } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import Swal from "sweetalert2";
 
 export default function GuestProject({ projectId }: { projectId: number }) {
-  // const { projectId } = useParams();
-  //   const [isLoading, setIsLoading] = useState(true);
-  const [isCommentsLoading, setIsCommentsLoading] = useState(true);
   const [guestData, setGuestData] = useState<GuestType>({
     profile_pic: "",
     last_name_en: "",
@@ -33,11 +25,15 @@ export default function GuestProject({ projectId }: { projectId: number }) {
     virtual_money: 0,
     id: 0,
   });
-
-  const [commentData, setCommentData] = useState<object[]>([]);
-  const [pageSize] = useState(5);
-  const [page, setPage] = useState(1);
-  const [totalComments, setTotalComments] = useState(0);
+  const [alreadyGivenVirtualMoney, setAlreadyGivenVirtualMoney] = useState({
+    amount: 0,
+  });
+  const [isGivenLoading, setIsGivenLoading] = useState(true);
+  const [isGuestDataLoading, setIsGuestDataLoading] = useState(true);
+  const [isGiveVirtualMoneyLoading, setIsGiveVirtualMoneyLoading] =
+    useState(false);
+  const [giveVirtualMoneyError, setGiveVirtualMoneyError] = useState("");
+  const [unit, setUnit] = useState("");
 
   const navigate = useNavigate();
   const { eventId } = useParams();
@@ -57,44 +53,88 @@ export default function GuestProject({ projectId }: { projectId: number }) {
     },
   });
 
-  const commentForm = useForm({
-    initialValues: {
-      comment: "",
-    },
-    validate: {
-      comment: (value) => {
-        if (value.length < 0) {
-          return "Comment must be greater than 0";
-        } else if (value.length > 500) {
-          return "Comment must be less than 100";
-        }
-      },
-    },
-  });
+  useEffect(() => {
+    const fetchAlreadyGive = () => {
+      axios
+        .get(
+          `${
+            import.meta.env.VITE_BASE_ENDPOINTMENT
+          }guests/get-already-given-virtual-money?projectId=${projectId}&guestId=${
+            guestData.id
+          }&eventId=${eventId}`,
+          {
+            withCredentials: true,
+          }
+        )
+        .then((res) => {
+          if (res.data.success === true) {
+            setAlreadyGivenVirtualMoney(res.data.data);
+            setIsGivenLoading(false);
+          }
+          setIsGivenLoading(false);
+        })
+        .catch((error) => {
+          console.error("Error during fetchAlreadyGiven:", error);
+          setIsGivenLoading(false);
+          // Handle error gracefully, show a message to the user, or retry
+        });
+    };
+    fetchAlreadyGive();
 
-  async function fetchProjectComments() {
-    try {
-      const response = await axios.get(
+    const fetchEventData = async () => {
+      try {
+        const res = await axios.get(
+          `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        setUnit(res.data.data.unit_money);
+      } catch (err) {
+        // console.error("Error fetching event data:", err);
+      }
+    };
+    fetchEventData();
+  }, [eventId, guestData.id, projectId]);
+
+  const fetchAlreadyGive = () => {
+    axios
+      .get(
         `${
           import.meta.env.VITE_BASE_ENDPOINTMENT
-        }guests/get-project-comments?projectId=${projectId}`,
+        }guests/get-already-given-virtual-money?projectId=${projectId}&guestId=${
+          guestData.id
+        }&eventId=${eventId}`,
         {
           withCredentials: true,
-          params: { page, pageSize },
         }
-      );
+      )
+      .then((res) => {
+        if (res.data.success === true) {
+          setAlreadyGivenVirtualMoney(res.data.data);
+        }
+      })
+      .catch(() => {
+        // console.error("Error during fetchAlreadyGiven:", error);
+      });
+  };
 
-      if (response.data.success === true) {
-        // console.log("comments", response.data);
-        setCommentData(response.data.data);
-        setTotalComments(response.data.totalComments);
-      } else {
-        // console.log("comments", response.data);
-      }
-    } catch (err) {
-      // console.log("err ggg", err);
-    }
-  }
+  const fetchGuestData = useCallback(async () => {
+    await axios
+      .get(`${import.meta.env.VITE_BASE_ENDPOINTMENT}guests/get-guest-data`, {
+        withCredentials: true,
+      })
+      .then((res) => {
+        if (res.data.success === true) {
+          console.log("guest data", res.data.data);
+          setGuestData(res.data.data);
+          setIsGuestDataLoading(false);
+        }
+        setIsGuestDataLoading(false);
+      })
+      .catch(() => {});
+  }, []);
+
   useEffect(() => {
     const isLoggedIn = async () => {
       try {
@@ -105,6 +145,7 @@ export default function GuestProject({ projectId }: { projectId: number }) {
           }
         );
         if (response.data.authenticated === false) {
+          console.log("not authenticated");
           window.location.href = `${
             import.meta.env.VITE_FRONTEND_ENDPOINT
           }/guest/login`;
@@ -114,78 +155,12 @@ export default function GuestProject({ projectId }: { projectId: number }) {
       }
     };
     isLoggedIn();
-    // async function fetchProjectData() {
-    //   const response = await axios
-    //     .get(
-    //       `${
-    //         import.meta.env.VITE_BASE_ENDPOINTMENT
-    //       }projects/get-data/${projectId}`,
-    //       {
-    //         withCredentials: true,
-    //       }
-    //     )
-    //     .then((res) => {
-    //       if (res.data.success === true) {
-    //         setIsLoading(false);
-    //         setIsCommentsLoading(false);
-    //         document.title = res.data.data.title;
-    //       } else {
-    //         navigate(-1);
-    //       }
-    //     })
-    //     .catch(() => {
-    //       // console.log("err", err);
-    //     });
-    //   return response;
-    // }
 
-    async function fetchProjectComments() {
-      try {
-        const response = await axios.get(
-          `${
-            import.meta.env.VITE_BASE_ENDPOINTMENT
-          }guests/get-project-comments?projectId=${projectId}`,
-          {
-            withCredentials: true,
-            params: { page, pageSize },
-          }
-        );
-        if (response.data.success === true) {
-          // console.log("comments", response.data);
-          setCommentData(response.data.data);
-          setTotalComments(response.data.totalComments);
-        } else {
-          // console.log("comments", response.data);
-        }
-      } catch (err) {
-        // console.log("err ggg", err);
-      }
-    }
-
-    // fetchProjectData();
     fetchGuestData();
-    fetchProjectComments();
-  }, [navigate, page, pageSize, projectId]);
-
-  async function fetchGuestData() {
-    await axios
-      .get(`${import.meta.env.VITE_BASE_ENDPOINTMENT}guests/get-guest-data`, {
-        withCredentials: true,
-      })
-      .then((res) => {
-        if (res.data.success === true) {
-          // console.log("guest data", res.data.data);
-          setGuestData(res.data.data);
-          //   setIsLoading(false);
-          setIsCommentsLoading(false);
-        }
-      })
-      .catch(() => {
-        // console.log("err", err);
-      });
-  }
+  }, [fetchGuestData, navigate, projectId]);
 
   async function giveVirtualMoney() {
+    setIsGiveVirtualMoneyLoading(true);
     await axios
       .post(
         `${
@@ -202,19 +177,22 @@ export default function GuestProject({ projectId }: { projectId: number }) {
       )
       .then((res) => {
         if (res.data.success === true) {
-          Swal.fire({
-            icon: "success",
-            title: "Success",
-            text: `Virtual money given ${form.values.amount}`,
-            timer: 1000,
-            showConfirmButton: false,
-          });
+          // Swal.fire({
+          //   icon: "success",
+          //   title: "Success",
+          //   text: `Virtual money given ${form.values.amount}`,
+          //   timer: 1000,
+          //   showConfirmButton: false,
+          // });
           close();
           //   setIsLoading(false);
           fetchGuestData();
+          fetchAlreadyGive();
+          setIsGiveVirtualMoneyLoading(false);
           form.reset();
         } else {
           //   setIsLoading(false);
+          setGiveVirtualMoneyError(res.data.message);
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -224,46 +202,6 @@ export default function GuestProject({ projectId }: { projectId: number }) {
         }
       })
       .catch(() => {});
-  }
-
-  async function addComment() {
-    setIsCommentsLoading(true);
-    await axios
-      .post(
-        `${import.meta.env.VITE_BASE_ENDPOINTMENT}guests/add-comment`,
-        {
-          comment: commentForm.values.comment,
-          projectId: projectId,
-        },
-        {
-          withCredentials: true,
-        }
-      )
-      .then((res) => {
-        if (res.data.success === true) {
-          fetchProjectComments();
-          setIsCommentsLoading(false);
-        } else {
-          Swal.fire({
-            icon: "error",
-            title: "Oops...",
-            text: "Something went wrong!",
-            timer: 1000,
-            showConfirmButton: false,
-          });
-          //   setIsLoading(false);
-        }
-      })
-      .catch(() => {
-        // console.log("add comment err", err);
-        Swal.fire({
-          icon: "error",
-          title: "Oops...",
-          text: "Something went wrong!",
-          timer: 1000,
-          showConfirmButton: false,
-        });
-      });
   }
 
   type GuestType = {
@@ -277,123 +215,83 @@ export default function GuestProject({ projectId }: { projectId: number }) {
   return (
     <>
       <Paper withBorder p="md" radius="md" bg="none" h="max-content">
-        <Group justify="space-between">
-          <Text c="graycolor.2">You have</Text>
-          <IconCoins size={16} />
-        </Group>
+        {isGivenLoading ? (
+          <LoadingOverlay
+            visible={isGivenLoading}
+            zIndex={1000}
+            overlayProps={{ radius: "sm", blur: 2 }}
+            loaderProps={{ color: "greencolor.4", type: "dots" }}
+          />
+        ) : (
+          <>
+            <Group justify="space-between">
+              <Text c="graycolor.2">You have</Text>
+              <IconCoins size={16} />
+            </Group>
 
-        <Group align="flex-end" gap="xs" mt={25}>
-          <Text fw={500} c="greencolor.4">
-            {guestData?.virtual_money}
-          </Text>
-        </Group>
-
-        <Text fz="xs" c="dimmed" mt={7}>
-          Your Virtual Money
-        </Text>
+            <Flex justify="space-between" align="baseline" gap="xs">
+              <Flex align="baseline" gap="xs">
+                <Text fz="50" fw={500} c="greencolor.4">
+                  {isGuestDataLoading ? (
+                    <Loader color="greencolor.4" size={14} />
+                  ) : (
+                    guestData.virtual_money.toLocaleString()
+                  )}
+                </Text>
+                <Text c="greencolor.3" fz="md">
+                  {unit}
+                </Text>
+              </Flex>
+            </Flex>
+            <Flex justify="flex-end" align="center" gap="xs">
+              <Text fz="md" c="dimmed">
+                {isGivenLoading ? (
+                  <>
+                    <Flex align="center" gap="xs">
+                      <Loader color="greencolor.4" size={14} />
+                    </Flex>
+                  </>
+                ) : (
+                  <>{alreadyGivenVirtualMoney.amount.toLocaleString()} given</>
+                )}{" "}
+              </Text>
+            </Flex>
+          </>
+        )}
       </Paper>
       <form onSubmit={form.onSubmit(() => giveVirtualMoney())}>
-        <NumberInput
-          mt="md"
-          label="Virtual Money"
-          placeholder="Enter amount"
-          {...form.getInputProps("amount")}
-        />
-        <Group justify="flex-end" mt="md">
-          <Button type="submit" color="greencolor.4">
-            Submit
-          </Button>
-        </Group>
-      </form>
-
-      <Divider my="md" />
-
-      <Text size="md" c="greencolor.4">
-        Comments
-      </Text>
-
-      <form
-        onSubmit={commentForm.onSubmit(() => {
-          addComment(), commentForm.reset();
-        })}
-      >
-        <Textarea {...commentForm.getInputProps("comment")} />
-        <Text size="xs" c="dimmed" mt="xs" ta="end">
-          {commentForm.values.comment.length} / 500
+        <Text size="md" c="greencolor.4" mt="md">
+          Give Virtual Money
         </Text>
-
-        {/* <TextInput
-          placeholder="Comment"
-          {...commentForm.getInputProps("comment")}
-        /> */}
-
-        <Group justify="flex-end" mt="md">
-          <Button
-            w="fit-content"
-            color="greencolor.4"
-            size="sm"
-            type="submit"
-            rightSection={<IconSend size={14} />}
-          >
-            Send
-          </Button>
-        </Group>
-      </form>
-      {commentData.length > 0 ? (
-        <>
-          {isCommentsLoading ? (
-            <Center>
-              <Loader mt="lg" color="blue" />
-            </Center>
-          ) : (
-            <>
-              {commentData.map((comment: object) => (
-                <Text mx="md" mt="md" key={(comment as { id: string }).id}>
-                  {/* <Divider mt="4" /> */}
-                  <Flex justify="space-between" align="center">
-                    <Text mt="xs" size="xs" c="gray">
-                      {moment(
-                        (comment as { created_at: string }).created_at
-                      ).format("D MMMM YYYY HH:mm A")}{" "}
-                    </Text>
-                    <Text mt="xs" size="xs" c="gray">
-                      {moment(
-                        (comment as { created_at: string }).created_at
-                      ).fromNow()}
-                    </Text>
-                  </Flex>
-                  <Text
-                    style={{
-                      overflowWrap: "break-word",
-                    }}
-
-                    // mb="sm"
-                  >
-                    {(comment as { comment: string }).comment}
-                  </Text>
-                  <Divider mt="4" />
-                </Text>
-              ))}
-              <Center mt="xs">
-                <Pagination
-                  color="greencolor.4"
-                  size="sm"
-                  mt="md"
-                  total={Math.ceil(totalComments / pageSize)}
-                  boundaries={2}
-                  value={page}
-                  onChange={(newPage) => setPage(newPage)}
-                />
-              </Center>
-            </>
+        <Flex
+          gap="xl"
+          justify="flex-start"
+          align="center"
+          direction="row"
+          wrap="wrap"
+        >
+          <NumberInput
+            // label="Virtual Money"
+            placeholder="Enter amount"
+            defaultValue={0}
+            thousandSeparator=","
+            {...form.getInputProps("amount")}
+          />
+          {giveVirtualMoneyError && (
+            <Text c="red" size="sm">
+              {giveVirtualMoneyError}
+            </Text>
           )}
-        </>
-      ) : (
-        // </ScrollArea>
-        <Text mx="md" mt="md">
-          No comments
-        </Text>
-      )}
+
+          <Button type="submit" color="greencolor.4">
+            {isGiveVirtualMoneyLoading ? (
+              <Loader type="dots" color="white" size={20} />
+            ) : (
+              <IconSend size={14} />
+            )}
+          </Button>
+        </Flex>
+      </form>
     </>
   );
 }

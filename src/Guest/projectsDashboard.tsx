@@ -16,13 +16,14 @@ import {
   SimpleGrid,
   Anchor,
 } from "@mantine/core";
-import { IconSearch, IconCoin } from "@tabler/icons-react";
+import { IconSearch, IconCoin, IconMessagePlus } from "@tabler/icons-react";
 import axios from "axios";
 import moment from "moment";
 import { useEffect, useState } from "react";
 import styles from "../styles.module.css";
 import { useDisclosure } from "@mantine/hooks";
 import GuestProject from "./guestProject";
+import Comment from "./comment";
 export default function ProjectsDashboard(props: {
   eventId: string | undefined;
 }) {
@@ -59,6 +60,7 @@ export default function ProjectsDashboard(props: {
         setIsProjectDataLoading(false);
       } catch (err) {
         // console.error("Error fetching events:", error);
+        setIsProjectDataLoading(false);
       }
     };
 
@@ -81,13 +83,13 @@ export default function ProjectsDashboard(props: {
     const [opened, { open, close }] = useDisclosure(false);
 
     return (
-      <>
+      <div>
         <Modal
           opened={opened}
           onClose={close}
           title="Project Details"
-          //   centered
-          w="fit-content"
+          style={{ width: "fit-content" }}
+          h={500}
         >
           <Text size="topic" c="greencolor.4" fw={500} truncate="end">
             {projectTitle}
@@ -113,29 +115,32 @@ export default function ProjectsDashboard(props: {
                 Document
               </Text>
               <div>
-                <SimpleGrid cols={2} spacing={1}>
-                  {(
-                    document as {
-                      document_name: string;
-                      document_url: string;
-                    }[]
-                  ).map(
-                    (doc: { document_url: string; document_name: string }) => {
-                      return (
-                        <div>
+                {(
+                  document as {
+                    document_name: string;
+                    document_url: string;
+                  }[]
+                ).map(
+                  (doc: { document_url: string; document_name: string }) => {
+                    return (
+                      <ul>
+                        <li>
                           <Anchor
+                            mt="md"
                             href={doc.document_url}
+                            ta="start"
                             target="_blank"
+                            rel="noreferrer"
                             underline="always"
-                            c="graycolor.2"
+                            c={"bluecolor.4"}
                           >
-                            {doc.document_name}
+                            {doc.document_name.split("-").pop()}
                           </Anchor>
-                        </div>
-                      );
-                    }
-                  )}
-                </SimpleGrid>
+                        </li>
+                      </ul>
+                    );
+                  }
+                )}
               </div>
             </>
           )}
@@ -148,7 +153,10 @@ export default function ProjectsDashboard(props: {
                   {(image as { project_image_url: string }[]).map(
                     (img: { project_image_url: string }) => {
                       return (
-                        <div>
+                        <Anchor
+                          href={"/image?image=" + img.project_image_url}
+                          target="_blank"
+                        >
                           <Image
                             mt="md"
                             src={img.project_image_url}
@@ -156,7 +164,7 @@ export default function ProjectsDashboard(props: {
                             w={300}
                             h={300}
                           />
-                        </div>
+                        </Anchor>
                       );
                     }
                   )}
@@ -177,7 +185,7 @@ export default function ProjectsDashboard(props: {
             </Text>
           </UnstyledButton>
         </Flex>
-      </>
+      </div>
     );
   };
 
@@ -196,6 +204,26 @@ export default function ProjectsDashboard(props: {
           onClick={open}
         >
           <IconCoin />
+        </ActionIcon>
+      </div>
+    );
+  };
+
+  const ModalGiveComment = ({ projectId }: { projectId: number }) => {
+    const [opened, { open, close }] = useDisclosure(false);
+
+    return (
+      <div>
+        <Modal opened={opened} onClose={close} title="Give Comment">
+          <Comment projectId={projectId} />
+        </Modal>
+        <ActionIcon
+          variant="filled"
+          color="greencolor.4"
+          aria-label="Settings"
+          onClick={open}
+        >
+          <IconMessagePlus />
         </ActionIcon>
       </div>
     );
@@ -276,6 +304,17 @@ export default function ProjectsDashboard(props: {
                                 position: "absolute",
                                 top: "0",
                                 right: "0",
+                              }}
+                            >
+                              <ModalGiveComment
+                                projectId={Number(project.id)}
+                              />
+                            </div>
+                            <div
+                              style={{
+                                position: "absolute",
+                                right: "2rem",
+                                top: "0",
                               }}
                             >
                               <ModalGiveVirtualMoney

@@ -37,6 +37,8 @@ import Projects from "./Event Manager and Presenter/project.tsx";
 import EditEvent from "./Event Manager and Presenter/editEvent.tsx";
 import GuestWelcome from "./Guest/guestWelcome.tsx";
 import PresenterWelcome from "./Event Manager and Presenter/presenterWelcome.tsx";
+import PDFViewer from "./components/pdfViewer.tsx";
+import ImagePreview from "./Guest/imagePreview.tsx";
 
 // import Test from "./test.tsx";
 // import { DateTimePicker } from "@mantine/dates";
@@ -48,7 +50,7 @@ const theme = createTheme({
     small: "12px",
     base: "14px",
     topic: "16px",
-    header: "18px",
+    header: "24px",
   },
   colors: {
     whitecolor: generateColors("#fffdfd"),
@@ -60,6 +62,14 @@ const theme = createTheme({
     greencolor: generateColors("#36AE7C"),
     yellowcolor: generateColors("#F9D923"),
     bluecolor: generateColors("#187498"),
+  },
+
+  breakpoints: {
+    xs: "30em",
+    sm: "50em",
+    md: "64em",
+    lg: "74em",
+    xl: "90em",
   },
 
   components: {
@@ -149,8 +159,10 @@ export default function App() {
           <Route path="/presenter/:eventId" element={<PresenterWelcome />} />
 
           {/* 404 */}
+          <Route path="/pdf" element={<PDFViewer />} />
           <Route path="*" element={<NotFoundTitle />} />
           <Route path="/404" element={<NotFoundTitle />} />
+          <Route path="/image" element={<ImagePreview />} />
         </Routes>
       </MantineProvider>
     </Router>
