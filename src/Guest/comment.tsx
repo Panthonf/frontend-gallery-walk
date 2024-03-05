@@ -217,7 +217,7 @@ export default function Comment({ projectId }: { projectId: number }) {
 
                           <Text
                             style={{
-                              // whiteSpace: "pre-line",
+                              whiteSpace: "pre-line",
                               wordBreak: "break-word",
                             }}
                             mt="xs"
