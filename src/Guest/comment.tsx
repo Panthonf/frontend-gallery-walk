@@ -215,7 +215,13 @@ export default function Comment({ projectId }: { projectId: number }) {
                             </Text>
                           </Flex>
 
-                          <ScrollArea mt="sm">
+                          <Text
+                            style={{
+                              whiteSpace: "pre-line",
+                              wordBreak: "break-word",
+                            }}
+                            mt="xs"
+                          >
                             {(comment as { comment_like: string }).comment_like
                               .length < 1 ? (
                               ""
@@ -260,7 +266,7 @@ export default function Comment({ projectId }: { projectId: number }) {
                                 }
                               </>
                             )}
-                          </ScrollArea>
+                          </Text>
                           <Divider mt="4" />
                         </>
                       )}
