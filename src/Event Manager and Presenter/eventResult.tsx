@@ -2,7 +2,11 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart, CategoryScale } from "chart.js";
-import { Flex, Text, RadioGroup, Radio, Group, Space } from "@mantine/core";
+import {
+  Flex,
+  Text,
+  // RadioGroup, Radio, Group, Space
+} from "@mantine/core";
 import { IconChartBar } from "@tabler/icons-react";
 
 import { TableSort } from "../components/tableSort";
@@ -19,7 +23,6 @@ export default function EventResult(props: { eventId: unknown }) {
   const [eventResult, setEventResult] = useState<EventResultType[] | null>(
     null
   );
-  const [numberOfBars, setNumberOfBars] = useState<number>(3);
 
   useEffect(() => {
     const fetchProjectResult = async () => {
@@ -43,70 +46,7 @@ export default function EventResult(props: { eventId: unknown }) {
 
   Chart.register(CategoryScale);
 
-  const handleSelectChange = (value: number) => {
-    setNumberOfBars(value);
-  };
-
-  // console.log("eventResult=" + JSON.stringify(eventResult));
-  let chartDataArray = JSON.parse(JSON.stringify(eventResult));
-  // console.log("chartDataArray=" + JSON.stringify(chartDataArray));
-
-  if (eventResult !== null) {
-    //chartDataArray.sort((a, b) => b.virtual_money - a.virtual_money);
-    const arrOutput = [];
-    let count = 1;
-
-    for (let i = 0; i < chartDataArray.length; i++, count++) {
-      if (count > numberOfBars) break;
-      if (count % 2 == 1) {
-        arrOutput.push(chartDataArray[i]);
-      } else {
-        arrOutput.unshift(chartDataArray[i]);
-      }
-    }
-    chartDataArray = arrOutput;
-  }
-
-  const _Data = {
-    labels:
-      chartDataArray && chartDataArray.length >= 3
-        ? [
-            `1st-${chartDataArray[0].title}`,
-            `2nd-${chartDataArray.length >= 2 ? chartDataArray[1].title : ""}`,
-            `3rd-${chartDataArray.length >= 3 ? chartDataArray[2].title : ""}`,
-            ...(numberOfBars === 3
-              ? []
-              : [
-                  `4th-${
-                    chartDataArray.length >= 4 ? chartDataArray[3].title : ""
-                  }`,
-                  `5th-${
-                    chartDataArray.length >= 5 ? chartDataArray[4].title : ""
-                  }`,
-                ]),
-          ]
-        : [],
-    datasets: [
-      {
-        label: "Virtual Money ",
-        data:
-          numberOfBars === 3
-            ? ["100", "150", "100"]
-            : ["100", "150", "200", "150", "100"],
-        backgroundColor: [
-          "rgba(75,192,192,1)",
-          "#ecf0f1",
-          "#50AF95",
-          "#f3ba2f",
-          "#2a71d0",
-        ],
-        borderColor: "black",
-        borderWidth: 2,
-      },
-    ],
-  };
-
-  const chartContent = (
+  const chartContent = eventResult ? (
     <div className="chart-container">
       <h2
         style={{
@@ -121,11 +61,31 @@ export default function EventResult(props: { eventId: unknown }) {
         <IconChartBar size={20} />
       </h2>
       <Bar
-        data={_Data}
+        data={{
+          labels: [
+            `2nd-${eventResult[1].title}`,
+            `1st-${eventResult[0].title}`,
+            `3rd-${eventResult[2].title}`,
+          ],
+          datasets: [
+            {
+              label: "Virtual Money ",
+              data: ["100", "150", "100"],
+              backgroundColor: [
+                "rgba(75,192,192,1)",
+                "#ecf0f1",
+                "#50AF95",
+                "#f3ba2f",
+                "#2a71d0",
+              ],
+              borderColor: "black",
+              borderWidth: 2,
+            },
+          ],
+        }}
         options={{
           scales: {
             x: {
-              //   display: false,
               grid: {
                 display: false,
               },
@@ -144,54 +104,24 @@ export default function EventResult(props: { eventId: unknown }) {
             legend: {
               display: false,
             },
+            tooltip: {
+              callbacks: {
+                label: function () {
+                  return '';
+                },
+              },
+            },
           },
         }}
       />
     </div>
-  );
-
-  const [chartDataColumn, setChartDataColumn] = useState<number>(3);
+  ) : null;
 
   return (
     <div>
       <Flex justify="center">
         {eventResult ? (
           <div>
-            <RadioGroup
-              value={chartDataColumn.toString()}
-              onChange={(value) => setChartDataColumn(Number(value))}
-              label="Number of Bars"
-              required
-              withAsterisk
-            >
-              <Group mt="xs" color="red">
-                <Space h="lg" />
-                <Radio
-                  color="red"
-                  value="3"
-                  label="Top 3 teams"
-                  onClick={() => handleSelectChange(3)}
-                />
-                <Radio
-                  color="red"
-                  value="5"
-                  label="Top 5 teams"
-                  onClick={() => handleSelectChange(5)}
-                />
-              </Group>
-            </RadioGroup>
-            {/* <Flex justify="flex-end">
-              <Select
-                label="Number of Bars"
-                placeholder="Select number of bars"
-                data={["1", "3", "5", "10"]}
-                defaultValue="3"
-                clearable
-                value={numberOfBars.toString()}
-                onChange={(value) => handleSelectChange(Number(value))}
-              />
-            </Flex> */}
-
             {chartContent}
             <TableSort data={eventResult} />
           </div>
