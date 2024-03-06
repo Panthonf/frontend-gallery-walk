@@ -10,7 +10,6 @@ import {
   Center,
   Pagination,
   Loader,
-  ScrollArea,
   Divider,
   Flex,
   LoadingOverlay,
