@@ -105,11 +105,13 @@ export default function EventResult(props: { eventId: unknown }) {
                                 <Space h="lg" />
                                 <Radio
                                     value="3"
+                                    color="red"
                                     label="Top 3 teams"
                                     onClick={() => handleSelectChange(3)}
                                 />
                                 <Radio
                                     value="5"
+                                    color="red"
                                     label="Top 5 teams"
                                     onClick={() => handleSelectChange(5)}
                                 />
