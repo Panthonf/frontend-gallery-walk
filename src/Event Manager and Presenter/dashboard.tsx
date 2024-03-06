@@ -480,9 +480,8 @@ export default function Dashboard() {
       </Affix>
 
       <Affix
-        className={`${styles.footer} ${
-          activeTab === "Presenter" ? styles.presenter : styles.event
-        }`}
+        className={`${styles.footer} ${activeTab === "Presenter" ? styles.presenter : styles.event
+          }`}
         style={{
           backgroundColor:
             activeTab === "Presenter" ? "redcolor.4" : "bluecolor.4",

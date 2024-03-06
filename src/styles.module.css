@@ -128,7 +128,7 @@ p {
 }
 
 .cardContainer {
-    padding: 2rem;
+    padding: 1.75rem;
     border-radius: 0.2rem;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 1px 10px;
     background: var(--whitecolor);
@@ -140,13 +140,13 @@ p {
 }
 
 .cardInformation {
-    padding: 2rem;
+    padding: 1.75rem;
     border-radius: 0.2rem;
     box-shadow: rgba(149, 157, 165, 0.2) 0px 1px 10px;
     background: var(--whitecolor);
 }
 
-.cardContainer.presenter {
+.cardInformation.presenter {
     border-right: 1rem solid var(--bluecolor);
 }
 
