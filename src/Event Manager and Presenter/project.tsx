@@ -38,8 +38,8 @@ import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
 import {
-    // IconArrowLeft,
-    // IconArrowNarrowRight,
+    IconArrowLeft,
+    IconArrowNarrowRight,
     IconArrowsDiagonal,
     IconClockHour3,
     IconCoins,
@@ -47,12 +47,12 @@ import {
     IconExternalLink,
     IconFile,
     IconLayoutGridAdd,
-    // IconLink,
+    IconLink,
     IconPhotoUp,
     IconQrcode,
     IconTrash,
     IconUserQuestion,
-    // IconUserShare,
+    IconUserShare,
 } from "@tabler/icons-react";
 import Navbar from "../components/navbar";
 
@@ -61,7 +61,7 @@ import { useDisclosure } from "@mantine/hooks";
 
 import { generateRandomName } from "../components/generate_name";
 // import { colors } from "unique-names-generator";
-import QRCode from "qrcode";
+// import QRCode from "qrcode";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
