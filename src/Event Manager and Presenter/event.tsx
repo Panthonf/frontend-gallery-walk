@@ -2332,7 +2332,8 @@ export default function Event() {
                                 ta="end"
                               >
                                 <Text size="base" c="redcolor.4" fw={500}>
-                                  {project.virtual_money} {event?.unit_money}
+                                  {project.virtual_money}{" "}
+                                  {project.virtual_money && event?.unit_money}
                                 </Text>
                                 <Text size="small" c="graycolor.2">
                                   {moment(project?.created_at).format(
