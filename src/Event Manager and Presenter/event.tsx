@@ -197,7 +197,7 @@ export default function Event() {
           withCredentials: true,
         })
         .then((res) => {
-          console.log("event data", res.data.data);
+          console.log("event data fff", res.data.data);
           setTotalProjects(res.data.totalProjects);
           setEvent(res.data.data);
         })
@@ -2093,15 +2093,57 @@ export default function Event() {
           <Tabs.Panel value="projects" mt="3rem">
             <Box w="100%" mx="auto">
               <Flex justify="space-between" align="flex-start">
-                <Button
-                  size="sm"
-                  leftSection={<IconSquarePlus size={14} />}
-                  onClick={toggleAddProject}
-                >
-                  <Text c="pinkcolor.1" size="small">
-                    Add Project
-                  </Text>
-                </Button>
+                {moment().isBefore(moment(event?.submit_start)) ? (
+                  <div>
+                    <Button
+                      size="sm"
+                      leftSection={<IconSquarePlus size={14} />}
+                      onClick={toggleAddProject}
+                      disabled
+                    >
+                      <Text c="pinkcolor.1" size="small">
+                        Add Project
+                      </Text>
+                    </Button>
+                    <Text mt="sm" size="small" c="redcolor.4">
+                      Project submission will open in{" "}
+                      {moment(event?.submit_start).format("LL HH:MM A")}
+                    </Text>
+                  </div>
+                ) : moment().isBefore(moment(event?.submit_end)) ? (
+                  <div>
+                    <Button
+                      size="sm"
+                      leftSection={<IconSquarePlus size={14} />}
+                      onClick={toggleAddProject}
+                    >
+                      <Text c="pinkcolor.1" size="small">
+                        Add Project
+                      </Text>
+                    </Button>
+                    <Text mt="sm" size="small" c="redcolor.4">
+                      Project submission will close in{" "}
+                      {moment(event?.submit_end).format("LL HH:MM A")}
+                    </Text>
+                  </div>
+                ) : (
+                  <div>
+                    <Button
+                      size="sm"
+                      leftSection={<IconSquarePlus size={14} />}
+                      onClick={toggleAddProject}
+                      disabled
+                    >
+                      <Text c="pinkcolor.1" size="small">
+                        Add Project
+                      </Text>
+                    </Button>
+                    <Text mt="md" size="small" c="redcolor.4">
+                      Project submission is closed
+                    </Text>
+                  </div>
+                )}
+
                 <Modal
                   title="Create New Project"
                   opened={addProjectOpened}
