@@ -8,22 +8,21 @@ import {
   TextInput,
   Grid,
   ActionIcon,
-  // Anchor,
-  Stack,
   Modal,
   Box,
   Group,
   Affix,
   SimpleGrid,
   Paper,
-  GridCol,
   Center,
-  // Container,
-  // rem,
   Image,
   Anchor,
   FileInput,
+  Menu,
+  Divider,
 } from "@mantine/core";
+// import { Carousel } from '@mantine/carousel';
+
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
@@ -40,17 +39,21 @@ import TextAlign from "@tiptap/extension-text-align";
 import Superscript from "@tiptap/extension-superscript";
 import SubScript from "@tiptap/extension-subscript";
 import {
-  IconArrowLeft,
-  IconArrowNarrowRight,
+  // IconArrowLeft,
+  // IconArrowNarrowRight,
   IconArrowsDiagonal,
+  IconClockHour3,
   IconCoins,
   IconEdit,
+  IconExternalLink,
   IconFile,
   IconLayoutGridAdd,
+  // IconLink,
   IconPhotoUp,
   // IconQrcode,
   IconTrash,
   IconUserQuestion,
+  // IconUserShare,
 } from "@tabler/icons-react";
 import Navbar from "../components/navbar";
 
@@ -63,6 +66,7 @@ import { generateRandomName } from "../components/generate_name";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
+import "@mantine/carousel/styles.css";
 
 type ProjectType = {
   project_image: {
@@ -96,6 +100,7 @@ type EventType = {
   unit_money: string;
   submit_start: string;
   submit_end: string;
+  location: string;
 };
 
 type CommentType = {
@@ -103,6 +108,9 @@ type CommentType = {
   comment: string;
   created_at: string;
   anonymousName?: string;
+  comment_idea: string;
+  comment_like: string;
+  comment_better: string;
 };
 
 export default function Projects() {
@@ -303,18 +311,12 @@ export default function Projects() {
   };
 
   const data = [
-    // {
-    //     title: "Projects",
-    //     icon: "projects",
-    //     value: "10",
-    //     label: "Project from event presenter",
-    // },
-    // {
-    //   title: "Guests",
-    //   icon: "guests",
-    //   value: "1234",
-    //   label: "Number of guests",
-    // },
+    {
+      title: "Guests",
+      icon: "guests",
+      value: "1234",
+      label: "Number of guests",
+    },
     {
       title: "Virtual money",
       icon: "money",
@@ -443,8 +445,8 @@ export default function Projects() {
 
     return (
       <>
-        <Flex align="center" gap="md">
-          <Text c="bluecolor.4" fw={600} size="topic">
+        <Flex align="center" gap="md" mb="xs">
+          <Text size="header" c="bluecolor.4" fw={600}>
             {project?.title}{" "}
           </Text>
 
@@ -474,11 +476,22 @@ export default function Projects() {
             />
 
             <Flex justify="flex-end" mt="md" gap="md">
-              <Button variant="outline" size="xs" onClick={close}>
+              <Button
+                variant="outline"
+                color="bluecolor.4"
+                size="xs"
+                onClick={close}
+              >
                 Cancel
               </Button>
 
-              <Button variant="filled" size="xs" type="submit" onClick={close}>
+              <Button
+                variant="filled"
+                color="bluecolor.4"
+                size="xs"
+                type="submit"
+                onClick={close}
+              >
                 Save
               </Button>
             </Flex>
@@ -503,31 +516,30 @@ export default function Projects() {
   //       <Modal
   //         opened={opened}
   //         onClose={close}
-  //         title="QR Code for Project"
+  //         title="QR Code for Presenter"
   //         centered
   //         radius="xs"
-  //         size="90%"
   //         padding="lg"
   //         className={styles.scrollBar}
   //       >
   //         <Center>
-  //           <div>
-  //             <Text c="graycolor.3" mt="md">
-  //               Share this QR code to your guests
-  //             </Text>
-  //             <Image src={qrCodeDataUrl} alt="QR Code" />
+  //           <Text c="graycolor.2">Scan QR code to join the event</Text>
+  //         </Center>
 
-  //             <Center>
-  //               <Anchor
-  //                 href={qrCodeDataUrl}
-  //                 download={`${project?.title}_qr_code.png`}
-  //                 target="_blank"
-  //                 rel="noreferrer"
-  //               >
-  //                 Download QR Code
-  //               </Anchor>
-  //             </Center>
-  //           </div>
+  //         <Center>
+  //           <Image src={qrCodeDataUrl} alt="QR Code" my="sm" w={300} h={300} />
+  //         </Center>
+
+  //         <Center>
+  //           <Anchor
+  //             href={qrCodeDataUrl}
+  //             download={`${project?.title}_qr_code.png`}
+  //             target="_blank"
+  //             rel="noreferrer"
+  //             c="redcolor.4"
+  //           >
+  //             <Button>Download QR Code</Button>
+  //           </Anchor>
   //         </Center>
   //       </Modal>
   //     </>
@@ -774,13 +786,13 @@ export default function Projects() {
     return (
       <>
         <Flex align="center" gap="md" mb="xs">
-          <Text c="graycolor.2">Description </Text>
+          <Text c="bluecolor.4">Description</Text>
 
           <ActionIcon
             variant="transparent"
             onClick={handleEditDescription}
             size="xs"
-            color="graycolor.2"
+            color="bluecolor.4"
           >
             <IconEdit size={14} stroke={1.5} onClick={open} />
           </ActionIcon>
@@ -858,56 +870,126 @@ export default function Projects() {
       </>
     );
   };
-
+  const handleDeleteProject = async (projectId: string) => {
+    try {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      }).then(async (result) => {
+        if (result.isConfirmed) {
+          await axios
+            .delete(
+              `${import.meta.env.VITE_BASE_ENDPOINTMENT}projects/${projectId}`,
+              {
+                withCredentials: true,
+              }
+            )
+            .then(() => {
+              Swal.fire({
+                title: "Deleted!",
+                text: "Your project has been deleted.",
+                icon: "success",
+                timer: 2000,
+                showConfirmButton: false,
+              }).then(() => {
+                window.location.href = "/dashboard";
+              });
+            });
+        }
+      });
+    } catch (error) {
+      console.error("Error fetching project:", error);
+    }
+  };
   return (
     <body>
       <Navbar />
       <div style={{ paddingBottom: "5rem" }}>
         {project && project !== null ? (
           <div>
-            <Affix position={{ top: 90, left: 20 }}>
-              <a href="/dashboard">
-                <Button
-                  size="xs"
-                  leftSection={
-                    <IconArrowLeft size={14} color="var(--bluecolor)" />
-                  }
-                  color="bluecolor.4"
-                >
-                  <Text c="bluecolor.9" size="small">
-                    Back
-                  </Text>
-                </Button>
-              </a>
-            </Affix>
             <Box w="80%" mx="auto">
-              <Flex justify="space-between" align="flex-start" my="xl">
+              <Flex justify="space-between" align="flex-start" mt="xl" mb="md">
                 <div>
                   <ModalEdit />
                   <Flex mb="md" gap="2rem">
                     <div>
-                      <Text size="xsmall" c="graycolor.3">
+                      <Text size="xsmall" c="graycolor.4" mb="xs">
                         Start submit of project
                       </Text>
-                      <Text>
-                        {moment(event?.submit_start).format("LL [at] HH:mm A")}
-                      </Text>
+                      <Flex align="center" gap="xs">
+                        <Text c="bluecolor.4">
+                          {moment(event?.submit_start).format("LL")}
+                        </Text>
+                        <IconClockHour3 size={14} />
+                        {moment(event?.submit_start).format("HH:MM A")}
+                      </Flex>
                     </div>
                     <div>
-                      <Text size="xsmall" c="graycolor.3">
+                      <Text size="xsmall" c="graycolor.4" mb="xs">
                         End submit of project
                       </Text>
-                      <Text>
-                        {moment(event?.submit_end).format("LL [at] HH:mm A")}
-                      </Text>
+                      <Flex align="center" gap="xs">
+                        <Text c="bluecolor.4">
+                          {moment(event?.submit_end).format("LL")}
+                        </Text>
+                        <IconClockHour3 size={14} />
+                        {moment(event?.submit_end).format("HH:MM A")}
+                      </Flex>
                     </div>
                   </Flex>
                 </div>
-                {/* <QrCodeModal /> */}
+
+                <Flex align="center" gap="md">
+                  <div>
+                    <Text size="small" c="graycolor.2">
+                      Created at:
+                    </Text>
+                    <Text size="small" c="graycolor.2">
+                      {moment(project?.created_at).format("LL [at] HH:mm A")}
+                    </Text>
+                  </div>
+
+                  <ActionIcon.Group>
+                    {/* <QrCodeModal /> */}
+                    <Menu position="bottom-end" shadow="sm">
+                      <Menu.Target>
+                        <ActionIcon
+                          variant="default"
+                          size="lg"
+                          onClick={() => {
+                            window.location.href = `/event/${project.event_id}`;
+                          }}
+                        >
+                          <IconExternalLink size={16} />
+                        </ActionIcon>
+                      </Menu.Target>
+                    </Menu>
+                    <Menu position="bottom-end" shadow="sm">
+                      <Menu.Target>
+                        <ActionIcon
+                          variant="default"
+                          size="lg"
+                          onClick={() => {
+                            handleDeleteProject(project.id);
+                          }}
+                          c="red"
+                        >
+                          <IconTrash size={16} />
+                        </ActionIcon>
+                      </Menu.Target>
+                    </Menu>
+                  </ActionIcon.Group>
+                </Flex>
               </Flex>
             </Box>
+
             <Card
-              className={`${styles.cardContainer} ${styles.presenter}`}
+              className={`${styles.cardInformation} ${styles.presenter}`}
               mx="auto"
               w="80%"
             >
@@ -919,9 +1001,20 @@ export default function Projects() {
                     </Grid.Col>
                     <Grid.Col span={8}>
                       <div>
-                        <Text>
-                          30th Year Building, Faculty of Engineering, Chiang Mai
+                        <Text size="xsmall" c="graycolor.4">
+                          Event location
                         </Text>
+                        <Anchor
+                          href={
+                            event && event.location
+                              ? "https://www.google.com/maps/search/" +
+                                encodeURIComponent(event.location)
+                              : "#"
+                          }
+                          underline="never"
+                        >
+                          {event?.location}
+                        </Anchor>
                       </div>
                     </Grid.Col>
                     <Grid.Col span={4}>
@@ -929,6 +1022,9 @@ export default function Projects() {
                     </Grid.Col>
                     <Grid.Col span={8}>
                       <div>
+                        <Text size="xsmall" c="graycolor.4">
+                          Event status
+                        </Text>
                         {moment(event?.end_date).isBefore(moment()) ? (
                           <Text c="red.4">Ended</Text>
                         ) : (
@@ -939,52 +1035,90 @@ export default function Projects() {
                   </Grid>
                 </Grid.Col>
                 <Grid.Col span="auto">
-                  <SimpleGrid cols={{ base: 1, sm: 1 }}>{stats}</SimpleGrid>
+                  <SimpleGrid cols={{ sm: 1, lg: 2 }}>{stats}</SimpleGrid>
                 </Grid.Col>
-                <GridCol span={1.5}>
-                  <Stack h={125} align="flex-end" justify="space-between">
-                    <div>
-                      <Text size="small" c="graycolor.2">
-                        Created at:
-                      </Text>
-                      <Text size="small" c="graycolor.2">
-                        {moment(project.created_at).format("LL [at] HH:mm A")}
-                      </Text>
-                    </div>
-                    <Button
-                      rightSection={<IconArrowNarrowRight size={14} />}
-                      size="small"
-                      onClick={() => {
-                        window.location.href = `/event/${project.event_id}`;
-                      }}
-                    >
-                      Event
-                    </Button>
-                  </Stack>
-                </GridCol>
+
                 <Grid.Col span={12}>
                   <ModalEditDescription />
                 </Grid.Col>
-                <div>
-                  <Text c="graycolor.2" mt="md">
-                    Images ({project?.project_image.length}/5)
-                  </Text>
 
-                  <Dropzone accept={IMAGE_MIME_TYPE} onDrop={onDrop}>
-                    <Button
-                      mt="md"
-                      leftSection={<IconPhotoUp size={14} />}
-                      variant="default"
-                    >
-                      Upload Image
-                    </Button>
-                  </Dropzone>
-                  {project?.project_image.length === 5 && (
-                    <Text c="red.4" mt={3} size="sm">
-                      You have reached the maximum number of images. Please
-                      delete some images to upload new ones
+                <Grid.Col>
+                  <Flex align="center" gap="md" mb="xs">
+                    <Text c="bluecolor.4">
+                      Images {project?.project_image.length}/5
                     </Text>
-                  )}
+
+                    <Dropzone accept={IMAGE_MIME_TYPE} onDrop={onDrop}>
+                      <Button
+                        leftSection={<IconPhotoUp size={14} />}
+                        variant="default"
+                        size="compact-small"
+                      >
+                        Upload Image
+                      </Button>
+                    </Dropzone>
+                  </Flex>
+                </Grid.Col>
+
+                <Grid.Col>
+                  {/* <Carousel
+                                        withIndicators
+                                        height={200}
+                                        slideSize="33.333333%"
+                                        slideGap="md"
+                                        loop
+                                        align="start"
+                                        slidesToScroll={3}
+                                    >
+                                        {files.map((file, index) => {
+                                            const imageUrl = URL.createObjectURL(file);
+                                            return (
+                                                <Carousel.Slide key={index}>
+                                                    <Image
+                                                        radius={3}
+                                                        h={200}
+                                                        src={imageUrl}
+                                                        alt={`Preview ${index + 1}`}
+                                                        onLoad={() => URL.revokeObjectURL(imageUrl)}
+                                                    />
+                                                    <Button
+                                                        onClick={() => {
+                                                            setFiles(files.filter((_, i) => i !== index));
+                                                        }}
+                                                        variant="light"
+                                                        size="sm"
+                                                        mt="md"
+                                                    >
+                                                        <IconTrash size={14} />
+                                                    </Button>
+                                                </Carousel.Slide>
+                                            );
+                                        })}
+
+                                        {project?.project_image.map((image, index) => (
+                                            <Carousel.Slide key={index}>
+                                                <Zoom>
+                                                    <Image
+                                                        src={image.project_image_url}
+                                                        alt="Project image"
+                                                        h={200}
+                                                        w="auto"
+                                                    />
+                                                </Zoom>
+                                                <Button
+                                                    onClick={() => {
+                                                        deleteProjectImage(image.project_id, image.project_image), open;
+                                                    }}
+                                                    variant="light"
+                                                    size="sm"
+                                                    mt="md"
+                                                >
+                                                    <IconTrash size={14} />
+                                                </Button>
+                                            </Carousel.Slide>
+                                        ))}
+                                    </Carousel> */}
+
                   {project?.project_image.length !== 0 || files.length !== 0 ? (
                     <>
                       <div>
@@ -993,8 +1127,6 @@ export default function Projects() {
                             const imageUrl = URL.createObjectURL(file);
                             return (
                               <div>
-                                {/* <AspectRatio ratio={1080 / 720} maw={300} mx="auto"> */}
-
                                 <Image
                                   radius={8}
                                   h={200}
@@ -1005,7 +1137,6 @@ export default function Projects() {
                                   onLoad={() => URL.revokeObjectURL(imageUrl)}
                                 />
 
-                                {/* </AspectRatio> */}
                                 <Button
                                   onClick={() => {
                                     setFiles(
@@ -1043,7 +1174,6 @@ export default function Projects() {
                       <SimpleGrid spacing="lg" cols={4} mt="md">
                         {project?.project_image.map((image) => (
                           <div>
-                            {/* <AspectRatio ratio={1080 / 720} maw={300} mx="auto"> */}
                             <Zoom>
                               <Image
                                 src={image.project_image_url}
@@ -1053,7 +1183,7 @@ export default function Projects() {
                                 w="auto"
                               />
                             </Zoom>
-                            {/* </AspectRatio> */}
+
                             <Button
                               onClick={() => {
                                 deleteProjectImage(
@@ -1083,7 +1213,6 @@ export default function Projects() {
                   </Text>
                   <FileInput
                     accept="docx, pdf, pptx, xlsx"
-                    // label="Upload files"
                     placeholder="Upload files"
                     onChange={(files) => {
                       setDocuments([...documents, ...files]);
@@ -1189,7 +1318,7 @@ export default function Projects() {
                       </ActionIcon>
                     </Flex>
                   ))}
-                </div>
+                </Grid.Col>
               </Grid>
             </Card>
             <Card mx="auto" w="80%" mt="xl" p="0" bg="none">
@@ -1211,7 +1340,104 @@ export default function Projects() {
                               <IconUserQuestion size={14} />
                               <Text>{comment.anonymousName}</Text>
                             </Flex>
-                            <Text>{comment.comment}</Text>
+                            {/* <Text>{comment.comment_idea}</Text> */}
+                            <Text
+                              mx="md"
+                              mt="md"
+                              key={(comment as { id: string }).id}
+                            >
+                              {(
+                                (comment as { comment_like: string })
+                                  .comment_like || ""
+                              ).length < 1 &&
+                              (
+                                (comment as { comment_better: string })
+                                  .comment_better || ""
+                              ).length < 1 &&
+                              (
+                                (comment as { comment_idea: string })
+                                  .comment_idea || ""
+                              ).length < 1 ? (
+                                ""
+                              ) : (
+                                <>
+                                  {/* <Divider mt="4" /> */}
+                                  {/* <Flex justify="space-between" align="center">
+                                    <Text mt="xs" size="xs" c="gray">
+                                      {moment(
+                                        (comment as { created_at: string })
+                                          .created_at
+                                      ).format("D MMMM YYYY HH:mm A")}{" "}
+                                    </Text>
+                                    <Text mt="xs" size="xs" c="gray">
+                                      {moment(
+                                        (comment as { created_at: string })
+                                          .created_at
+                                      ).fromNow()}
+                                    </Text>
+                                  </Flex> */}
+
+                                  <Text
+                                    style={{
+                                      whiteSpace: "pre-line",
+                                      wordBreak: "break-word",
+                                    }}
+                                    mt="xs"
+                                    c={"bluecolor.5"}
+                                  >
+                                    {(comment as { comment_like: string })
+                                      .comment_like.length < 1 ? (
+                                      ""
+                                    ) : (
+                                      <>
+                                        <Text size="xs" c="dimmed">
+                                          What i like about this project?
+                                        </Text>
+                                        {
+                                          (comment as { comment_like: string })
+                                            .comment_like
+                                        }
+                                      </>
+                                    )}
+
+                                    {(comment as { comment_better: string })
+                                      .comment_better.length < 1 ? (
+                                      ""
+                                    ) : (
+                                      <>
+                                        <Text size="xs" c="dimmed">
+                                          What could make this project better?
+                                        </Text>
+                                        {
+                                          (
+                                            comment as {
+                                              comment_better: string;
+                                            }
+                                          ).comment_better
+                                        }
+                                      </>
+                                    )}
+
+                                    {(comment as { comment_idea: string })
+                                      .comment_idea.length < 1 ? (
+                                      ""
+                                    ) : (
+                                      <>
+                                        <Text size="xs" c="dimmed">
+                                          New idea or suggestion for this
+                                          project?
+                                        </Text>{" "}
+                                        {
+                                          (comment as { comment_idea: string })
+                                            .comment_idea
+                                        }
+                                      </>
+                                    )}
+                                  </Text>
+                                  <Divider mt="4" />
+                                </>
+                              )}
+                            </Text>
                             <Text c="bluecolor.4" size="small" fw={500} mt="xs">
                               {moment(comment.created_at).fromNow()}
                             </Text>

@@ -105,6 +105,7 @@ type ProjectType = {
   id: number;
   title: string;
   description: string;
+  user_id: number;
 };
 
 type EventFeedbackType = {
@@ -150,6 +151,7 @@ export default function Event() {
   const [visible, { toggle: toggleCreateProject }] = useDisclosure(false);
   const [documents, setDocuments] = useState<File[]>([]);
   const [isProjectDataLoading, setIsProjectDataLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
 
   const editor = useEditor({
     extensions: [
@@ -277,6 +279,8 @@ export default function Event() {
             }
           )
           .then((res) => {
+            console.log("role", res.data);
+            setUserId(res.data.user_id);
             if (res.data.role === "manager") {
               setCanEdit(true);
             }
@@ -301,23 +305,6 @@ export default function Event() {
       }
     };
 
-    const fetchProjectsData = async () => {
-      await axios
-        .get(`${BASE_ENDPOINT}presenters/get-project/${eventId}`, {
-          withCredentials: true,
-          params: { query, page, pageSize },
-        })
-        .then((res) => {
-          console.log("projects hhh", res.data.data);
-          setProjects(res.data.data);
-          setIsProjectDataLoading(false);
-        })
-        .catch((err) => {
-          console.log("projects err", err);
-          setIsProjectDataLoading(false);
-        });
-    };
-
     const fetchEventFeedback = async () => {
       try {
         await axios
@@ -339,13 +326,48 @@ export default function Event() {
 
     if (eventId) {
       generateQRCode();
-      fetchProjectsData();
       fetchEventFeedback();
     }
 
     document.title = `${event?.event_name} | Virtual Event Manager`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId, event?.event_name, query, page, pageSize]);
+
+  useEffect(() => {
+    const fetchProjectsData = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_ENDPOINT}presenters/get-project/${eventId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        console.log("project data", response.data.data);
+        setIsProjectDataLoading(false);
+        setProjects(response.data.data);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        setIsProjectDataLoading(false);
+      }
+    };
+    fetchProjectsData();
+  }, [eventId]);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
+    setPage(1); // Reset page to 1 when search term changes
+  };
+
+  const filteredData = (projects as unknown as ProjectType[])?.filter(
+    (item) =>
+      item.title.toLowerCase().includes(query.toLowerCase()) ||
+      item.description.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const paginatedData = (filteredData || []).slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
 
   const handlePublishToggle = async () => {
     await axios
@@ -2093,15 +2115,57 @@ export default function Event() {
           <Tabs.Panel value="projects" mt="3rem">
             <Box w="100%" mx="auto">
               <Flex justify="space-between" align="flex-start">
-                <Button
-                  size="sm"
-                  leftSection={<IconSquarePlus size={14} />}
-                  onClick={toggleAddProject}
-                >
-                  <Text c="pinkcolor.1" size="small">
-                    Add Project
-                  </Text>
-                </Button>
+                {moment().isBefore(moment(event?.submit_start)) ? (
+                  <div>
+                    <Button
+                      size="sm"
+                      leftSection={<IconSquarePlus size={14} />}
+                      onClick={toggleAddProject}
+                      disabled
+                    >
+                      <Text c="pinkcolor.1" size="small">
+                        Add Project
+                      </Text>
+                    </Button>
+                    <Text mt="sm" size="small" c="redcolor.4">
+                      Project submission will open in{" "}
+                      {moment(event?.submit_start).format("LL HH:MM A")}
+                    </Text>
+                  </div>
+                ) : moment().isBefore(moment(event?.submit_end)) ? (
+                  <div>
+                    <Button
+                      size="sm"
+                      leftSection={<IconSquarePlus size={14} />}
+                      onClick={toggleAddProject}
+                    >
+                      <Text c="pinkcolor.1" size="small">
+                        Add Project
+                      </Text>
+                    </Button>
+                    <Text mt="sm" size="small" c="redcolor.4">
+                      Project submission will close in{" "}
+                      {moment(event?.submit_end).format("LL HH:MM A")}
+                    </Text>
+                  </div>
+                ) : (
+                  <div>
+                    <Button
+                      size="sm"
+                      leftSection={<IconSquarePlus size={14} />}
+                      onClick={toggleAddProject}
+                      disabled
+                    >
+                      <Text c="pinkcolor.1" size="small">
+                        Add Project
+                      </Text>
+                    </Button>
+                    <Text mt="md" size="small" c="redcolor.4">
+                      Project submission is closed
+                    </Text>
+                  </div>
+                )}
+
                 <Modal
                   title="Create New Project"
                   opened={addProjectOpened}
@@ -2278,7 +2342,7 @@ export default function Event() {
                 </Modal>
                 <TextInput
                   value={query}
-                  onChange={(event) => setQuery(event.target.value)}
+                  onChange={handleSearchChange}
                   placeholder="Search project"
                   rightSection={<IconSearch size={14} />}
                   w="50%"
@@ -2302,9 +2366,9 @@ export default function Event() {
                   </Flex>
                 ) : (
                   <>
-                    {projects ? (
+                    {paginatedData.length > 0 ? (
                       <div>
-                        {projects.map((project: ProjectType) => (
+                        {paginatedData.map((project: ProjectType) => (
                           <Card
                             key={project.id}
                             className={styles.cardInformation}
@@ -2340,37 +2404,56 @@ export default function Event() {
                                     "LL [at] HH:mm A"
                                   )}
                                 </Text>
+                                <Text size="small" c="redcolor.2">
+                                  {project.user_id === userId && (
+                                    <ActionIcon
+                                      variant="filled"
+                                      color="red"
+                                      mt="sm"
+                                      size="md"
+                                      onClick={() => {
+                                        window.open(
+                                          `/project/${project.id}`,
+                                          "_blank"
+                                        );
+                                      }}
+                                    >
+                                      <IconEdit size={14} />
+                                    </ActionIcon>
+                                  )}
+                                </Text>
                               </Grid.Col>
                             </Grid>
                           </Card>
                         ))}
+                        <Center mt="md">
+                          <Pagination.Root
+                            color="redcolor.4"
+                            size="sm"
+                            total={Math.ceil(filteredData.length / pageSize)}
+                            boundaries={2}
+                            value={page}
+                            onChange={(newPage) => setPage(newPage)}
+                          >
+                            <Group gap={5} justify="center">
+                              <Pagination.First />
+                              <Pagination.Previous />
+                              <Pagination.Items />
+                              <Pagination.Next />
+                              <Pagination.Last />
+                            </Group>
+                          </Pagination.Root>
+                        </Center>
                       </div>
                     ) : (
                       <div>
-                        <Text size="md" my="md" fw={500}>
-                          No Projects
-                        </Text>
+                        <Center>
+                          <Text size="md" my="md" fw={500} c={"graycolor.4"}>
+                            No Projects Found
+                          </Text>
+                        </Center>
                       </div>
                     )}
-
-                    <Center mt="md">
-                      <Pagination.Root
-                        color="redcolor.4"
-                        size="sm"
-                        total={Math.ceil(totalProjects / pageSize)}
-                        boundaries={2}
-                        value={page}
-                        onChange={(newPage) => setPage(newPage)}
-                      >
-                        <Group gap={5} justify="center">
-                          <Pagination.First />
-                          <Pagination.Previous />
-                          <Pagination.Items />
-                          <Pagination.Next />
-                          <Pagination.Last />
-                        </Group>
-                      </Pagination.Root>
-                    </Center>
                   </>
                 )}
               </div>
