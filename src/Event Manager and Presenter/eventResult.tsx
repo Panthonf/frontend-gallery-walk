@@ -2,7 +2,10 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart, CategoryScale } from "chart.js";
-import { Flex, Text, RadioGroup, Radio, Group, Space } from "@mantine/core";
+import { Flex, Text, RadioGroup, Radio, Group, Space, } from "@mantine/core";
+import {
+    IconChartBar
+  } from "@tabler/icons-react";
 
 import { TableSort } from "../components/tableSort";
 
@@ -99,12 +102,14 @@ export default function EventResult(props: { eventId: unknown }) {
       <h2
         style={{
           textAlign: "center",
-          color: "red",
+          color: "grey",
           fontFamily: "sans-serif",
           fontWeight: 800,
         }}
       >
         Event Result
+        <span style={{ marginLeft: '8px' }}></span>
+        <IconChartBar size={20} />
       </h2>
       <Bar
         data={_Data}
@@ -117,7 +122,7 @@ export default function EventResult(props: { eventId: unknown }) {
               ticks: {
                 display: true,
                 font: {
-                  size: 23,
+                  size: 18,
                   family: "sans-serif",
                   weight: 800,
                 },
