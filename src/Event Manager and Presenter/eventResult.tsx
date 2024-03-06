@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import { Chart, CategoryScale } from "chart.js";
 import { Flex, Text, RadioGroup, Radio, Group, Space } from "@mantine/core";
+import { IconChartBar } from "@tabler/icons-react";
 
 import { TableSort } from "../components/tableSort";
 
@@ -18,7 +19,7 @@ export default function EventResult(props: { eventId: unknown }) {
   const [eventResult, setEventResult] = useState<EventResultType[] | null>(
     null
   );
-  //   const [numberOfBars, setNumberOfBars] = useState<number>(3);
+  const [numberOfBars, setNumberOfBars] = useState<number>(3);
 
   useEffect(() => {
     const fetchProjectResult = async () => {
@@ -41,8 +42,6 @@ export default function EventResult(props: { eventId: unknown }) {
   }, [props.eventId]);
 
   Chart.register(CategoryScale);
-
-  const [numberOfBars, setNumberOfBars] = useState<number>(3);
 
   const handleSelectChange = (value: number) => {
     setNumberOfBars(value);
@@ -68,15 +67,32 @@ export default function EventResult(props: { eventId: unknown }) {
     chartDataArray = arrOutput;
   }
 
-  console.log("eventResult=" + JSON.stringify(eventResult));
   const _Data = {
-    labels: chartDataArray?.map((data: { title: unknown; }) => data.title).slice(0, numberOfBars),
+    labels:
+      chartDataArray && chartDataArray.length >= 3
+        ? [
+            `1st-${chartDataArray[0].title}`,
+            `2nd-${chartDataArray.length >= 2 ? chartDataArray[1].title : ""}`,
+            `3rd-${chartDataArray.length >= 3 ? chartDataArray[2].title : ""}`,
+            ...(numberOfBars === 3
+              ? []
+              : [
+                  `4th-${
+                    chartDataArray.length >= 4 ? chartDataArray[3].title : ""
+                  }`,
+                  `5th-${
+                    chartDataArray.length >= 5 ? chartDataArray[4].title : ""
+                  }`,
+                ]),
+          ]
+        : [],
     datasets: [
       {
         label: "Virtual Money ",
-        data: chartDataArray
-          ?.map((data: { total_virtual_money: unknown; }) => data.total_virtual_money)
-          .slice(0, numberOfBars),
+        data:
+          numberOfBars === 3
+            ? ["100", "150", "100"]
+            : ["100", "150", "200", "150", "100"],
         backgroundColor: [
           "rgba(75,192,192,1)",
           "#ecf0f1",
@@ -92,10 +108,35 @@ export default function EventResult(props: { eventId: unknown }) {
 
   const chartContent = (
     <div className="chart-container">
-      <h2 style={{ textAlign: "center" }}>Event Result</h2>
+      <h2
+        style={{
+          textAlign: "center",
+          color: "grey",
+          fontFamily: "sans-serif",
+          fontWeight: 800,
+        }}
+      >
+        Event Result
+        <span style={{ marginLeft: "8px" }}></span>
+        <IconChartBar size={20} />
+      </h2>
       <Bar
         data={_Data}
         options={{
+          scales: {
+            x: {
+              //   display: false,
+              grid: {
+                display: false,
+              },
+            },
+            y: {
+              display: false,
+              grid: {
+                display: false,
+              },
+            },
+          },
           plugins: {
             title: {
               display: true,
