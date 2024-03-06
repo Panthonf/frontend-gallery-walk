@@ -48,7 +48,7 @@ import {
   IconFile,
   IconLayoutGridAdd,
   IconPhotoUp,
-  IconQrcode,
+  // IconQrcode,
   IconTrash,
   IconUserQuestion,
 } from "@tabler/icons-react";
@@ -59,7 +59,7 @@ import { useDisclosure } from "@mantine/hooks";
 
 import { generateRandomName } from "../components/generate_name";
 // import { colors } from "unique-names-generator";
-import QRCode from "qrcode";
+// import QRCode from "qrcode";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import Zoom from "react-medium-image-zoom";
 import "react-medium-image-zoom/dist/styles.css";
@@ -111,7 +111,7 @@ export default function Projects() {
   const [event, setEvent] = useState<EventType>();
   const [virtualMoney, setVirtualMoney] = useState<number>(0);
   const [comment, setComment] = useState<CommentType | null>();
-  const [qrCodeDataUrl, setQRCodeDataUrl] = useState("");
+  // const [qrCodeDataUrl, setQRCodeDataUrl] = useState("");
   const [documents, setDocuments] = useState<File[]>([]);
 
   document.title = project?.title || "Project";
@@ -252,18 +252,18 @@ export default function Projects() {
       }
     };
 
-    const generateQRCode = async () => {
-      try {
-        const url = `${import.meta.env.VITE_FRONTEND_ENDPOINT}/guest/event/${
-          project?.event_id
-        }/project/${projectId}`;
-        const dataUrl = await QRCode.toDataURL(url);
-        setQRCodeDataUrl(dataUrl);
-      } catch (error) {
-        console.error("Error generating QR code:", error);
-      }
-    };
-    generateQRCode();
+    // const generateQRCode = async () => {
+    //   try {
+    //     const url = `${import.meta.env.VITE_FRONTEND_ENDPOINT}/guest/event/${
+    //       project?.event_id
+    //     }/project/${projectId}`;
+    //     const dataUrl = await QRCode.toDataURL(url);
+    //     setQRCodeDataUrl(dataUrl);
+    //   } catch (error) {
+    //     console.error("Error generating QR code:", error);
+    //   }
+    // };
+    // generateQRCode();
     fetchProjectComment();
   }, [project?.event_id, projectId]);
 
@@ -488,51 +488,51 @@ export default function Projects() {
     );
   };
 
-  const QrCodeModal = () => {
-    const [opened, { open, close }] = useDisclosure(false);
-    return (
-      <>
-        <ActionIcon
-          onClick={open}
-          variant="default"
-          size="lg"
-          aria-label="Gallery"
-        >
-          <IconQrcode size={16} />
-        </ActionIcon>
-        <Modal
-          opened={opened}
-          onClose={close}
-          title="QR Code for Project"
-          centered
-          radius="xs"
-          size="90%"
-          padding="lg"
-          className={styles.scrollBar}
-        >
-          <Center>
-            <div>
-              <Text c="graycolor.3" mt="md">
-                Share this QR code to your guests
-              </Text>
-              <Image src={qrCodeDataUrl} alt="QR Code" />
+  // const QrCodeModal = () => {
+  //   const [opened, { open, close }] = useDisclosure(false);
+  //   return (
+  //     <>
+  //       <ActionIcon
+  //         onClick={open}
+  //         variant="default"
+  //         size="lg"
+  //         aria-label="Gallery"
+  //       >
+  //         <IconQrcode size={16} />
+  //       </ActionIcon>
+  //       <Modal
+  //         opened={opened}
+  //         onClose={close}
+  //         title="QR Code for Project"
+  //         centered
+  //         radius="xs"
+  //         size="90%"
+  //         padding="lg"
+  //         className={styles.scrollBar}
+  //       >
+  //         <Center>
+  //           <div>
+  //             <Text c="graycolor.3" mt="md">
+  //               Share this QR code to your guests
+  //             </Text>
+  //             <Image src={qrCodeDataUrl} alt="QR Code" />
 
-              <Center>
-                <Anchor
-                  href={qrCodeDataUrl}
-                  download={`${project?.title}_qr_code.png`}
-                  target="_blank"
-                  rel="noreferrer"
-                >
-                  Download QR Code
-                </Anchor>
-              </Center>
-            </div>
-          </Center>
-        </Modal>
-      </>
-    );
-  };
+  //             <Center>
+  //               <Anchor
+  //                 href={qrCodeDataUrl}
+  //                 download={`${project?.title}_qr_code.png`}
+  //                 target="_blank"
+  //                 rel="noreferrer"
+  //               >
+  //                 Download QR Code
+  //               </Anchor>
+  //             </Center>
+  //           </div>
+  //         </Center>
+  //       </Modal>
+  //     </>
+  //   );
+  // };
 
   const deleteProjectImage = async (
     projectId: number,
