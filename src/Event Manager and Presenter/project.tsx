@@ -903,7 +903,7 @@ export default function Projects() {
                     </div>
                   </Flex>
                 </div>
-                <QrCodeModal />
+                {/* <QrCodeModal /> */}
               </Flex>
             </Box>
             <Card
