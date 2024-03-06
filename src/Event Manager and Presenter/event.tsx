@@ -301,23 +301,6 @@ export default function Event() {
       }
     };
 
-    const fetchProjectsData = async () => {
-      await axios
-        .get(`${BASE_ENDPOINT}presenters/get-project/${eventId}`, {
-          withCredentials: true,
-          params: { query, page, pageSize },
-        })
-        .then((res) => {
-          console.log("projects hhh", res.data.data);
-          setProjects(res.data.data);
-          setIsProjectDataLoading(false);
-        })
-        .catch((err) => {
-          console.log("projects err", err);
-          setIsProjectDataLoading(false);
-        });
-    };
-
     const fetchEventFeedback = async () => {
       try {
         await axios
@@ -339,13 +322,47 @@ export default function Event() {
 
     if (eventId) {
       generateQRCode();
-      fetchProjectsData();
       fetchEventFeedback();
     }
 
     document.title = `${event?.event_name} | Virtual Event Manager`;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [eventId, event?.event_name, query, page, pageSize]);
+
+  useEffect(() => {
+    const fetchProjectsData = async () => {
+      try {
+        const response = await axios.get(
+          `${BASE_ENDPOINT}presenters/get-project/${eventId}`,
+          {
+            withCredentials: true,
+          }
+        );
+        setIsProjectDataLoading(false);
+        setProjects(response.data.data);
+      } catch (error) {
+        console.error("Error fetching projects:", error);
+        setIsProjectDataLoading(false);
+      }
+    };
+    fetchProjectsData();
+  }, [eventId]);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
+    setPage(1); // Reset page to 1 when search term changes
+  };
+
+  const filteredData = (projects as unknown as ProjectType[])?.filter(
+    (item) =>
+      item.title.toLowerCase().includes(query.toLowerCase()) ||
+      item.description.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const paginatedData = (filteredData || []).slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
 
   const handlePublishToggle = async () => {
     await axios
@@ -2320,7 +2337,7 @@ export default function Event() {
                 </Modal>
                 <TextInput
                   value={query}
-                  onChange={(event) => setQuery(event.target.value)}
+                  onChange={handleSearchChange}
                   placeholder="Search project"
                   rightSection={<IconSearch size={14} />}
                   w="50%"
@@ -2344,9 +2361,9 @@ export default function Event() {
                   </Flex>
                 ) : (
                   <>
-                    {projects ? (
+                    {paginatedData ? (
                       <div>
-                        {projects.map((project: ProjectType) => (
+                        {paginatedData.map((project: ProjectType) => (
                           <Card
                             key={project.id}
                             className={styles.cardInformation}
@@ -2399,7 +2416,7 @@ export default function Event() {
                       <Pagination.Root
                         color="redcolor.4"
                         size="sm"
-                        total={Math.ceil(totalProjects / pageSize)}
+                        total={Math.ceil(filteredData.length / pageSize)}
                         boundaries={2}
                         value={page}
                         onChange={(newPage) => setPage(newPage)}
