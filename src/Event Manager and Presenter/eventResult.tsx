@@ -70,16 +70,12 @@ export default function EventResult(props: { eventId: unknown }) {
 
   console.log("eventResult=" + JSON.stringify(eventResult));
   const _Data = {
-    labels: chartDataArray
-      ?.map((data: { title: unknown }) => data.title)
-      .slice(0, numberOfBars),
+    labels: chartDataArray?.map((data: { title: unknown; }) => data.title).slice(0, numberOfBars),
     datasets: [
       {
         label: "Virtual Money ",
         data: chartDataArray
-          ?.map(
-            (data: { total_virtual_money: unknown }) => data.total_virtual_money
-          )
+          ?.map((data: { total_virtual_money: unknown; }) => data.total_virtual_money)
           .slice(0, numberOfBars),
         backgroundColor: [
           "rgba(75,192,192,1)",
@@ -96,40 +92,10 @@ export default function EventResult(props: { eventId: unknown }) {
 
   const chartContent = (
     <div className="chart-container">
-      <h2
-        style={{
-          textAlign: "center",
-          color: "red",
-          fontFamily: "sans-serif",
-          fontWeight: 800,
-        }}
-      >
-        Event Result
-      </h2>
+      <h2 style={{ textAlign: "center" }}>Event Result</h2>
       <Bar
         data={_Data}
         options={{
-          scales: {
-            x: {
-              grid: {
-                display: false,
-              },
-              ticks: {
-                display: true,
-                font: {
-                  size: 23,
-                  family: "sans-serif",
-                  weight: 800,
-                },
-                color: "grey",
-              },
-            },
-            y: {
-              grid: {
-                display: false,
-              },
-            },
-          },
           plugins: {
             title: {
               display: true,
