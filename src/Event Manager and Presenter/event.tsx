@@ -105,6 +105,7 @@ type ProjectType = {
   id: number;
   title: string;
   description: string;
+  user_id: number;
 };
 
 type EventFeedbackType = {
@@ -150,6 +151,7 @@ export default function Event() {
   const [visible, { toggle: toggleCreateProject }] = useDisclosure(false);
   const [documents, setDocuments] = useState<File[]>([]);
   const [isProjectDataLoading, setIsProjectDataLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
 
   const editor = useEditor({
     extensions: [
@@ -197,7 +199,7 @@ export default function Event() {
           withCredentials: true,
         })
         .then((res) => {
-          console.log("event data fff", res.data.data);
+          console.log("event data", res.data.data);
           setTotalProjects(res.data.totalProjects);
           setEvent(res.data.data);
         })
@@ -277,6 +279,8 @@ export default function Event() {
             }
           )
           .then((res) => {
+            console.log("role", res.data);
+            setUserId(res.data.user_id);
             if (res.data.role === "manager") {
               setCanEdit(true);
             }
@@ -338,6 +342,7 @@ export default function Event() {
             withCredentials: true,
           }
         );
+        console.log("project data", response.data.data);
         setIsProjectDataLoading(false);
         setProjects(response.data.data);
       } catch (error) {
@@ -2361,7 +2366,7 @@ export default function Event() {
                   </Flex>
                 ) : (
                   <>
-                    {paginatedData ? (
+                    {paginatedData.length > 0 ? (
                       <div>
                         {paginatedData.map((project: ProjectType) => (
                           <Card
@@ -2399,37 +2404,56 @@ export default function Event() {
                                     "LL [at] HH:mm A"
                                   )}
                                 </Text>
+                                <Text size="small" c="redcolor.2">
+                                  {project.user_id === userId && (
+                                    <ActionIcon
+                                      variant="filled"
+                                      color="red"
+                                      mt="sm"
+                                      size="md"
+                                      onClick={() => {
+                                        window.open(
+                                          `/project/${project.id}`,
+                                          "_blank"
+                                        );
+                                      }}
+                                    >
+                                      <IconEdit size={14} />
+                                    </ActionIcon>
+                                  )}
+                                </Text>
                               </Grid.Col>
                             </Grid>
                           </Card>
                         ))}
+                        <Center mt="md">
+                          <Pagination.Root
+                            color="redcolor.4"
+                            size="sm"
+                            total={Math.ceil(filteredData.length / pageSize)}
+                            boundaries={2}
+                            value={page}
+                            onChange={(newPage) => setPage(newPage)}
+                          >
+                            <Group gap={5} justify="center">
+                              <Pagination.First />
+                              <Pagination.Previous />
+                              <Pagination.Items />
+                              <Pagination.Next />
+                              <Pagination.Last />
+                            </Group>
+                          </Pagination.Root>
+                        </Center>
                       </div>
                     ) : (
                       <div>
-                        <Text size="md" my="md" fw={500}>
-                          No Projects
-                        </Text>
+                        <Center>
+                          <Text size="md" my="md" fw={500} c={"graycolor.4"}>
+                            No Projects Found
+                          </Text>
+                        </Center>
                       </div>
                     )}
-
-                    <Center mt="md">
-                      <Pagination.Root
-                        color="redcolor.4"
-                        size="sm"
-                        total={Math.ceil(filteredData.length / pageSize)}
-                        boundaries={2}
-                        value={page}
-                        onChange={(newPage) => setPage(newPage)}
-                      >
-                        <Group gap={5} justify="center">
-                          <Pagination.First />
-                          <Pagination.Previous />
-                          <Pagination.Items />
-                          <Pagination.Next />
-                          <Pagination.Last />
-                        </Group>
-                      </Pagination.Root>
-                    </Center>
                   </>
                 )}
               </div>
