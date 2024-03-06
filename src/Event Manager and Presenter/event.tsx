@@ -292,8 +292,8 @@ export default function Event() {
     const generateQRCode = async () => {
       try {
         const url = `${
-          import.meta.env.VITE_BASE_ENDPOINTMENT
-        }presenters/${eventId}`;
+          import.meta.env.VITE_FRONTEND_ENDPOINT
+        }/presenters/${eventId}`;
         const dataUrl = await QRCode.toDataURL(url);
         setQRCodeDataUrl(dataUrl);
       } catch (error) {
