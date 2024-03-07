@@ -26,6 +26,7 @@ import GuestProject from "./guestProject";
 import Comment from "./comment";
 export default function ProjectsDashboard(props: {
   eventId: string | undefined;
+  handleModalClose: () => void; // Define a prop to handle modal close event
 }) {
   type ProjectType = {
     project_document: object;
@@ -191,15 +192,33 @@ export default function ProjectsDashboard(props: {
         </Modal>
 
         <Flex align="center" gap="md">
-          <Text size="topic" c="greencolor.4" fw={500} truncate="end">
+          {/* <Text
+            size="topic"
+            onClick={open}
+            c="greencolor.4"
+            fw={500}
+            truncate="end"
+            style={{
+              cursor: "pointer",
+            }}
+          >
             {projectTitle}
-          </Text>
+          </Text> */}
 
-          <UnstyledButton c="graycolor.2" onClick={open}>
+          <Anchor
+            size="topic"
+            onClick={open}
+            underline="hover"
+            c="greencolor.4"
+          >
+            {projectTitle}
+          </Anchor>
+
+          {/* <UnstyledButton c="graycolor.2" >
             <Text c="graycolor.2" size="small">
               Details
             </Text>
-          </UnstyledButton>
+          </UnstyledButton> */}
         </Flex>
       </div>
     );
@@ -208,9 +227,18 @@ export default function ProjectsDashboard(props: {
   const ModalGiveVirtualMoney = ({ projectId }: { projectId: number }) => {
     const [opened, { open, close }] = useDisclosure(false);
 
+    const handleModalClose = () => {
+      close();
+      props.handleModalClose(); // Call the function passed from props
+    };
+
     return (
       <div>
-        <Modal opened={opened} onClose={close} title="Give Virtual Money">
+        <Modal
+          opened={opened}
+          onClose={handleModalClose}
+          title="Give Virtual Money"
+        >
           <GuestProject projectId={projectId} />
         </Modal>
         <ActionIcon
