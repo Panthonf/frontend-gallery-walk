@@ -51,7 +51,7 @@ export default function ProjectsDashboard(props: {
           `${import.meta.env.VITE_BASE_ENDPOINTMENT}projects/${eventId}/search`,
           {
             withCredentials: true,
-            params: { query, page, pageSize },
+            // params: { query, page, pageSize },
           }
         );
         console.log("projects data", response.data);
@@ -68,6 +68,22 @@ export default function ProjectsDashboard(props: {
       fetchProjectsData(props.eventId);
     }
   }, [page, props.eventId, query, pageSize]);
+
+  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setQuery(event.target.value);
+    setPage(1); // Reset page to 1 when search term changes
+  };
+
+  const filteredData = (projectsData as unknown as ProjectType[])?.filter(
+    (item) =>
+      item.title.toLowerCase().includes(query.toLowerCase()) ||
+      item.description.toLowerCase().includes(query.toLowerCase())
+  );
+
+  const paginatedData = (filteredData || []).slice(
+    (page - 1) * pageSize,
+    page * pageSize
+  );
 
   const ModalProjectDetails = ({
     projectTitle,
@@ -235,13 +251,13 @@ export default function ProjectsDashboard(props: {
         <Grid w="100%">
           <Grid.Col span={12}>
             <Text c="greencolor.4" fw={500} size="topic" mt="md">
-              Projects {projectsData.length > 0 ? `(${totalProjects})` : ""}
+              Projects {projectsData?.length > 0 ? `(${totalProjects})` : ""}
             </Text>
           </Grid.Col>
           <Grid.Col span={12} mb="md">
             <TextInput
               value={query}
-              onChange={(project) => setQuery(project.target.value)}
+              onChange={handleSearchChange}
               placeholder="Search events"
               rightSection={<IconSearch size={14} />}
             />
@@ -254,9 +270,9 @@ export default function ProjectsDashboard(props: {
                 </Center>
               ) : (
                 <>
-                  {projectsData.length > 0 ? (
+                  {paginatedData?.length > 0 ? (
                     <div>
-                      {projectsData.map((project: ProjectType) => (
+                      {paginatedData.map((project: ProjectType) => (
                         <Card
                           className={styles.cardContainer}
                           p="1rem"
@@ -340,7 +356,7 @@ export default function ProjectsDashboard(props: {
               <Pagination.Root
                 color="greencolor.4"
                 size="sm"
-                total={Math.ceil(totalProjects / pageSize)}
+                total={Math.ceil(filteredData.length / pageSize)}
                 boundaries={2}
                 value={page}
                 onChange={(newPage) => setPage(newPage)}
