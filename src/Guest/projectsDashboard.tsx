@@ -7,7 +7,6 @@ import {
   Text,
   TextInput,
   Flex,
-  UnstyledButton,
   Modal,
   Group,
   ActionIcon,
