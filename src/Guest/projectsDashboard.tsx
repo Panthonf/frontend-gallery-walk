@@ -7,7 +7,6 @@ import {
   Text,
   TextInput,
   Flex,
-  UnstyledButton,
   Modal,
   Group,
   ActionIcon,
@@ -15,6 +14,7 @@ import {
   Image,
   SimpleGrid,
   Anchor,
+  Select,
 } from "@mantine/core";
 import { IconSearch, IconCoin, IconMessagePlus } from "@tabler/icons-react";
 import axios from "axios";
@@ -40,7 +40,7 @@ export default function ProjectsDashboard(props: {
   const [projectsData, setProjectsData] = useState<ProjectType[]>([]);
   const [query, setQuery] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(30);
   const [totalProjects, setTotalProjects] = useState(0);
   const [isProjectDataLoading, setIsProjectDataLoading] = useState(true);
 
@@ -91,11 +91,13 @@ export default function ProjectsDashboard(props: {
     description,
     image,
     document,
+    createAt,
   }: {
     projectTitle: string;
-    description: string;
     image: object;
     document: object;
+    createAt: string;
+    description: string;
   }) => {
     const [opened, { open, close }] = useDisclosure(false);
 
@@ -220,6 +222,24 @@ export default function ProjectsDashboard(props: {
             </Text>
           </UnstyledButton> */}
         </Flex>
+        <Text my="xs" c="graycolor.2" size="small">
+          {moment(createAt).format("MMMM Do YY HH:mm A")}
+        </Text>
+        <Divider size="xs" color="graycolor.2" />
+        <div style={{ marginTop: "1rem" }}>
+          <Text size="xsmall" mb="xs">
+            Description
+          </Text>
+          <Text lineClamp={2}>
+            <Anchor onClick={open}>
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: description.toString() || "",
+                }}
+              />
+            </Anchor>
+          </Text>
+        </div>
       </div>
     );
   };
@@ -283,12 +303,25 @@ export default function ProjectsDashboard(props: {
             </Text>
           </Grid.Col>
           <Grid.Col span={12} mb="md">
-            <TextInput
-              value={query}
-              onChange={handleSearchChange}
-              placeholder="Search events"
-              rightSection={<IconSearch size={14} />}
-            />
+            <Flex align="center" justify="flex-start" gap="md">
+              <TextInput
+                value={query}
+                onChange={handleSearchChange}
+                placeholder="Search events"
+                rightSection={<IconSearch size={14} />}
+                w={300}
+              />
+
+              <Select
+                data={["5", "10", "15", "30"]}
+                defaultValue={"30"}
+                onChange={(value) => {
+                  setPageSize(Number(value));
+                }}
+                // label="Items per page"
+                w={50}
+              />
+            </Flex>
           </Grid.Col>
           <Grid.Col>
             <>
@@ -321,27 +354,8 @@ export default function ProjectsDashboard(props: {
                                 description={project.description as string}
                                 image={project.project_image as object}
                                 document={project.project_document as object}
+                                createAt={project.created_at}
                               />
-
-                              <Text my="xs" c="graycolor.2" size="small">
-                                {moment(project.created_at).format(
-                                  "MMMM Do YY HH:mm A"
-                                )}
-                              </Text>
-                              <Divider size="xs" color="graycolor.2" />
-                              <div style={{ marginTop: "1rem" }}>
-                                <Text size="xsmall" mb="xs">
-                                  Description
-                                </Text>
-                                <Text lineClamp={2}>
-                                  <div
-                                    dangerouslySetInnerHTML={{
-                                      __html:
-                                        project.description.toString() || "",
-                                    }}
-                                  />
-                                </Text>
-                              </div>
                             </Grid.Col>
                             <div
                               style={{
