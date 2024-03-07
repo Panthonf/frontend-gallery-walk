@@ -30,6 +30,7 @@ import {
   FileInput,
   Badge,
   Loader,
+  Title,
 } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { useClipboard, useDisclosure } from "@mantine/hooks";
@@ -121,6 +122,7 @@ export default function Event() {
   const rerSubmitEnd = useRef<HTMLInputElement>(null);
   const { eventId } = useParams();
   const [qrCodeDataUrl, setQRCodeDataUrl] = useState("");
+  const [guestQrCodeDataUrl, setGuestQRCodeDataUrl] = useState("");
   // const clipboard = useClipboard({ timeout: 500 });
   const guestClipboard = useClipboard({ timeout: 500 });
   const presenterClipboard = useClipboard({ timeout: 500 });
@@ -305,6 +307,18 @@ export default function Event() {
       }
     };
 
+    const generateGuestQrCode = async () => {
+      try {
+        const url = `${
+          import.meta.env.VITE_FRONTEND_ENDPOINT
+        }/guest/${eventId}`;
+        const dataUrl = await QRCode.toDataURL(url);
+        setGuestQRCodeDataUrl(dataUrl);
+      } catch (error) {
+        console.error("Error generating QR code:", error);
+      }
+    };
+
     const fetchEventFeedback = async () => {
       try {
         await axios
@@ -326,6 +340,7 @@ export default function Event() {
 
     if (eventId) {
       generateQRCode();
+      generateGuestQrCode();
       fetchEventFeedback();
     }
 
@@ -680,23 +695,44 @@ export default function Event() {
         <Modal
           opened={opened}
           onClose={close}
-          title="QR Code for Presenter"
+          title="QR Code"
           centered
           radius="xs"
           padding="lg"
           className={styles.scrollBar}
         >
-          <Center>
-            <Text c="graycolor.2">Scan QR code to join the event</Text>
-          </Center>
-
+          <Title order={3}>Presenter QR Code</Title>
           <Center>
             <Image src={qrCodeDataUrl} alt="QR Code" my="sm" w={300} h={300} />
+          </Center>
+          <Center>
+            <Anchor
+              href={qrCodeDataUrl}
+              download="qr-code-presenter.png"
+              target="_blank"
+              rel="noreferrer"
+              c="redcolor.4"
+            >
+              <Button>Download QR Code</Button>
+            </Anchor>
+          </Center>
+
+          <Title mt="50" order={3}>
+            Guest QR Code
+          </Title>
+          <Center>
+            <Image
+              src={guestQrCodeDataUrl}
+              alt="QR Code"
+              my="sm"
+              w={300}
+              h={300}
+            />
           </Center>
 
           <Center>
             <Anchor
-              href={qrCodeDataUrl}
+              href={guestQrCodeDataUrl}
               download="qr-code-presenter.png"
               target="_blank"
               rel="noreferrer"
