@@ -261,6 +261,7 @@ export default function ProjectsDashboard(props: {
         >
           <GuestProject projectId={projectId} />
         </Modal>
+        
         <ActionIcon
           variant="filled"
           color="greencolor.4"
