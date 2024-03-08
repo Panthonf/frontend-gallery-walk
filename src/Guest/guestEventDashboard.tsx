@@ -213,12 +213,12 @@ export default function GuestEventDashboard() {
           <Grid.Col my="md">
             <Paper withBorder p="md" radius="md" bg="none" h="max-content">
               <Group justify="space-between">
-                <Text c="graycolor.2">All virtual money</Text>
+                <Text c="graycolor.2">Virtual money</Text>
                 <IconCoins size={16} />
               </Group>
 
               <Group align="flex-end" gap="xs" mt={25}>
-                <Text fw={500} c="greencolor.4">
+                <Text fz="25" fw={500} c="greencolor.5">
                   {guestData?.virtual_money.toLocaleString()}{" "}
                   {eventData?.unit_money}
                 </Text>
