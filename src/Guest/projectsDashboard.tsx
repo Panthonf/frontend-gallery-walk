@@ -223,7 +223,7 @@ export default function ProjectsDashboard(props: {
           </UnstyledButton> */}
         </Flex>
         <Text my="xs" c="graycolor.2" size="small">
-          {moment(createAt).format("MMMM Do YY HH:mm A")}
+          {moment(createAt).format("MMMM D, YYYY HH:mm")}
         </Text>
         <Divider size="xs" color="graycolor.2" />
         <div style={{ marginTop: "1rem" }}>
@@ -261,7 +261,7 @@ export default function ProjectsDashboard(props: {
         >
           <GuestProject projectId={projectId} />
         </Modal>
-        
+
         <ActionIcon
           variant="filled"
           color="greencolor.4"
