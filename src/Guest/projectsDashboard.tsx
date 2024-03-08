@@ -212,6 +212,7 @@ export default function ProjectsDashboard(props: {
             onClick={open}
             underline="hover"
             c="greencolor.4"
+            fz={25}
           >
             {projectTitle}
           </Anchor>
@@ -308,7 +309,7 @@ export default function ProjectsDashboard(props: {
               <TextInput
                 value={query}
                 onChange={handleSearchChange}
-                placeholder="Search events"
+                placeholder="Search project"
                 rightSection={<IconSearch size={14} />}
                 w={300}
               />
