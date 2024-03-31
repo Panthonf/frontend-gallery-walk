@@ -39,20 +39,17 @@ git clone
 cd /path/to/your/app
 
 # Build the image
-docker build -t my-app .
+docker build -t gwalk-frontend .
 
-# Run the container
-docker run -d -p 3000:3000 my-app
+# List all images
+docker tag gwalk-frontend:latest dockerhub-username/gwalk-frontend:tagname
 
-# Test the container
-curl -i localhost:3000
+# Push the image to Docker Hub
+docker push dockerhub-username/gwalk-frontend:tagname
 
-# Stop the container
-docker stop <container-id>
+# Pull the image from Docker Hub
+docker pull dockerhub-username/gwalk-frontend:tagname
 
-# Remove the container
-docker rm <container-id>
-
-# Remove the image
-docker rmi my-app
+# Run the image
+docker run -p 3000:3000 dockerhub-username/gwalk-frontend:tagname
 ```
