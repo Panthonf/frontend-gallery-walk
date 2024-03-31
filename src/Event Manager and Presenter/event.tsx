@@ -31,6 +31,7 @@ import {
   Badge,
   Loader,
   Title,
+  Textarea,
 } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { useClipboard, useDisclosure } from "@mantine/hooks";
@@ -63,7 +64,7 @@ import {
 } from "@tabler/icons-react";
 import { isNotEmpty, useForm } from "@mantine/form";
 
-import { RichTextEditor, Link } from "@mantine/tiptap";
+import { Link } from "@mantine/tiptap";
 import { useEditor } from "@tiptap/react";
 import Highlight from "@tiptap/extension-highlight";
 import StarterKit from "@tiptap/starter-kit";
@@ -2233,7 +2234,7 @@ export default function Event() {
                       Description
                     </Text>
 
-                    <RichTextEditor mt="xs" editor={editor}>
+                    {/* <RichTextEditor mt="xs" editor={editor}>
                       <RichTextEditor.Toolbar sticky stickyOffset={60}>
                         <RichTextEditor.ControlsGroup>
                           <RichTextEditor.Bold />
@@ -2272,7 +2273,9 @@ export default function Event() {
                       <RichTextEditor.Content
                         {...form.getInputProps("description")}
                       />
-                    </RichTextEditor>
+                    </RichTextEditor> */}
+
+                    <Textarea mt="xs" {...form.getInputProps("description")} />
                     <Text mt="sm" c="red">
                       {form.errors.description && (
                         <>{form.errors.description}</>
