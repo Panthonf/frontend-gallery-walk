@@ -16,6 +16,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { IconCoins, IconSend } from "@tabler/icons-react";
 import { useForm } from "@mantine/form";
 import Swal from "sweetalert2";
+import moment from "moment";
 
 export default function GuestProject({ projectId }: { projectId: number }) {
   const [guestData, setGuestData] = useState<GuestType>({
@@ -32,8 +33,11 @@ export default function GuestProject({ projectId }: { projectId: number }) {
   const [isGuestDataLoading, setIsGuestDataLoading] = useState(true);
   const [isGiveVirtualMoneyLoading, setIsGiveVirtualMoneyLoading] =
     useState(false);
-  const [giveVirtualMoneyError, setGiveVirtualMoneyError] = useState("");
+  // const [giveVirtualMoneyError, setGiveVirtualMoneyError] = useState("");
   const [unit, setUnit] = useState("");
+  const [eventData, setEventData] = useState({
+    end_date: "",
+  });
 
   const navigate = useNavigate();
   const { eventId } = useParams();
@@ -89,6 +93,8 @@ export default function GuestProject({ projectId }: { projectId: number }) {
             withCredentials: true,
           }
         );
+        console.log("ddd", res.data.data);
+        setEventData(res.data.data);
         setUnit(res.data.data.unit_money);
       } catch (err) {
         // console.error("Error fetching event data:", err);
@@ -192,7 +198,7 @@ export default function GuestProject({ projectId }: { projectId: number }) {
           form.reset();
         } else {
           //   setIsLoading(false);
-          setGiveVirtualMoneyError(res.data.message);
+          // setGiveVirtualMoneyError(res.data.message);
           Swal.fire({
             icon: "error",
             title: "Oops...",
@@ -264,32 +270,58 @@ export default function GuestProject({ projectId }: { projectId: number }) {
           Give Virtual Money
         </Text>
         <Flex
-          gap="xl"
+          // gap="xl"
           justify="flex-start"
           align="center"
           direction="row"
           wrap="wrap"
         >
-          <NumberInput
-            // label="Virtual Money"
-            placeholder="Enter amount"
-            defaultValue={0}
-            thousandSeparator=","
-            {...form.getInputProps("amount")}
-          />
-          {giveVirtualMoneyError && (
-            <Text c="red" size="sm">
-              {giveVirtualMoneyError}
-            </Text>
+          {moment().isBefore(moment(eventData.end_date)) ? (
+            <Flex align="center" gap="sm" mt="md">
+              <NumberInput
+                // label="Virtual Money"
+                placeholder="Enter amount"
+                defaultValue={0}
+                thousandSeparator=","
+                {...form.getInputProps("amount")}
+              />
+              <Button type="submit" color="greencolor.4">
+                {isGiveVirtualMoneyLoading ? (
+                  <Loader type="dots" color="white" size={20} />
+                ) : (
+                  <IconSend size={14} />
+                )}
+              </Button>
+            </Flex>
+          ) : (
+            <>
+              <NumberInput
+                mt="sm"
+                // label="Virtual Money"
+                placeholder="Enter amount"
+                defaultValue={0}
+                thousandSeparator=","
+                {...form.getInputProps("amount")}
+                disabled
+              />
+              <Button
+                mt="sm"
+                ml="md"
+                type="submit"
+                color="greencolor.4"
+                disabled
+              >
+                {isGiveVirtualMoneyLoading ? (
+                  <Loader type="dots" color="white" size={20} />
+                ) : (
+                  <IconSend size={14} />
+                )}
+              </Button>
+              <Text size="sm" mt="md" c="red">
+                Event has ended. You can't give virtual money anymore
+              </Text>
+            </>
           )}
-
-          <Button type="submit" color="greencolor.4">
-            {isGiveVirtualMoneyLoading ? (
-              <Loader type="dots" color="white" size={20} />
-            ) : (
-              <IconSend size={14} />
-            )}
-          </Button>
         </Flex>
       </form>
     </>

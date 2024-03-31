@@ -63,9 +63,9 @@ export default function EventResult(props: { eventId: unknown }) {
       <Bar
         data={{
           labels: [
-            `2nd-${eventResult[1].title}`,
-            `1st-${eventResult[0].title}`,
-            `3rd-${eventResult[2].title}`,
+            `2nd-${eventResult[1]?.title}`,
+            `1st-${eventResult[0]?.title}`,
+            `3rd-${eventResult[2]?.title}`,
           ],
           datasets: [
             {

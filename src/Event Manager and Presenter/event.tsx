@@ -30,6 +30,7 @@ import {
   FileInput,
   Badge,
   Loader,
+  Title,
 } from "@mantine/core";
 import { Dropzone, IMAGE_MIME_TYPE, FileWithPath } from "@mantine/dropzone";
 import { useClipboard, useDisclosure } from "@mantine/hooks";
@@ -58,6 +59,7 @@ import {
   IconFile,
   IconLink,
   IconClockHour3,
+  IconChartPie,
 } from "@tabler/icons-react";
 import { isNotEmpty, useForm } from "@mantine/form";
 
@@ -74,6 +76,7 @@ import Navbar from "../components/navbar";
 import EditDescriptionEvent from "./editDescriptionEvent";
 import { DateInput, TimeInput } from "@mantine/dates";
 import EventResult from "./eventResult";
+import EventSummary from "./eventSummary";
 import Chart from "chart.js/auto";
 import { CategoryScale } from "chart.js";
 
@@ -121,6 +124,7 @@ export default function Event() {
   const rerSubmitEnd = useRef<HTMLInputElement>(null);
   const { eventId } = useParams();
   const [qrCodeDataUrl, setQRCodeDataUrl] = useState("");
+  const [guestQrCodeDataUrl, setGuestQRCodeDataUrl] = useState("");
   // const clipboard = useClipboard({ timeout: 500 });
   const guestClipboard = useClipboard({ timeout: 500 });
   const presenterClipboard = useClipboard({ timeout: 500 });
@@ -199,12 +203,12 @@ export default function Event() {
           withCredentials: true,
         })
         .then((res) => {
-          console.log("event data", res.data.data);
+          // console.log("event data", res.data.data);
           setTotalProjects(res.data.totalProjects);
           setEvent(res.data.data);
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          // console.log(err);
         });
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -236,7 +240,7 @@ export default function Event() {
             withCredentials: true,
           })
           .then((res) => {
-            console.log("event data", res.data.data);
+            // console.log("event data", res.data.data);
             setTotalProjects(res.data.totalProjects);
             setEvent(res.data.data);
             setIsPublished(res.data.data.published);
@@ -261,8 +265,8 @@ export default function Event() {
                 ""
             );
           })
-          .catch((err) => {
-            console.log(err);
+          .catch(() => {
+            // console.log(err);
           });
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -279,14 +283,14 @@ export default function Event() {
             }
           )
           .then((res) => {
-            console.log("role", res.data);
+            // console.log("role", res.data);
             setUserId(res.data.user_id);
             if (res.data.role === "manager") {
               setCanEdit(true);
             }
           })
-          .catch((err) => {
-            console.log(err);
+          .catch(() => {
+            // console.log(err);
           });
       } catch (error) {
         console.error("Error fetching events:", error);
@@ -300,6 +304,18 @@ export default function Event() {
         }/presenters/${eventId}`;
         const dataUrl = await QRCode.toDataURL(url);
         setQRCodeDataUrl(dataUrl);
+      } catch (error) {
+        console.error("Error generating QR code:", error);
+      }
+    };
+
+    const generateGuestQrCode = async () => {
+      try {
+        const url = `${
+          import.meta.env.VITE_FRONTEND_ENDPOINT
+        }/guest/${eventId}`;
+        const dataUrl = await QRCode.toDataURL(url);
+        setGuestQRCodeDataUrl(dataUrl);
       } catch (error) {
         console.error("Error generating QR code:", error);
       }
@@ -326,6 +342,7 @@ export default function Event() {
 
     if (eventId) {
       generateQRCode();
+      generateGuestQrCode();
       fetchEventFeedback();
     }
 
@@ -342,7 +359,7 @@ export default function Event() {
             withCredentials: true,
           }
         );
-        console.log("project data", response.data.data);
+        // console.log("project data", response.data.data);
         setIsProjectDataLoading(false);
         setProjects(response.data.data);
       } catch (error) {
@@ -377,11 +394,11 @@ export default function Event() {
           withCredentials: true,
         }
       )
-      .then((res) => {
-        console.log("dd", res.data);
+      .then(() => {
+        // console.log("dd", res.data);
       })
-      .catch((err) => {
-        console.log(err);
+      .catch(() => {
+        // console.log(err);
       });
     setIsPublished((prev) => !prev);
   };
@@ -505,12 +522,12 @@ export default function Event() {
             withCredentials: true,
           }
         )
-        .then((res) => {
-          console.log("upload project image", res.data);
+        .then(() => {
+          // console.log("upload project image", res.data);
           toggleCreateProject();
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          // console.log(err);
         });
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -532,11 +549,11 @@ export default function Event() {
             withCredentials: true,
           }
         )
-        .then((res) => {
-          console.log("upload document", res.data);
+        .then(() => {
+          // console.log("upload document", res.data);
         })
-        .catch((err) => {
-          console.log(err);
+        .catch(() => {
+          // console.log(err);
         });
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -566,7 +583,7 @@ export default function Event() {
               }
             )
             .then((res) => {
-              console.log("create project", res.data.data);
+              // console.log("create project", res.data.data);
               if (files.length > 0) {
                 toggleCreateProject();
                 handleUploadProjectImage(res.data.data.id);
@@ -584,8 +601,8 @@ export default function Event() {
                 window.location.reload();
               });
             })
-            .catch((err) => {
-              console.log(err);
+            .catch(() => {
+              // console.log(err);
               Swal.fire({
                 title: "Error",
                 text: "Create project error",
@@ -680,23 +697,44 @@ export default function Event() {
         <Modal
           opened={opened}
           onClose={close}
-          title="QR Code for Presenter"
+          title="QR Code"
           centered
           radius="xs"
           padding="lg"
           className={styles.scrollBar}
         >
-          <Center>
-            <Text c="graycolor.2">Scan QR code to join the event</Text>
-          </Center>
-
+          <Title order={3}>Presenter QR Code</Title>
           <Center>
             <Image src={qrCodeDataUrl} alt="QR Code" my="sm" w={300} h={300} />
+          </Center>
+          <Center>
+            <Anchor
+              href={qrCodeDataUrl}
+              download="qr-code-presenter.png"
+              target="_blank"
+              rel="noreferrer"
+              c="redcolor.4"
+            >
+              <Button>Download QR Code</Button>
+            </Anchor>
+          </Center>
+
+          <Title mt="50" order={3}>
+            Guest QR Code
+          </Title>
+          <Center>
+            <Image
+              src={guestQrCodeDataUrl}
+              alt="QR Code"
+              my="sm"
+              w={300}
+              h={300}
+            />
           </Center>
 
           <Center>
             <Anchor
-              href={qrCodeDataUrl}
+              href={guestQrCodeDataUrl}
               download="qr-code-presenter.png"
               target="_blank"
               rel="noreferrer"
@@ -985,8 +1023,8 @@ export default function Event() {
           setEditVirtualMoney(false);
           setEvent(res.data.data);
         })
-        .catch((err) => {
-          console.log("update start date err", err);
+        .catch(() => {
+          // console.log("update start date err", err);
         });
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -1009,8 +1047,8 @@ export default function Event() {
           setEditEventName(false);
           setEvent(res.data.data);
         })
-        .catch((err) => {
-          console.log("update start date err", err);
+        .catch(() => {
+          // console.log("update start date err", err);
         });
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -1033,8 +1071,8 @@ export default function Event() {
           setEditStartDateEvent(false);
           setEvent(res.data.data);
         })
-        .catch((err) => {
-          console.log("update start date err", err);
+        .catch(() => {
+          // console.log("update start date err", err);
         });
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -1043,10 +1081,10 @@ export default function Event() {
 
   const updateEventEnd = async () => {
     try {
-      console.log(`update end date`, {
-        start_date: moment(form2?.values.startDate).toISOString(),
-        end_date: moment(form2?.values.endDate).toISOString(),
-      });
+      // console.log(`update end date`, {
+      //   // start_date: moment(form2?.values.startDate).toISOString(),
+      //   end_date: moment(form2?.values.endDate).toISOString(),
+      // });
       await axios
         .put(
           `${import.meta.env.VITE_BASE_ENDPOINTMENT}events/${eventId}`,
@@ -1061,8 +1099,8 @@ export default function Event() {
           setEditEndDateEvent(false);
           setEvent(res.data.data);
         })
-        .catch((err) => {
-          console.log("update start date err", err);
+        .catch(() => {
+          // console.log("update start date err", err);
         });
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -1085,8 +1123,8 @@ export default function Event() {
           setEditLocation(false);
           setEvent(res.data.data);
         })
-        .catch((err) => {
-          console.log("update start date err", err);
+        .catch(() => {
+          // console.log("update start date err", err);
         });
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -1109,8 +1147,8 @@ export default function Event() {
           setEditSubmissionStart(false);
           setEvent(res.data.data);
         })
-        .catch((err) => {
-          console.log("update start date err", err);
+        .catch(() => {
+          // console.log("update start date err", err);
         });
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -1133,8 +1171,8 @@ export default function Event() {
           setEditSubmissionEnd(false);
           setEvent(res.data.data);
         })
-        .catch((err) => {
-          console.log("update start date err", err);
+        .catch(() => {
+          // console.log("update start date err", err);
         });
     } catch (error) {
       console.error("Error fetching events:", error);
@@ -1170,8 +1208,8 @@ export default function Event() {
                 window.location.href = "/dashboard";
               });
             })
-            .catch((err) => {
-              console.log(err);
+            .catch(() => {
+              // console.log(err);
               Swal.fire({
                 title: "Error",
                 text: "Delete event error",
@@ -1307,8 +1345,8 @@ export default function Event() {
                           setThumbnails(res.data.data.thumbnail_url);
                           close();
                         })
-                        .catch((err) => {
-                          console.log("update thumbnail err", err);
+                        .catch(() => {
+                          // console.log("update thumbnail err", err);
                         });
                     }
                   }}
@@ -1440,11 +1478,9 @@ export default function Event() {
                           onChange={(date) => {
                             form2?.setFieldValue(
                               "startDate",
-                              moment(date).format("LL") +
+                              moment(date).format("MMMM D, YYYY") +
                                 " " +
-                                moment(form2?.values.startDate).format(
-                                  "HH:MM A"
-                                )
+                                moment(form2?.values.startDate).format("HH:mm")
                             );
                           }}
                         />
@@ -1477,7 +1513,7 @@ export default function Event() {
 
                         <Flex align="center" gap="xs">
                           <IconClockHour3 size={14} />
-                          {moment(event?.start_date).format("HH:MM A")}
+                          {moment(event?.start_date).format("hh:mm A")}
                         </Flex>
                       </div>
                     )}
@@ -1520,17 +1556,15 @@ export default function Event() {
                     {editEndDateEvent ? (
                       <>
                         <DateInput
-                          label="End event"
+                          label="End of event"
                           required
-                          value={moment(form2?.values.startDate).toDate()}
+                          value={moment(form2?.values.endDate).toDate()}
                           onChange={(date) => {
                             form2?.setFieldValue(
                               "endDate",
-                              moment(date).format("LL") +
+                              moment(date).format("MMMM D, YYYY") +
                                 " " +
-                                moment(form2?.values.startDate).format(
-                                  "HH:MM A"
-                                )
+                                moment(form2?.values.endDate).format("HH:mm")
                             );
                           }}
                         />
@@ -1538,16 +1572,14 @@ export default function Event() {
                           mt="xs"
                           label="End Event Time"
                           required
-                          ref={refStartTime}
+                          ref={refEndTime}
                           rightSection={pickerControlEndTime}
-                          value={moment(form2?.values.startDate).format(
-                            "HH:MM A"
-                          )}
+                          value={moment(form2?.values.endDate).format("HH:mm")}
                           onChange={(date) => {
                             form2?.setFieldValue(
                               "endDate",
-                              moment(form2?.values.startDate).format(
-                                "HH:MM A"
+                              moment(form2?.values.endDate).format(
+                                "MMMM D, YYYY"
                               ) +
                                 " " +
                                 date.target.value
@@ -1563,7 +1595,7 @@ export default function Event() {
 
                         <Flex align="center" gap="xs">
                           <IconClockHour3 size={14} />
-                          {moment(event?.end_date).format("HH:MM A")}
+                          {moment(event?.end_date).format("hh:mm A")}
                         </Flex>
                       </div>
                     )}
@@ -1771,6 +1803,14 @@ export default function Event() {
             <Tabs.Tab value="settings" leftSection={<IconChartBar size={14} />}>
               Result
             </Tabs.Tab>
+            {canEdit && (
+              <Tabs.Tab
+                value="summary"
+                leftSection={<IconChartPie size={14} />}
+              >
+                Summary
+              </Tabs.Tab>
+            )}
           </Tabs.List>
           <Tabs.Panel value="infomation">
             <Card className={styles.cardInformation} mx="auto">
@@ -2034,7 +2074,7 @@ export default function Event() {
                                 }
                                 required
                                 onChange={(e) => {
-                                  console.log("e", e.target.value);
+                                  // console.log("e", e.target.value);
                                   virtualMoneyForm?.setFieldValue(
                                     "virtualMoney",
                                     parseInt(e.target.value)
@@ -2247,7 +2287,7 @@ export default function Event() {
                         placeholder="Upload files"
                         onChange={(files) => {
                           setDocuments([...documents, ...files]);
-                          console.log("files", documents);
+                          // console.log("files", documents);
                         }}
                         multiple
                       >
@@ -2486,6 +2526,15 @@ export default function Event() {
               </>
             )}
           </Tabs.Panel>
+          {canEdit ? (
+            <>
+              <Tabs.Panel value="summary">
+                <Card className={styles.cardInformation} mx="auto" mb="lg">
+                  <EventSummary eventId={eventId} />
+                </Card>
+              </Tabs.Panel>
+            </>
+          ) : null}
         </Tabs>
       </div>
 

@@ -280,7 +280,7 @@ export default function Dashboard() {
 
                 <Flex align="center" gap="xs">
                   <IconClockHour3 size={14} />
-                  {moment().format("LT")}
+                  {moment(event.start_date).format("LT")}
                 </Flex>
               </div>
               <div>
@@ -291,7 +291,7 @@ export default function Dashboard() {
 
                 <Flex align="center" gap="xs">
                   <IconClockHour3 size={14} />
-                  {moment().format("LT")}
+                  {moment(event.end_date).format("LT")}
                 </Flex>
               </div>
             </Flex>
