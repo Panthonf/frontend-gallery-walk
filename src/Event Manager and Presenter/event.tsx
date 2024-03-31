@@ -59,6 +59,7 @@ import {
   IconFile,
   IconLink,
   IconClockHour3,
+  IconChartPie,
 } from "@tabler/icons-react";
 import { isNotEmpty, useForm } from "@mantine/form";
 
@@ -75,6 +76,7 @@ import Navbar from "../components/navbar";
 import EditDescriptionEvent from "./editDescriptionEvent";
 import { DateInput, TimeInput } from "@mantine/dates";
 import EventResult from "./eventResult";
+import EventSummary from "./eventSummary";
 import Chart from "chart.js/auto";
 import { CategoryScale } from "chart.js";
 
@@ -1801,6 +1803,14 @@ export default function Event() {
             <Tabs.Tab value="settings" leftSection={<IconChartBar size={14} />}>
               Result
             </Tabs.Tab>
+            {canEdit && (
+              <Tabs.Tab
+                value="summary"
+                leftSection={<IconChartPie size={14} />}
+              >
+                Summary
+              </Tabs.Tab>
+            )}
           </Tabs.List>
           <Tabs.Panel value="infomation">
             <Card className={styles.cardInformation} mx="auto">
@@ -2516,6 +2526,15 @@ export default function Event() {
               </>
             )}
           </Tabs.Panel>
+          {canEdit ? (
+            <>
+              <Tabs.Panel value="summary">
+                <Card className={styles.cardInformation} mx="auto" mb="lg">
+                  <EventSummary eventId={eventId} />
+                </Card>
+              </Tabs.Panel>
+            </>
+          ) : null}
         </Tabs>
       </div>
 
